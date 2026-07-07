@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Operativo de Material</title>
+    <style>
+        :root { 
+            --bg-color: #e9ecef; --text-color: #333; --box-bg: #fff; --border-color: #ddd; 
+            --primary: #0056b3; --th-bg: #f1f1f1; --th-text: #333;
+            --green: #28a745; --red: #d9534f; --badge-bg: #eee;
+        }
+        body.dark-mode { 
+            --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; 
+            --primary: #6ea8fe; --th-bg: #2c2c2c; --th-text: #e0e0e0;
+            --green: #75b798; --red: #ea868f; --badge-bg: #333;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; box-sizing: border-box; transition: 0.3s;}
+        
+        .theme-toggle { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; display: block; margin: 0 auto 20px auto; font-weight: bold;}
+        body.dark-mode .theme-toggle { background: #f8f9fa; color: #121212; }
+
+        .card { background: var(--box-bg); padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 600px; margin: 0 auto 20px auto; border: 1px solid var(--border-color); transition: 0.3s;}
+        h1 { color: var(--primary); margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
+        h2, h3 { color: var(--text-color); }
+        
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: var(--bg-color); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color);}
+        .highlight-green { font-size: 28px; font-weight: bold; color: var(--green); display: block;}
+        .highlight-red { font-size: 28px; font-weight: bold; color: var(--red); display: block;}
+        
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;}
+        button { border: none; padding: 12px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; color: white;}
+        button:hover { opacity: 0.8; }
+        .btn-sacar { background: #f0ad4e; color: #212529;} 
+        .btn-regresar { background: #0dcaf0; color: #212529;}
+        .btn-daño { background: #dc3545; } 
+        .btn-reserva { background: #6f42c1; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; color: var(--text-color);}
+        th, td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
+        th { background-color: var(--th-bg); color: var(--th-text); }
+        .badge { background: var(--badge-bg); padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; color: var(--text-color);}
+    </style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleDarkMode()">🌙 / ☀️ Cambiar Modo</button>
+
+<div class="card" id="tarjetaContenido"><h2>Cargando Base de Datos...</h2></div>
+<div class="card" id="seccionHistorial" style="display:none;"></div>
+
+<script>
+    window.onload = () => {
+        if(localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+    };
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const idProducto = urlParams.get('id');
+    const API_URL = 'https://JonasSK13.pythonanywhere.com/api';
+    let prodGlobal = null;
+
+    if (idProducto) cargarDatos();
+    else document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:var(--red);">Falta el ID.</h2>`;
+
+    function cargarDatos() {
+        fetch(`${API_URL}/inventario/${idProducto}`)
+        .then(res => { if(!res.ok) throw new Error(); return res.json(); })
+        .then(data => {
+            prodGlobal = data.producto;
+            
+            document.getElementById('tarjetaContenido').innerHTML = `
+                <h1>${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
+                    <div class="stat-box">Piso/Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
+                </div>
+
+                <div class="action-grid">
+                    <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso</button>
+                    <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
+                    <button class="btn-daño" onclick="registrarMovimiento('desecho')">🗑️ Reportar Daño</button>
+                    <button class="btn-reserva" onclick="hacerReserva()">📋 Apartar/Reservar</button>
+                </div>
+            `;
+
+            let htmlHistorial = `<h3>Reservas Pendientes de este producto</h3>`;
+            if(data.reservas.length > 0) {
+                htmlHistorial += `<table><tr><th>Para</th><th>Cant</th><th>Fecha</th></tr>`;
+                data.reservas.forEach(r => { htmlHistorial += `<tr><td><strong>${r.Nombre_Persona}</strong></td><td>${r.Cantidad}</td><td>${r.Fecha_Reserva}</td></tr>`; });
+                htmlHistorial += `</table><br>`;
+            } else {
+                htmlHistorial += `<p style="font-size:14px;">No hay apartados activos para este producto.</p>`;
+            }
+
+            htmlHistorial += `<h3>Historial de Movimientos</h3><table><tr><th>Acción</th><th>Detalle</th><th>Fecha y Hora</th></tr>`;
+            data.historial.forEach(h => {
+                htmlHistorial += `<tr><td><strong>${h.Accion}</strong></td><td>${h.Detalle}</td><td><small>${h.Fecha}</small></td></tr>`;
+            });
+            htmlHistorial += `</table>`;
+
+            const secHistorial = document.getElementById('seccionHistorial');
+            secHistorial.innerHTML = htmlHistorial;
+            secHistorial.style.display = 'block';
+        })
+        .catch(() => document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:var(--red);">Material no encontrado.</h2>`);
+    }
+
+    function registrarMovimiento(tipo) {
+        let mensaje = ""; let max = 0;
+        if(tipo === 'salida') { mensaje = "a Piso/Dulcería"; max = prodGlobal.Cantidad_Guardados; }
+        if(tipo === 'regreso') { mensaje = "sanos a Bodega"; max = prodGlobal.Cantidad_Cartelera; }
+        if(tipo === 'desecho') { mensaje = "para tirar a la basura (dañados)"; max = prodGlobal.Cantidad_Cartelera; }
+
+        if(max <= 0) { alert(`⚠️ No hay piezas disponibles en esa ubicación para realizar el movimiento.`); return; }
+
+        let resp = prompt(`¿Cuántas piezas vas a mover ${mensaje}? (Máximo disponible: ${max})`);
+        if(!resp) return;
+        
+        let cant = parseInt(resp);
+        if(isNaN(cant) || cant <= 0 || cant > max) { alert("⚠️ Cantidad inválida."); return; }
+
+        fetch(`${API_URL}/movimiento/${idProducto}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: tipo, cantidad: cant })
+        }).then(() => { alert("✅ Movimiento registrado con éxito."); cargarDatos(); });
+    }
+
+    function hacerReserva() {
+        if(prodGlobal.Cantidad_Guardados <= 0) { alert("⚠️ No hay piezas en bodega para apartar."); return; }
+        
+        let nombre = prompt("¿A nombre de quién estará la reserva? (Ej. Fer, Gerente, etc.)");
+        if(!nombre || nombre.trim() === "") return;
+
+        let resp = prompt(`¿Cuántas piezas le vas a apartar a ${nombre}? (Máximo en bodega: ${prodGlobal.Cantidad_Guardados})`);
+        let cant = parseInt(resp);
+        if(isNaN(cant) || cant <= 0 || cant > prodGlobal.Cantidad_Guardados) { alert("⚠️ Cantidad inválida."); return; }
+
+        fetch(`${API_URL}/reservas`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_publicidad: idProducto, nombre: nombre, cantidad: cant })
+        }).then(() => { alert("✅ Reserva guardada."); cargarDatos(); });
+    }
+</script>
+<!-- Firma digital -->
+<style>
+    #sello-sk13 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(5);
+        font-size: 60px;
+        font-family: 'Arial Black', sans-serif;
+        color: rgba(220, 53, 69, 0.85);
+        border: 10px solid rgba(220, 53, 69, 0.85);
+        padding: 20px 40px;
+        border-radius: 15px;
+        text-transform: uppercase;
+        z-index: 99999;
+        pointer-events: none;
+        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4);
+        opacity: 0;
+        visibility: hidden;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out;
+    }
+
+    #sello-sk13.mostrar {
+        visibility: visible;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(-15deg);
+    }
+
+    #zona-secreta {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 50px;
+        height: 50px;
+        z-index: 99998; 
+        cursor: default; 
+    }
+</style>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Centro de Impresión QR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --th-bg: #f1f3f5; }
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; --th-bg: #2c2c2c; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 20px; margin: 0; transition: 0.3s; }
+        .box { background: var(--box-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border-color); }
+        .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
+        button { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.2s;}
+        button:hover { opacity: 0.8; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
+        th { background-color: var(--th-bg); }
+        
+        #qr-temp-container { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="action-bar">
+    <h1>🖨️ Centro de Impresión de Etiquetas QR</h1>
+    <div>
+        <button onclick="generarPDF()">📄 Descargar PDF con QRs Seleccionados</button>
+    </div>
+</div>
+
+<div class="box">
+    <p>Selecciona los materiales de los cuales deseas imprimir su etiqueta QR. El sistema los acomodará automáticamente en formato A4.</p>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 50px;"><input type="checkbox" id="selectAll" onclick="toggleAll(this)"> Sel.</th>
+                <th>ID</th>
+                <th>Material</th>
+                <th>Categoría</th>
+            </tr>
+        </thead>
+        <tbody id="tablaProductos">
+            <tr><td colspan="4">Cargando base de datos...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<div id="qr-temp-container"></div>
+
+<script>
+   const API_URL = 'https://JonasSK13.pythonanywhere.com/api/inventario';
+    let listaProductos = [];
+
+    window.onload = () => {
+        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+        cargarLista();
+    };
+
+    function cargarLista() {
+        fetch(API_URL).then(res => res.json()).then(data => {
+            listaProductos = data;
+            const tbody = document.getElementById('tablaProductos');
+            tbody.innerHTML = '';
+            
+            data.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="qr-check" value="${item.ID_Publicidad}"></td>
+                        <td>${item.ID_Publicidad}</td>
+                        <td><strong>${item.Nombre_Material}</strong></td>
+                        <td>${item.Categoria}</td>
+                    </tr>
+                `;
+            });
+        });
+    }
+
+    function toggleAll(source) {
+        const checkboxes = document.querySelectorAll('.qr-check');
+        checkboxes.forEach(cb => cb.checked = source.checked);
+    }
+
+    function obtenerQRBase64(urlTexto) {
+        return new Promise((resolve) => {
+            const container = document.getElementById('qr-temp-container');
+            container.innerHTML = ''; 
+            
+            const tempDiv = document.createElement('div');
+            container.appendChild(tempDiv);
+            
+            new QRCode(tempDiv, {
+                text: urlTexto,
+                width: 200,
+                height: 200,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            setTimeout(() => {
+                const canvas = tempDiv.querySelector('canvas');
+                resolve(canvas.toDataURL("image/png"));
+            }, 100);
+        });
+    }
+
+    async function generarPDF() {
+        const checkboxes = document.querySelectorAll('.qr-check:checked');
+        if (checkboxes.length === 0) {
+            alert("⚠️ Por favor, selecciona al menos un producto de la lista.");
+            return;
+        }
+
+        const idsSeleccionados = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        const productosAImprimir = listaProductos.filter(p => idsSeleccionados.includes(p.ID_Publicidad));
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF(); 
+        
+        const cols = 4;
+        const rows = 5;
+        const marginX = 10;
+        const marginY = 15;
+        const cellW = (210 - 2 * marginX) / cols; 
+        const cellH = (297 - 2 * marginY) / rows; 
+        const qrSize = 35; 
+
+        let idx = 0; 
+
+        for (let i = 0; i < productosAImprimir.length; i++) {
+            const producto = productosAImprimir[i];
+            
+            if (idx > 0 && idx % (cols * rows) === 0) {
+                doc.addPage();
+                idx = 0; 
+            }
+
+            const col = idx % cols;
+            const row = Math.floor(idx / cols);
+
+            const x = marginX + (col * cellW);
+            const y = marginY + (row * cellH);
+
+            const qrX = x + (cellW - qrSize) / 2;
+            const qrY = y;
+
+
+            const rutaBase = window.location.href.substring(0, window.location.href.lastIndexOf("/"));
+            const linkQR = `${rutaBase}/detalle.html?id=${producto.ID_Publicidad}`;
+
+
+            const base64QR = await obtenerQRBase64(linkQR);
+            
+
+            doc.addImage(base64QR, 'PNG', qrX, qrY, qrSize, qrSize);
+
+
+            doc.setFontSize(8);
+            doc.setTextColor(0, 0, 0);
+            
+            const textoCortado = doc.splitTextToSize(producto.Nombre_Material, cellW - 4);
+            doc.text(textoCortado, x + (cellW / 2), qrY + qrSize + 4, { align: 'center' });
+            
+            idx++;
+        }
+
+        const pdfBlob = doc.output('blob');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+        window.open(pdfUrl, '_blank');
+        
+        document.getElementById('selectAll').checked = false;
+        toggleAll({checked: false});
+    }
+</script>
+<!-- Firma digital -->
+<style>
+    #sello-sk13 {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(5);
+        font-size: 60px;
+        font-family: 'Arial Black', sans-serif;
+        color: rgba(220, 53, 69, 0.85);
+        border: 10px solid rgba(220, 53, 69, 0.85);
+        padding: 20px 40px;
+        border-radius: 15px;
+        text-transform: uppercase;
+        z-index: 99999;
+        pointer-events: none;
+        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4);
+        opacity: 0;
+        visibility: hidden;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out;
+    }
+
+    #sello-sk13.mostrar {
+        visibility: visible;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(-15deg);
+    }
+
+    #zona-secreta {
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        width: 50px;
+        height: 50px;
+        z-index: 99998; 
+        cursor: default; 
+    }
+</style>
+</body>
+</html>
