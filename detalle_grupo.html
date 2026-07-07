@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de la Caja/Grupo</title>
+    <style>
+        :root { --bg-color: #e9ecef; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #17a2b8; --th-bg: #f1f1f1; --th-text: #333;}
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #39c0d6; --th-bg: #2c2c2c; --th-text: #e0e0e0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; box-sizing: border-box; transition: 0.3s;}
+        
+        .theme-toggle { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; display: block; margin: 0 auto 20px auto; font-weight: bold;}
+        body.dark-mode .theme-toggle { background: #f8f9fa; color: #121212; }
+
+        .card { background: var(--box-bg); padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 600px; margin: 0 auto; border: 1px solid var(--border-color); transition: 0.3s;}
+        h1 { color: var(--primary); margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;}
+        
+        .lista-productos { margin-top: 20px; }
+        .producto-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 1px solid var(--border-color); margin-bottom: 10px; border-radius: 8px; background: var(--bg-color);}
+        .btn-abrir { background: #0d6efd; color: white; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 14px;}
+    </style>
+</head>
+<body>
+
+<button class="theme-toggle" onclick="toggleDarkMode()">🌙 / ☀️ Cambiar Modo</button>
+
+<div class="card" id="tarjetaContenido">
+    <h2>Analizando caja...</h2>
+</div>
+
+<script>
+    window.onload = () => { if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode'); };
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const idGrupo = urlParams.get('id');
+    const API_GRUPOS = 'https://jonassk13.pythonanywhere.com/api/grupos';
+
+    if (idGrupo) cargarGrupo();
+    else document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red;">Falta el ID del grupo.</h2>`;
+
+    function cargarGrupo() {
+        fetch(`${API_GRUPOS}/${idGrupo}`)
+        .then(res => { if(!res.ok) throw new Error(); return res.json(); })
+        .then(data => {
+            let html = `
+                <h1 id="zona-secreta">📦 ${data.grupo.Nombre_Grupo}</h1>
+                <p>Este código QR pertenece a una <strong>Caja / Kit</strong>. A continuación se muestran los materiales que fueron registrados dentro de este grupo:</p>
+                <div class="lista-productos">
+            `;
+            
+            data.productos.forEach(p => {
+                const linkProducto = `detalle.html?id=${p.ID_Publicidad}`;
+                html += `
+                    <div class="producto-item">
+                        <div>
+                            <strong style="font-size:18px;">${p.Nombre_Material}</strong><br>
+                            <small>Categoría: ${p.Categoria}</small>
+                        </div>
+                        <a href="${linkProducto}" class="btn-abrir">Ir al Producto 👁️</a>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+            document.getElementById('tarjetaContenido').innerHTML = html;
+        })
+        .catch(() => document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red;">El grupo ya no existe.</h2>`);
+    }
+</script>
+
+<!-- Firma digital -->
+
+<style>
+    #sello-sk13 { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); font-size: 60px; font-family: 'Arial Black', sans-serif; color: rgba(220, 53, 69, 0.85); border: 10px solid rgba(220, 53, 69, 0.85); padding: 20px 40px; border-radius: 15px; text-transform: uppercase; z-index: 99999; pointer-events: none; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out; }
+    #sello-sk13.mostrar { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }
+</style>
+<div id="sello-sk13">Creado por SK13</div>
+<script>
+    let contadorClics = 0; let temporizadorClics;
+    document.addEventListener('click', (e) => { 
+        if(e.target && e.target.id === 'zona-secreta') {
+            contadorClics++; clearTimeout(temporizadorClics);
+            temporizadorClics = setTimeout(() => { contadorClics = 0; }, 1500);
+            if (contadorClics === 13) {
+                const sello = document.getElementById('sello-sk13');
+                if(!sello.classList.contains('mostrar')) { sello.classList.add('mostrar'); setTimeout(() => { sello.classList.remove('mostrar'); }, 13000); }
+                contadorClics = 0;
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
