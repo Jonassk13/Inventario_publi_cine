@@ -9,26 +9,20 @@
             --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f3f5; --th-text: #333; 
             --btn-primary: #0d6efd; --btn-success: #198754; --btn-danger: #dc3545; --btn-info: #0dcaf0; --btn-reserva: #6f42c1; --btn-dark: #212529; --btn-text: #fff;
         }
-        
         body.dark-mode { 
             --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; 
             --btn-primary: #6ea8fe; --btn-success: #75b798; --btn-danger: #ea868f; --btn-info: #6edff6; --btn-reserva: #b288e7; --btn-dark: #f8f9fa; --btn-text: #121212;
         }
 
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 20px; margin: 0; transition: background 0.3s, color 0.3s; }
-        .action-bar { display: flex; gap: 10px; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; transition: 0.3s;}
+        .action-bar { display: flex; gap: 10px; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; align-items: center; transition: 0.3s;}
         
         input, select { padding: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 5px; background: var(--box-bg); color: var(--text-color); }
-        
         .btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; width: auto; border-radius: 5px; color: var(--btn-text); text-decoration: none; display: inline-block; transition: opacity 0.2s; }
         .btn:hover { opacity: 0.8; }
         
-        .btn-primary { background: var(--btn-primary); }
-        .btn-success { background: var(--btn-success); }
-        .btn-danger { background: var(--btn-danger); }
-        .btn-info { background: var(--btn-info); }
-        .btn-reserva { background: var(--btn-reserva); }
-        .btn-dark { background: var(--btn-dark); color: var(--bg-color); } /* Invierte el color del texto */
+        .btn-primary { background: var(--btn-primary); } .btn-success { background: var(--btn-success); } .btn-danger { background: var(--btn-danger); }
+        .btn-info { background: var(--btn-info); color: #000; } .btn-reserva { background: var(--btn-reserva); } .btn-dark { background: var(--btn-dark); color: var(--bg-color); } 
 
         .box { background: var(--box-bg); padding: 20px; border-radius: 10px; overflow-x: auto; transition: 0.3s;}
         table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 800px; font-size: 14px;}
@@ -38,12 +32,14 @@
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative; color: var(--text-color);}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-color); background: none; border: none; padding: 0;}
+        
+        .fila-grupo { background-color: var(--border-color); color: var(--text-color); font-weight: bold; font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
-    <h1 style="margin: 0;">Sistema de Inventario - Cine</h1>
+    <h1 style="margin: 0;">Sistema de Inventario - <span id="zona-secreta" style="cursor: default;">Cine</span></h1>
     <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️ Modo Visual</button>
 </div>
 
@@ -51,9 +47,11 @@
     <button class="btn btn-primary" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
     <button class="btn btn-reserva" onclick="abrirModalReservas()">📋 Historial de Apartados</button>
     <button class="btn btn-info" onclick="abrirModalGrupo()">📦 Armar Grupo/Caja</button>
-    <a href="imprimir_qrs.html" target="_blank" class="btn btn-dark" style="text-align: center;">🖨️ Centro de Impresión QR</a>
+    <a href="imprimir_qrs.html" target="_blank" class="btn btn-dark" style="text-align: center;">🖨️ Centro QR</a>
     
-    <select id="filtroCategoria" onchange="cargarTabla()" style="width: 250px; margin-bottom: 0;">
+    <button id="btnVistaGrupos" class="btn btn-dark" style="background:#495057; color:#fff;" onclick="toggleVistaGrupos()">🗂️ Ver por Cajas</button>
+    
+    <select id="filtroCategoria" onchange="cargarTabla()" style="width: 200px; margin-bottom: 0; margin-left: auto;">
         <option value="Todos">Todas las categorías</option>
         <option value="Poster">Posters</option>
         <option value="Standee">Standees / Lonas</option>
@@ -69,19 +67,7 @@
         <tbody id="tablaCuerpo"></tbody>
     </table>
 </div>
-<div id="modalGrupo" class="modal">
-    <div class="modal-content" style="max-width: 500px;">
-        <button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button>
-        <h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2>
-        <input type="text" id="nombreGrupo" placeholder="Nombre (Ej. Caja Kits Estreno Deadpool)" style="width:100%;" required>
-        
-        <h3 style="font-size: 16px;">Selecciona qué vas a meter en esta caja:</h3>
-        <div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px; background: var(--bg-color);">
-        </div>
-        
-        <button class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo en Base de Datos</button>
-    </div>
-</div>
+
 <div id="modalProducto" class="modal">
     <div class="modal-content" style="max-width: 500px;">
         <button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button>
@@ -103,13 +89,11 @@
     <div class="modal-content">
         <button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button>
         <h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados</h2>
-        
         <h3>⏳ Pendientes de Entrega</h3>
         <table>
             <thead><tr><th>Material</th><th>A Nombre De</th><th>Piezas</th><th>Fecha Apartado</th><th>Acción</th></tr></thead>
             <tbody id="tablaReservasGlobales"></tbody>
         </table>
-
         <h3 style="margin-top: 30px;">✅ Entregas Concluidas</h3>
         <table>
             <thead><tr><th>Material</th><th>Entregado A</th><th>Piezas</th><th>Fecha de Entrega</th></tr></thead>
@@ -118,9 +102,24 @@
     </div>
 </div>
 
+<div id="modalGrupo" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button>
+        <h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2>
+        <input type="text" id="nombreGrupo" placeholder="Nombre (Ej. Caja Kits Estreno Deadpool)" style="width:100%;" required>
+        <h3 style="font-size: 16px;">Selecciona qué vas a meter en esta caja:</h3>
+        <div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px; background: var(--bg-color);"></div>
+        <button class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo en Base de Datos</button>
+    </div>
+</div>
+
 <script>
-const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
-const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
+    const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
+    const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
+    const API_GRUPOS = 'https://jonassk13.pythonanywhere.com/api/grupos';
+    
+    let datosInventario = [];
+    let vistaAgrupada = false; 
 
     window.onload = () => {
         cargarTabla();
@@ -136,6 +135,79 @@ const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
     window.onclick = function(e) { if(e.target.classList.contains('modal')) e.target.style.display = "none"; }
 
+    function toggleVistaGrupos() {
+        vistaAgrupada = !vistaAgrupada;
+        const btn = document.getElementById('btnVistaGrupos');
+        btn.innerHTML = vistaAgrupada ? "📄 Ver Lista Normal" : "🗂️ Ver por Cajas";
+        btn.style.background = vistaAgrupada ? "#198754" : "#495057"; // Cambia a verde si está activado
+        renderizarTabla();
+    }
+
+    function cargarTabla() {
+        fetch(API_URL).then(res => res.json()).then(data => {
+            datosInventario = data;
+            renderizarTabla();
+        });
+    }
+
+    function renderizarTabla() {
+        const tbody = document.getElementById('tablaCuerpo');
+        const filtro = document.getElementById('filtroCategoria').value;
+        tbody.innerHTML = '';
+        
+        let datosFiltrados = datosInventario.filter(item => filtro === "Todos" || item.Categoria === filtro);
+
+        if (!vistaAgrupada) {
+            datosFiltrados.forEach(item => {
+                tbody.innerHTML += crearFilaHTML(item, false);
+            });
+        } else {
+            let agrupados = {};
+            let sueltos = [];
+
+            datosFiltrados.forEach(item => {
+                if (item.GruposNombres) {
+                    const nombreGrupo = item.GruposNombres; 
+                    if(!agrupados[nombreGrupo]) agrupados[nombreGrupo] = [];
+                    agrupados[nombreGrupo].push(item);
+                } else {
+                    sueltos.push(item);
+                }
+            });
+
+            for (let grupo in agrupados) {
+                tbody.innerHTML += `<tr class="fila-grupo"><td colspan="5">📦 Grupo: ${grupo}</td></tr>`;
+                agrupados[grupo].forEach(item => {
+                    tbody.innerHTML += crearFilaHTML(item, true); // true indica que está identado
+                });
+            }
+
+            if (sueltos.length > 0) {
+                tbody.innerHTML += `<tr class="fila-grupo"><td colspan="5">🛒 Sueltos / Sin Asignar a Caja</td></tr>`;
+                sueltos.forEach(item => {
+                    tbody.innerHTML += crearFilaHTML(item, true);
+                });
+            }
+        }
+    }
+
+    function crearFilaHTML(item, esAgrupado) {
+        const linkVer = `${window.location.href.substring(0, window.location.href.lastIndexOf("/"))}/detalle.html?id=${item.ID_Publicidad}`;
+        const sangria = esAgrupado ? 'style="padding-left: 30px; border-left: 4px solid var(--btn-info);"' : '';
+        return `
+            <tr>
+                <td ${sangria}><strong>${item.Nombre_Material}</strong></td>
+                <td>${item.Categoria}</td>
+                <td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td>
+                <td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td>
+                <td style="display:flex; gap:8px;">
+                    <a href="${linkVer}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>
+                    <button class="btn btn-danger" style="padding: 6px 12px; font-size:12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>
+                </td>
+            </tr>
+        `;
+    }
+
     function guardarProducto() {
         const nombre = document.getElementById('nombre').value;
         const total = parseInt(document.getElementById('cantidadTotal').value);
@@ -145,9 +217,7 @@ const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nombre, categoria: document.getElementById('categoria').value, cantidad_total: total })
-        })
-        .then(res => res.json())
-        .then(data => {
+        }).then(res => res.json()).then(data => {
             const linkQR = `${window.location.href.substring(0, window.location.href.lastIndexOf("/"))}/detalle.html?id=${data.id}`;
             document.getElementById('qrcode').innerHTML = "";
             new QRCode(document.getElementById("qrcode"), { text: linkQR, width: 130, height: 130 });
@@ -156,32 +226,40 @@ const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
         });
     }
 
-    function cargarTabla() {
+    function eliminarProducto(id) { if(confirm("¿Eliminar registro completo?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
+
+    function abrirModalGrupo() {
         fetch(API_URL).then(res => res.json()).then(data => {
-            const tbody = document.getElementById('tablaCuerpo');
-            const filtro = document.getElementById('filtroCategoria').value;
-            tbody.innerHTML = '';
-            data.forEach(item => {
-                if(filtro === "Todos" || item.Categoria === filtro) {
-                    const linkVer = `${window.location.href.substring(0, window.location.href.lastIndexOf("/"))}/detalle.html?id=${item.ID_Publicidad}`;
-                    tbody.innerHTML += `
-                        <tr>
-                            <td><strong>${item.Nombre_Material}</strong></td>
-                            <td>${item.Categoria}</td>
-                            <td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td>
-                            <td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td>
-                            <td style="display:flex; gap:8px;">
-                                <a href="${linkVer}" target="_blank" class="btn btn-info" style="padding: 6px 12px;">Abrir Panel 👁️</a>
-                                <button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>
-                            </td>
-                        </tr>
-                    `;
-                }
+            const lista = document.getElementById('listaProductosGrupo');
+            lista.innerHTML = '';
+            data.forEach(p => {
+                lista.innerHTML += `
+                <label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer; padding-bottom:5px; border-bottom:1px solid var(--border-color);">
+                    <input type="checkbox" class="check-grupo" value="${p.ID_Publicidad}"> 
+                    <span><strong>${p.Nombre_Material}</strong> <br><small style="color:var(--btn-success);">En bodega: ${p.Cantidad_Guardados}</small></span>
+                </label>`;
             });
+            abrirModal('modalGrupo');
         });
     }
 
-    function eliminarProducto(id) { if(confirm("¿Eliminar registro completo?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
+    function guardarGrupo() {
+        const nombre = document.getElementById('nombreGrupo').value;
+        const checkboxes = document.querySelectorAll('.check-grupo:checked');
+        const productos = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        
+        if(!nombre || productos.length === 0) { alert("⚠️ Ponle nombre a la caja y selecciona al menos un producto."); return; }
+
+        fetch(API_GRUPOS, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nombre: nombre, productos: productos })
+        }).then(res => res.json()).then(data => {
+            alert("✅ Grupo creado con éxito.");
+            cerrarModal('modalGrupo');
+            document.getElementById('nombreGrupo').value = '';
+            cargarTabla(); 
+        });
+    }
 
     function abrirModalReservas() {
         fetch(API_RESERVAS).then(res => res.json()).then(data => {
@@ -190,150 +268,41 @@ const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
             tbPendientes.innerHTML = ''; tbEntregadas.innerHTML = '';
             
             if(data.pendientes.length === 0) tbPendientes.innerHTML = "<tr><td colspan='5' style='text-align:center;'>No hay reservas pendientes</td></tr>";
-            data.pendientes.forEach(reserva => {
-                tbPendientes.innerHTML += `
-                    <tr>
-                        <td><strong>${reserva.Nombre_Material}</strong></td>
-                        <td>${reserva.Nombre_Persona}</td>
-                        <td>${reserva.Cantidad}</td>
-                        <td><small>${reserva.Fecha_Reserva}</small></td>
-                        <td><button class="btn btn-success" style="padding:5px 10px;" onclick="entregarReserva(${reserva.ID_Reserva})">Entregar ✔️</button></td>
-                    </tr>
-                `;
-            });
+            data.pendientes.forEach(r => { tbPendientes.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><small>${r.Fecha_Reserva}</small></td><td><button class="btn btn-success" style="padding:5px 10px;" onclick="entregarReserva(${r.ID_Reserva})">Entregar ✔️</button></td></tr>`; });
 
             if(data.entregadas.length === 0) tbEntregadas.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Aún no hay entregas registradas</td></tr>";
-            data.entregadas.forEach(reserva => {
-                tbEntregadas.innerHTML += `
-                    <tr>
-                        <td><strong>${reserva.Nombre_Material}</strong></td>
-                        <td>${reserva.Nombre_Persona}</td>
-                        <td>${reserva.Cantidad}</td>
-                        <td><small>${reserva.Fecha_Entrega}</small></td>
-                    </tr>
-                `;
-            });
+            data.entregadas.forEach(r => { tbEntregadas.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><small>${r.Fecha_Entrega}</small></td></tr>`; });
 
             abrirModal('modalReservas');
         });
     }
 
     function entregarReserva(idReserva) {
-        if(confirm("¿Confirmar que ya le entregaste el material a esta persona físicamente?")) {
+        if(confirm("¿Confirmar que ya le entregaste el material físicamente?")) {
             fetch(`${API_RESERVAS}/${idReserva}/entregar`, { method: 'PUT' }).then(() => {
-                abrirModalReservas();
-                cargarTabla(); 
+                abrirModalReservas(); cargarTabla();
             });
         }
     }
-    function abrirModalGrupo() {
-    fetch(API_URL).then(res => res.json()).then(data => {
-        const lista = document.getElementById('listaProductosGrupo');
-        lista.innerHTML = '';
-        data.forEach(p => {
-            lista.innerHTML += `
-            <label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer; padding-bottom:5px; border-bottom:1px solid var(--border-color);">
-                <input type="checkbox" class="check-grupo" value="${p.ID_Publicidad}"> 
-                <span><strong>${p.Nombre_Material}</strong> <br><small style="color:var(--btn-success);">En bodega: ${p.Cantidad_Guardados}</small></span>
-            </label>`;
-        });
-        abrirModal('modalGrupo');
-    });
-}
-
-function guardarGrupo() {
-    const nombre = document.getElementById('nombreGrupo').value;
-    const checkboxes = document.querySelectorAll('.check-grupo:checked');
-    const productos = Array.from(checkboxes).map(cb => parseInt(cb.value));
-    
-    if(!nombre || productos.length === 0) {
-        alert("⚠️ Ponle nombre a la caja y selecciona al menos un producto.");
-        return;
-    }
-
-    const API_GRUPOS = 'https://jonassk13.pythonanywhere.com/api/grupos';
-    fetch(API_GRUPOS, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre: nombre, productos: productos })
-    })
-    .then(res => res.json())
-    .then(data => {
-        alert("✅ Grupo creado con éxito. Ve al Centro de Impresión para sacar su código QR.");
-        cerrarModal('modalGrupo');
-        document.getElementById('nombreGrupo').value = '';
-    });
-}
 </script>
 
-<!-- Firma digital -->
+<!--  Firma digital  -->
 <style>
-    #sello-sk13 {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(5);
-        font-size: 60px;
-        font-family: 'Arial Black', sans-serif;
-        color: rgba(220, 53, 69, 0.85);
-        border: 10px solid rgba(220, 53, 69, 0.85);
-        padding: 20px 40px;
-        border-radius: 15px;
-        text-transform: uppercase;
-        z-index: 99999;
-        pointer-events: none;
-        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-        box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4);
-        opacity: 0;
-        visibility: hidden;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out;
-    }
-
-    #sello-sk13.mostrar {
-        visibility: visible;
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1) rotate(-15deg);
-    }
-
-    #zona-secreta {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 50px;
-        height: 50px;
-        z-index: 99998; 
-        cursor: default; 
-    }
+    #sello-sk13 { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); font-size: 60px; font-family: 'Arial Black', sans-serif; color: rgba(220, 53, 69, 0.85); border: 10px solid rgba(220, 53, 69, 0.85); padding: 20px 40px; border-radius: 15px; text-transform: uppercase; z-index: 99999; pointer-events: none; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out; }
+    #sello-sk13.mostrar { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }
 </style>
-
 <div id="sello-sk13">Creado por SK13</div>
-
-<div id="zona-secreta"></div>
-
 <script>
-    let contadorClics = 0;
-    let temporizadorClics;
-
-    document.getElementById('zona-secreta').addEventListener('click', () => {
-        contadorClics++;
-        
-        clearTimeout(temporizadorClics);
-        temporizadorClics = setTimeout(() => {
-            contadorClics = 0;
-        }, 1500);
-
-        if (contadorClics === 13) {
-            const sello = document.getElementById('sello-sk13');
-            
-            if(!sello.classList.contains('mostrar')) {
-                sello.classList.add('mostrar');
-                
-                setTimeout(() => {
-                    sello.classList.remove('mostrar');
-                }, 13000);
+    let contadorClics = 0; let temporizadorClics;
+    document.addEventListener('click', (e) => { 
+        if(e.target && e.target.id === 'zona-secreta') {
+            contadorClics++; clearTimeout(temporizadorClics);
+            temporizadorClics = setTimeout(() => { contadorClics = 0; }, 1500);
+            if (contadorClics === 13) {
+                const sello = document.getElementById('sello-sk13');
+                if(!sello.classList.contains('mostrar')) { sello.classList.add('mostrar'); setTimeout(() => { sello.classList.remove('mostrar'); }, 13000); }
+                contadorClics = 0;
             }
-            
-            contadorClics = 0; 
         }
     });
 </script>
