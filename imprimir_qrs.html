@@ -7,8 +7,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
-        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --th-bg: #f1f3f5; }
-        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; --th-bg: #2c2c2c; }
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --th-bg: #f1f3f5; --grupo-bg: #e0f7fa;}
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; --th-bg: #2c2c2c; --grupo-bg: #004d40;}
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 20px; margin: 0; transition: 0.3s; }
         .box { background: var(--box-bg); padding: 20px; border-radius: 10px; border: 1px solid var(--border-color); }
         .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;}
@@ -17,60 +17,71 @@
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; }
         th { background-color: var(--th-bg); }
-        
+        .row-grupo { background-color: var(--grupo-bg); }
         #qr-temp-container { display: none; }
     </style>
 </head>
 <body>
 
 <div class="action-bar">
-    <h1>🖨️ Centro de Impresión de Etiquetas QR</h1>
-    <div>
-        <button onclick="generarPDF()">📄 Descargar PDF con QRs Seleccionados</button>
-    </div>
+    <h1 style="margin:0;">🖨️ Centro de Impresión QR</h1>
+    <button onclick="generarPDF()">📄 Descargar QRs Seleccionados (A4)</button>
 </div>
 
 <div class="box">
-    <p>Selecciona los materiales de los cuales deseas imprimir su etiqueta QR. El sistema los acomodará automáticamente en formato A4.</p>
+    <p>Selecciona los QRs que necesites. Las Cajas/Grupos están resaltadas para identificarlas fácil.</p>
     <table>
         <thead>
             <tr>
-                <th style="width: 50px;"><input type="checkbox" id="selectAll" onclick="toggleAll(this)"> Sel.</th>
-                <th>ID</th>
-                <th>Material</th>
+                <th style="width: 50px;"><input type="checkbox" id="selectAll" onclick="toggleAll(this)"></th>
+                <th>Tipo</th>
+                <th>Nombre del Material o Grupo</th>
                 <th>Categoría</th>
             </tr>
         </thead>
-        <tbody id="tablaProductos">
-            <tr><td colspan="4">Cargando base de datos...</td></tr>
-        </tbody>
+        <tbody id="tablaProductos"><tr><td colspan="4">Conectando a la base de datos...</td></tr></tbody>
     </table>
 </div>
 
 <div id="qr-temp-container"></div>
 
 <script>
-   const API_URL = 'https://JonasSK13.pythonanywhere.com/api/inventario';
-    let listaProductos = [];
+    const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
+    const API_GRUPOS = 'https://jonassk13.pythonanywhere.com/api/grupos';
+    let listaGlobal = [];
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        cargarLista();
+        cargarListas();
     };
 
-    function cargarLista() {
-        fetch(API_URL).then(res => res.json()).then(data => {
-            listaProductos = data;
+    function cargarListas() {
+        Promise.all([fetch(API_URL).then(r=>r.json()), fetch(API_GRUPOS).then(r=>r.json())])
+        .then(([productos, grupos]) => {
+            listaGlobal = [];
             const tbody = document.getElementById('tablaProductos');
             tbody.innerHTML = '';
             
-            data.forEach(item => {
+            grupos.forEach(g => {
+                listaGlobal.push({ id: g.ID_Grupo, nombre: g.Nombre_Grupo, tipo: 'Grupo' });
+                tbody.innerHTML += `
+                    <tr class="row-grupo">
+                        <td><input type="checkbox" class="qr-check" value="G-${g.ID_Grupo}"></td>
+                        <td><strong>📦 CAJA/KIT</strong></td>
+                        <td><strong>${g.Nombre_Grupo}</strong></td>
+                        <td>Múltiples Artículos</td>
+                    </tr>
+                `;
+            });
+
+            productos.forEach(p => {
+                listaGlobal.push({ id: p.ID_Publicidad, nombre: p.Nombre_Material, tipo: 'Producto' });
                 tbody.innerHTML += `
                     <tr>
-                        <td><input type="checkbox" class="qr-check" value="${item.ID_Publicidad}"></td>
-                        <td>${item.ID_Publicidad}</td>
-                        <td><strong>${item.Nombre_Material}</strong></td>
-                        <td>${item.Categoria}</td>
+                        <td><input type="checkbox" class="qr-check" value="P-${p.ID_Publicidad}"></td>
+                        <td>📄 Individual</td>
+                        <td>${p.Nombre_Material}</td>
+                        <td>${p.Categoria}</td>
                     </tr>
                 `;
             });
@@ -78,140 +89,87 @@
     }
 
     function toggleAll(source) {
-        const checkboxes = document.querySelectorAll('.qr-check');
-        checkboxes.forEach(cb => cb.checked = source.checked);
+        document.querySelectorAll('.qr-check').forEach(cb => cb.checked = source.checked);
     }
 
     function obtenerQRBase64(urlTexto) {
         return new Promise((resolve) => {
             const container = document.getElementById('qr-temp-container');
             container.innerHTML = ''; 
-            
             const tempDiv = document.createElement('div');
             container.appendChild(tempDiv);
             
-            new QRCode(tempDiv, {
-                text: urlTexto,
-                width: 200,
-                height: 200,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
+            new QRCode(tempDiv, { text: urlTexto, width: 200, height: 200, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
 
-            setTimeout(() => {
-                const canvas = tempDiv.querySelector('canvas');
-                resolve(canvas.toDataURL("image/png"));
-            }, 100);
+            setTimeout(() => { resolve(tempDiv.querySelector('canvas').toDataURL("image/png")); }, 100);
         });
     }
 
     async function generarPDF() {
         const checkboxes = document.querySelectorAll('.qr-check:checked');
-        if (checkboxes.length === 0) {
-            alert("⚠️ Por favor, selecciona al menos un producto de la lista.");
-            return;
-        }
+        if (checkboxes.length === 0) return alert("⚠️ Selecciona al menos una etiqueta.");
 
-        const idsSeleccionados = Array.from(checkboxes).map(cb => parseInt(cb.value));
-        const productosAImprimir = listaProductos.filter(p => idsSeleccionados.includes(p.ID_Publicidad));
+        const seleccionados = Array.from(checkboxes).map(cb => cb.value);
+        const itemsAImprimir = listaGlobal.filter(item => {
+            const key = item.tipo === 'Grupo' ? `G-${item.id}` : `P-${item.id}`;
+            return seleccionados.includes(key);
+        });
 
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF(); 
-        
-        const cols = 4;
-        const rows = 5;
-        const marginX = 10;
-        const marginY = 15;
-        const cellW = (210 - 2 * marginX) / cols; 
-        const cellH = (297 - 2 * marginY) / rows; 
-        const qrSize = 35; 
+        const doc = new jsPDF();
+        const cols = 4; const rows = 5; const marginX = 10; const marginY = 15;
+        const cellW = (210 - 2 * marginX) / cols; const cellH = (297 - 2 * marginY) / rows;
+        const qrSize = 35; let idx = 0;
 
-        let idx = 0; 
+        for (let i = 0; i < itemsAImprimir.length; i++) {
+            const item = itemsAImprimir[i];
+            if (idx > 0 && idx % (cols * rows) === 0) { doc.addPage(); idx = 0; }
 
-        for (let i = 0; i < productosAImprimir.length; i++) {
-            const producto = productosAImprimir[i];
-            
-            if (idx > 0 && idx % (cols * rows) === 0) {
-                doc.addPage();
-                idx = 0; 
-            }
-
-            const col = idx % cols;
-            const row = Math.floor(idx / cols);
-
-            const x = marginX + (col * cellW);
-            const y = marginY + (row * cellH);
-
+            const x = marginX + ((idx % cols) * cellW);
+            const y = marginY + (Math.floor(idx / cols) * cellH);
             const qrX = x + (cellW - qrSize) / 2;
             const qrY = y;
 
-
             const rutaBase = window.location.href.substring(0, window.location.href.lastIndexOf("/"));
-            const linkQR = `${rutaBase}/detalle.html?id=${producto.ID_Publicidad}`;
-
+            let linkQR = item.tipo === 'Grupo' 
+                ? `${rutaBase}/detalle_grupo.html?id=${item.id}` 
+                : `${rutaBase}/detalle.html?id=${item.id}`;
 
             const base64QR = await obtenerQRBase64(linkQR);
-            
-
             doc.addImage(base64QR, 'PNG', qrX, qrY, qrSize, qrSize);
 
-
-            doc.setFontSize(8);
-            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(8); doc.setTextColor(0, 0, 0);
             
-            const textoCortado = doc.splitTextToSize(producto.Nombre_Material, cellW - 4);
+            const textoAImprimir = (item.tipo === 'Grupo' ? "[CAJA] " : "") + item.nombre;
+            const textoCortado = doc.splitTextToSize(textoAImprimir, cellW - 4);
             doc.text(textoCortado, x + (cellW / 2), qrY + qrSize + 4, { align: 'center' });
-            
             idx++;
         }
 
-        const pdfBlob = doc.output('blob');
-        const pdfUrl = URL.createObjectURL(pdfBlob);
+        const pdfUrl = URL.createObjectURL(doc.output('blob'));
         window.open(pdfUrl, '_blank');
-        
         document.getElementById('selectAll').checked = false;
         toggleAll({checked: false});
     }
 </script>
-<!-- Firma digital -->
+
+<!-- Firma digital-->
 <style>
-    #sello-sk13 {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(5);
-        font-size: 60px;
-        font-family: 'Arial Black', sans-serif;
-        color: rgba(220, 53, 69, 0.85);
-        border: 10px solid rgba(220, 53, 69, 0.85);
-        padding: 20px 40px;
-        border-radius: 15px;
-        text-transform: uppercase;
-        z-index: 99999;
-        pointer-events: none;
-        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-        box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4);
-        opacity: 0;
-        visibility: hidden;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out;
-    }
-
-    #sello-sk13.mostrar {
-        visibility: visible;
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1) rotate(-15deg);
-    }
-
-    #zona-secreta {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 50px;
-        height: 50px;
-        z-index: 99998; 
-        cursor: default; 
-    }
+    #sello-sk13 { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); font-size: 60px; font-family: 'Arial Black', sans-serif; color: rgba(220, 53, 69, 0.85); border: 10px solid rgba(220, 53, 69, 0.85); padding: 20px 40px; border-radius: 15px; text-transform: uppercase; z-index: 99999; pointer-events: none; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out; }
+    #sello-sk13.mostrar { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }
 </style>
+<div id="sello-sk13">Creado por SK13</div>
+<script>
+    let contadorClics = 0; let temporizadorClics;
+    document.querySelector('h1').addEventListener('click', () => { // Clics en el título principal
+        contadorClics++; clearTimeout(temporizadorClics);
+        temporizadorClics = setTimeout(() => { contadorClics = 0; }, 1500);
+        if (contadorClics === 13) {
+            const sello = document.getElementById('sello-sk13');
+            if(!sello.classList.contains('mostrar')) { sello.classList.add('mostrar'); setTimeout(() => { sello.classList.remove('mostrar'); }, 13000); }
+            contadorClics = 0;
+        }
+    });
+</script>
 </body>
 </html>
