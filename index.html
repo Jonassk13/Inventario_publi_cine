@@ -50,14 +50,16 @@
 <div class="action-bar">
     <button class="btn btn-primary" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
     <button class="btn btn-reserva" onclick="abrirModalReservas()">📋 Historial de Apartados</button>
-    
-   
     <a href="imprimir_qrs.html" target="_blank" class="btn btn-dark" style="text-align: center;">🖨️ Centro de Impresión QR</a>
     
     <select id="filtroCategoria" onchange="cargarTabla()" style="width: 250px; margin-bottom: 0;">
- 
+        <option value="Todos">Todas las categorías</option>
+        <option value="Poster">Posters</option>
+        <option value="Palomera">Palomeras</option>
+        <option value="Standee">Standees / Lonas</option>
+        <option value="Otro">Otro</option>
     </select>
-</div><section></section>
+</div>
 
 <div class="box">
     <table>
