@@ -86,11 +86,40 @@
         fetch(`${API_BASE}/${idProd}`)
         .then(res => { if(!res.ok) throw new Error(); return res.json(); })
         .then(data => {
-        
-            let item = Array.isArray(data) ? data[0] : data;
             
+            // --- INICIO DEL SISTEMA DE DEPURACIÓN (DEBUG TRAP) ---
+            let item = data;
+            
+            // 1. Intentamos desempaquetar si Python lo envolvió raro
+            if (data && data.producto) item = data.producto;
+            else if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object') item = data[0];
+            
+            // 2. Buscamos las variables (Sin importar si están en mayúsculas o minúsculas)
+            const nombre = item.Nombre_Material || item.nombre_material || item.nombre || item.Nombre;
+            const bodega = item.Cantidad_Guardados ?? item.cantidad_guardados ?? item.cantidad ?? item.bodega;
+            const cartelera = item.Cantidad_Cartelera ?? item.cantidad_cartelera ?? item.piso ?? 0;
+            const categoria = item.Categoria ?? item.categoria ?? "General";
+            
+            // 3. TRAMPA DE ERROR: Si el nombre de verdad no existe, mostramos el JSON crudo en la pantalla
+            if (nombre === undefined) {
+                document.getElementById('tarjetaContenido').innerHTML = `
+                    <h2 style="color:#dc3545; display:flex; align-items:center; gap:10px;">🕵️‍♂️ Error de Estructura Detectado</h2>
+                    <p style="font-size: 14px;">Python envió los datos, pero no encontramos la variable del nombre. Toma captura a la caja negra de abajo:</p>
+                    <pre style="background:#1e1e1e; color:#0dcaf0; padding:15px; border-radius:5px; overflow-x:auto; font-size: 14px;">${JSON.stringify(data, null, 2)}</pre>
+                `;
+                return; // Detenemos el código aquí
+            }
+
+            // 4. Si lo encontramos, normalizamos el objeto para que el sistema siga funcionando perfecto
             prodGlobal = item;
+            prodGlobal.Nombre_Material = nombre;
+            prodGlobal.Cantidad_Guardados = bodega;
+            prodGlobal.Cantidad_Cartelera = cartelera;
+            prodGlobal.Categoria = categoria;
+            // --- FIN DEL SISTEMA ---
+
             
+            // RENDERIZADO DE LA INTERFAZ
             let botonesHTML = '';
             
             if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor') {
@@ -102,10 +131,10 @@
                 `;
 
                 document.getElementById('tarjetaContenido').innerHTML = `
-                    <h1>${item.Nombre_Material} <span class="badge">${item.Categoria}</span></h1>
+                    <h1>${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
                     <div class="stats-grid">
-                        <div class="stat-box">Bodega <span class="highlight-green">${item.Cantidad_Guardados}</span></div>
-                        <div class="stat-box">Piso/Exhibición <span class="highlight-red">${item.Cantidad_Cartelera}</span></div>
+                        <div class="stat-box">Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
+                        <div class="stat-box">Piso/Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
                     </div>
                     <div class="action-grid">
                         ${botonesHTML}
@@ -115,16 +144,16 @@
                 botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()">📋 Apartar / Reservar</button>`;
 
                 document.getElementById('tarjetaContenido').innerHTML = `
-                    <h1 style="justify-content: center; text-align: center;">${item.Nombre_Material}</h1>
+                    <h1 style="justify-content: center; text-align: center; border-bottom:none;">${prodGlobal.Nombre_Material}</h1>
                     <div class="stats-grid" style="grid-template-columns: 1fr;">
-                        <div class="stat-box">Piezas disponibles en Bodega <span class="highlight-green">${item.Cantidad_Guardados}</span></div>
+                        <div class="stat-box">Piezas disponibles en Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
                     </div>
                     <div class="action-grid">
                         ${botonesHTML}
                     </div>
                 `;
             }
-        }).catch(() => { document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red;">Producto no encontrado.</h2>`; });
+        }).catch(() => { document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red;">Error de Red o Producto no encontrado.</h2>`; });
     }
 
     function registrarMovimiento(tipo) {
@@ -180,6 +209,7 @@
     }
 </script>
 
+<!-- ================= EASTER EGG ================= -->
 <style>
     #sello-sk13 { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); font-size: 60px; font-family: 'Arial Black', sans-serif; color: rgba(220, 53, 69, 0.85); border: 10px solid rgba(220, 53, 69, 0.85); padding: 20px 40px; border-radius: 15px; text-transform: uppercase; z-index: 99999; pointer-events: none; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out; }
     #sello-sk13.mostrar { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }
