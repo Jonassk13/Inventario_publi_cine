@@ -5,55 +5,54 @@
     <title>Inventario de Publicidad</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { 
-            --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f3f5; --th-text: #333; 
-            --btn-primary: #0d6efd; --btn-success: #198754; --btn-danger: #dc3545; --btn-info: #0dcaf0; --btn-reserva: #6f42c1; --btn-dark: #212529; --btn-text: #fff;
-        }
-        body.dark-mode { 
-            --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; 
-            --btn-primary: #6ea8fe; --btn-success: #75b798; --btn-danger: #ea868f; --btn-info: #6edff6; --btn-reserva: #b288e7; --btn-dark: #f8f9fa; --btn-text: #121212;
-        }
-
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f3f5; --th-text: #333; --btn-primary: #0d6efd; --btn-success: #198754; --btn-danger: #dc3545; --btn-info: #0dcaf0; --btn-reserva: #6f42c1; --btn-dark: #212529; --btn-text: #fff; --admin-bg: #ffc107; }
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; --btn-primary: #6ea8fe; --btn-success: #75b798; --btn-danger: #ea868f; --btn-info: #6edff6; --btn-reserva: #b288e7; --btn-dark: #f8f9fa; --btn-text: #121212; --admin-bg: #ffca2c; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 20px; margin: 0; transition: background 0.3s, color 0.3s; }
         .action-bar { display: flex; gap: 10px; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; align-items: center; transition: 0.3s;}
-        
         input, select { padding: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 5px; background: var(--box-bg); color: var(--text-color); }
         .btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; width: auto; border-radius: 5px; color: var(--btn-text); text-decoration: none; display: inline-block; transition: opacity 0.2s; }
         .btn:hover { opacity: 0.8; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
         
         .btn-primary { background: var(--btn-primary); } .btn-success { background: var(--btn-success); } .btn-danger { background: var(--btn-danger); }
-        .btn-info { background: var(--btn-info); color: #000; } .btn-reserva { background: var(--btn-reserva); } .btn-dark { background: var(--btn-dark); color: var(--bg-color); } 
-
+        .btn-info { background: var(--btn-info); color: #000; } .btn-reserva { background: var(--btn-reserva); } .btn-dark { background: var(--btn-dark); color: var(--bg-color); } .btn-admin { background: var(--admin-bg); color: #000; }
+        
         .box { background: var(--box-bg); padding: 20px; border-radius: 10px; overflow-x: auto; transition: 0.3s;}
         table { width: 100%; border-collapse: collapse; margin-top: 10px; min-width: 800px; font-size: 14px;}
         th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left; transition: 0.3s;}
         th { background-color: var(--th-bg); color: var(--th-text); }
-        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative; color: var(--text-color);}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-color); background: none; border: none; padding: 0;}
-        
         .fila-grupo { background-color: var(--border-color); color: var(--text-color); font-weight: bold; font-size: 16px; }
+        
+        .rol-badge { padding: 5px 10px; border-radius: 15px; font-size: 14px; font-weight: bold; background: var(--btn-success); color: white; margin-left: 10px;}
+        .oculto { display: none !important; }
     </style>
 </head>
 <body>
 
 <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
-    <h1 style="margin: 0;">Sistema de Inventario - <span id="zona-secreta" style="cursor: default;">Cine</span></h1>
-    <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️ Modo Visual</button>
+    <h1 style="margin: 0;">Sistema de Inventario - <span id="zona-secreta" style="cursor: default;">Cine</span> <span id="etiquetaRol" class="rol-badge"></span></h1>
+    <div>
+        <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
+        <button id="btnIngresar" class="btn btn-primary" onclick="abrirModal('modalLogin')">👤 Personal</button>
+        <button id="btnSalir" class="btn btn-danger oculto" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
 </div>
 
 <div class="action-bar">
-    <button class="btn btn-primary" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
-    <button class="btn btn-reserva" onclick="abrirModalReservas()">📋 Historial de Apartados</button>
-    <button class="btn btn-info" onclick="abrirModalGrupo()">📦 Armar Grupo/Caja</button>
-    <a href="imprimir_qrs.html" target="_blank" class="btn btn-dark" style="text-align: center;">🖨️ Centro QR</a>
-    
+    <button id="btnRegistrar" class="btn btn-primary req-staff" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
+    <button id="btnMasivo" class="btn btn-admin req-admin" onclick="abrirModalMasivo()">⚡ Ingreso Masivo</button>
+    <button id="btnHistorial" class="btn btn-reserva req-staff" onclick="abrirModalReservas()">📋 Historial Apartados</button>
+    <button id="btnArmarGrupo" class="btn btn-info req-staff" onclick="abrirModalGrupo()">📦 Armar Caja</button>
+<a href="imprimir_qrs.html" target="_blank" class="btn btn-dark req-staff" style="text-align: center;">🖨️ Centro QR</a>    
     <button id="btnVistaGrupos" class="btn btn-dark" style="background:#495057; color:#fff;" onclick="toggleVistaGrupos()">🗂️ Ver por Cajas</button>
     
     <select id="filtroCategoria" onchange="cargarTabla()" style="width: 200px; margin-bottom: 0; margin-left: auto;">
         <option value="Todos">Todas las categorías</option>
         <option value="Poster">Posters</option>
+        <option value="Palomera">Palomeras</option>
         <option value="Standee">Standees / Lonas</option>
         <option value="Otro">Otro</option>
     </select>
@@ -62,26 +61,52 @@
 <div class="box">
     <table>
         <thead>
-            <tr><th>Nombre del Material</th><th>Categoría</th><th>Bodega</th><th>Piso</th><th>Acciones Operativas</th></tr>
+            <tr><th>Nombre del Material</th><th>Categoría</th><th>Bodega</th><th>Piso/Dulcería</th><th>Acciones</th></tr>
         </thead>
         <tbody id="tablaCuerpo"></tbody>
     </table>
 </div>
 
+
+<div id="modalLogin" class="modal">
+    <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <button class="close-btn" onclick="cerrarModal('modalLogin')">&times;</button>
+        <h2 style="margin-top: 0; color: var(--btn-primary);">👤 Acceso Restringido</h2>
+        <p>Solo personal autorizado (Admin/Supervisor).</p>
+        <input type="password" id="claveAcceso" placeholder="Contraseña..." style="width: 90%; text-align:center; font-size:18px;">
+        <button class="btn btn-primary" onclick="iniciarSesion()" style="width: 95%; margin-top: 15px;">Ingresar</button>
+    </div>
+</div>
+
 <div id="modalProducto" class="modal">
     <div class="modal-content" style="max-width: 500px;">
         <button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button>
-        <h2 style="margin-top: 0;">Registrar Entrada a Bodega</h2>
+        <h2 style="margin-top: 0;">Registro Individual</h2>
         <input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" required>
         <select id="categoria" style="width:100%;">
             <option value="Poster">Poster</option>
+            <option value="Palomera">Palomera</option>
             <option value="Standee">Standee / Lona</option>
             <option value="Otro">Otro</option>
         </select>
         <input type="number" id="cantidadTotal" placeholder="Cantidad Total Recibida" style="width:100%;" min="1" required>
-        <button class="btn btn-primary" onclick="guardarProducto()" style="width: 100%;">Generar Registro y QR</button>
-        <div id="qrcode" style="margin-top:15px; display:flex; justify-content:center;"></div>
-        <p id="textoURL" style="text-align:center; font-size:12px;"></p>
+        <button id="btnGuardarIndividual" class="btn btn-primary" onclick="guardarProducto()" style="width: 100%;">Guardar Registro</button>
+    </div>
+</div>
+
+<div id="modalMasivo" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button>
+        <h2 style="margin-top: 0; color: var(--admin-bg);">⚡ Ingreso Masivo de Productos</h2>
+        <table id="tablaMasivo">
+            <thead>
+                <tr><th>Nombre del Material</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr>
+            </thead>
+            <tbody id="cuerpoMasivo"></tbody>
+        </table>
+        <br>
+        <button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir otra fila</button>
+        <button id="btnGuardarMasivo" class="btn btn-admin" style="float:right;" onclick="guardarIngresoMasivo()">Guardar Todo en BD</button>
     </div>
 </div>
 
@@ -106,10 +131,9 @@
     <div class="modal-content" style="max-width: 500px;">
         <button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button>
         <h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2>
-        <input type="text" id="nombreGrupo" placeholder="Nombre (Ej. Caja Kits Estreno Deadpool)" style="width:100%;" required>
-        <h3 style="font-size: 16px;">Selecciona qué vas a meter en esta caja:</h3>
-        <div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px; background: var(--bg-color);"></div>
-        <button class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo en Base de Datos</button>
+        <input type="text" id="nombreGrupo" placeholder="Nombre de la Caja" style="width:100%;" required>
+        <div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px;"></div>
+        <button id="btnGuardarCaja" class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo</button>
     </div>
 </div>
 
@@ -120,26 +144,101 @@
     
     let datosInventario = [];
     let vistaAgrupada = false; 
+    let rolUsuario = 'General'; 
 
     window.onload = () => {
-        cargarTabla();
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+        verificarSesion();
     };
 
     function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
         localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
     }
-
+    
     function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
     window.onclick = function(e) { if(e.target.classList.contains('modal')) e.target.style.display = "none"; }
+
+    async function hashearClave(mensaje) {
+        const msgBuffer = new TextEncoder().encode(mensaje);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function verificarSesion() {
+        const rolGuardado = localStorage.getItem('rolCine');
+        if(rolGuardado) {
+            rolUsuario = rolGuardado;
+        } else {
+            rolUsuario = 'General';
+            localStorage.setItem('rolCine', 'General');
+        }
+        configurarInterfaz();
+        cargarTabla();
+    }
+
+    async function iniciarSesion() {
+        const clave = document.getElementById('claveAcceso').value;
+        const hashResult = await hashearClave(clave);
+        
+        // admin123 encriptado
+        if(hashResult === '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9') { 
+            rolUsuario = 'Admin';
+            localStorage.setItem('rolCine', 'Admin');
+        } 
+        // super123 encriptado
+        else if(hashResult === '1b3231655cebb7a1f783eddf27d254ca589e1df3a4a82ec4581f4de370f146a4') {
+            rolUsuario = 'Supervisor';
+            localStorage.setItem('rolCine', 'Supervisor');
+        } 
+        else { 
+            alert('Contraseña incorrecta'); 
+            return; 
+        }
+        
+        document.getElementById('claveAcceso').value = '';
+        cerrarModal('modalLogin');
+        configurarInterfaz();
+        renderizarTabla();
+    }
+
+    function cerrarSesion() {
+        localStorage.setItem('rolCine', 'General');
+        location.reload();
+    }
+
+    function configurarInterfaz() {
+        document.getElementById('etiquetaRol').innerText = `(${rolUsuario})`;
+        
+        const btnIngresar = document.getElementById('btnIngresar');
+        const btnSalir = document.getElementById('btnSalir');
+
+        if(rolUsuario === 'General') {
+            btnIngresar.classList.remove('oculto');
+            btnSalir.classList.add('oculto');
+            document.querySelectorAll('.req-staff').forEach(el => el.classList.add('oculto'));
+            document.querySelectorAll('.req-admin').forEach(el => el.classList.add('oculto'));
+        } else {
+            btnIngresar.classList.add('oculto');
+            btnSalir.classList.remove('oculto');
+            
+            document.querySelectorAll('.req-staff').forEach(el => el.classList.remove('oculto'));
+            
+            if(rolUsuario === 'Supervisor') {
+                document.querySelectorAll('.req-admin').forEach(el => el.classList.add('oculto'));
+            } else if (rolUsuario === 'Admin') {
+                document.querySelectorAll('.req-admin').forEach(el => el.classList.remove('oculto'));
+            }
+        }
+    }
 
     function toggleVistaGrupos() {
         vistaAgrupada = !vistaAgrupada;
         const btn = document.getElementById('btnVistaGrupos');
         btn.innerHTML = vistaAgrupada ? "📄 Ver Lista Normal" : "🗂️ Ver por Cajas";
-        btn.style.background = vistaAgrupada ? "#198754" : "#495057"; // Cambia a verde si está activado
+        btn.style.background = vistaAgrupada ? "#198754" : "#495057"; 
         renderizarTabla();
     }
 
@@ -158,42 +257,32 @@
         let datosFiltrados = datosInventario.filter(item => filtro === "Todos" || item.Categoria === filtro);
 
         if (!vistaAgrupada) {
-            datosFiltrados.forEach(item => {
-                tbody.innerHTML += crearFilaHTML(item, false);
-            });
+            datosFiltrados.forEach(item => { tbody.innerHTML += crearFilaHTML(item, false); });
         } else {
-            let agrupados = {};
-            let sueltos = [];
-
+            let agrupados = {}; let sueltos = [];
             datosFiltrados.forEach(item => {
                 if (item.GruposNombres) {
-                    const nombreGrupo = item.GruposNombres; 
-                    if(!agrupados[nombreGrupo]) agrupados[nombreGrupo] = [];
-                    agrupados[nombreGrupo].push(item);
-                } else {
-                    sueltos.push(item);
-                }
+                    if(!agrupados[item.GruposNombres]) agrupados[item.GruposNombres] = [];
+                    agrupados[item.GruposNombres].push(item);
+                } else sueltos.push(item);
             });
-
             for (let grupo in agrupados) {
                 tbody.innerHTML += `<tr class="fila-grupo"><td colspan="5">📦 Grupo: ${grupo}</td></tr>`;
-                agrupados[grupo].forEach(item => {
-                    tbody.innerHTML += crearFilaHTML(item, true); // true indica que está identado
-                });
+                agrupados[grupo].forEach(item => { tbody.innerHTML += crearFilaHTML(item, true); });
             }
-
             if (sueltos.length > 0) {
-                tbody.innerHTML += `<tr class="fila-grupo"><td colspan="5">🛒 Sueltos / Sin Asignar a Caja</td></tr>`;
-                sueltos.forEach(item => {
-                    tbody.innerHTML += crearFilaHTML(item, true);
-                });
+                tbody.innerHTML += `<tr class="fila-grupo"><td colspan="5">🛒 Sueltos / Sin Caja</td></tr>`;
+                sueltos.forEach(item => { tbody.innerHTML += crearFilaHTML(item, true); });
             }
         }
     }
 
     function crearFilaHTML(item, esAgrupado) {
-        const linkVer = `${window.location.href.substring(0, window.location.href.lastIndexOf("/"))}/detalle.html?id=${item.ID_Publicidad}`;
+        const linkVer = `detalle.html?id=${item.ID_Publicidad}`;
         const sangria = esAgrupado ? 'style="padding-left: 30px; border-left: 4px solid var(--btn-info);"' : '';
+        
+        const btnBorrar = rolUsuario === 'Admin' ? `<button class="btn btn-danger" style="padding: 6px 12px; font-size:12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : '';
+
         return `
             <tr>
                 <td ${sangria}><strong>${item.Nombre_Material}</strong></td>
@@ -202,62 +291,132 @@
                 <td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td>
                 <td style="display:flex; gap:8px;">
                     <a href="${linkVer}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>
-                    <button class="btn btn-danger" style="padding: 6px 12px; font-size:12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>
+                    ${btnBorrar}
                 </td>
             </tr>
         `;
     }
 
     function guardarProducto() {
-        const nombre = document.getElementById('nombre').value;
+        const nombre = document.getElementById('nombre').value.trim();
         const total = parseInt(document.getElementById('cantidadTotal').value);
-        if(!nombre || isNaN(total) || total < 1) { alert("Datos incorrectos."); return; }
+        
+        if(!nombre || isNaN(total) || total < 1) return alert("Error: Verifica que el nombre no esté vacío y la cantidad sea 1 o más.");
+
+        const btn = document.getElementById('btnGuardarIndividual');
+        btn.disabled = true;
+        btn.innerText = "Guardando...";
 
         fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ nombre, categoria: document.getElementById('categoria').value, cantidad_total: total })
-        }).then(res => res.json()).then(data => {
-            const linkQR = `${window.location.href.substring(0, window.location.href.lastIndexOf("/"))}/detalle.html?id=${data.id}`;
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), { text: linkQR, width: 130, height: 130 });
-            document.getElementById('textoURL').innerHTML = `<a href="${linkQR}" target="_blank" style="color:var(--btn-info);">Imprimir Detalles</a>`;
+        }).then(() => { 
+            alert("Registro guardado"); 
+            document.getElementById('nombre').value = '';
+            document.getElementById('cantidadTotal').value = '';
+            cerrarModal('modalProducto'); 
+            cargarTabla(); 
+        }).finally(() => {
+            btn.disabled = false;
+            btn.innerText = "Guardar Registro";
+        });
+    }
+    
+    function eliminarProducto(id) { if(confirm("¿Seguro que deseas eliminar este registro? Esta acción no se puede deshacer.")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
+
+    function abrirModalMasivo() {
+        document.getElementById('cuerpoMasivo').innerHTML = '';
+        agregarFilaMasivo(); 
+        abrirModal('modalMasivo');
+    }
+
+    function agregarFilaMasivo() {
+        const tr = document.createElement('tr');
+        tr.className = 'fila-masiva';
+        tr.innerHTML = `
+            <td><input type="text" class="masivo-nombre" placeholder="Ej. Poster X" required style="width:90%; margin:0;"></td>
+            <td>
+                <select class="masivo-cat" style="width:90%; margin:0;">
+                    <option value="Poster">Poster</option>
+                    <option value="Palomera">Palomera</option>
+                    <option value="Standee">Standee / Lona</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </td>
+            <td><input type="number" class="masivo-cant" placeholder="Cant." min="1" required style="width:70%; margin:0;"></td>
+            <td><button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">X</button></td>
+        `;
+        document.getElementById('cuerpoMasivo').appendChild(tr);
+    }
+
+    function guardarIngresoMasivo() {
+        const filas = document.querySelectorAll('.fila-masiva');
+        let productos = [];
+        let error = false;
+
+        filas.forEach(fila => {
+            const nombre = fila.querySelector('.masivo-nombre').value.trim();
+            const categoria = fila.querySelector('.masivo-cat').value;
+            const cant = parseInt(fila.querySelector('.masivo-cant').value);
+            
+            if(!nombre || isNaN(cant) || cant < 1) error = true;
+            else productos.push({ nombre: nombre, categoria: categoria, cantidad_total: cant });
+        });
+
+        if(error || productos.length === 0) { alert("Revisa que todas las filas tengan nombre y que la cantidad sea 1 o mayor."); return; }
+
+        const btn = document.getElementById('btnGuardarMasivo');
+        btn.disabled = true;
+        btn.innerText = "Guardando todo...";
+
+        fetch(API_URL + '/masivo', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(productos)
+        }).then(() => {
+            alert("✅ ¡Ingreso Masivo Exitoso!");
+            cerrarModal('modalMasivo');
             cargarTabla();
+        }).finally(() => {
+            btn.disabled = false;
+            btn.innerText = "Guardar Todo en BD";
         });
     }
 
-    function eliminarProducto(id) { if(confirm("¿Eliminar registro completo?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
-
+    // --- GRUPOS Y RESERVAS ---
     function abrirModalGrupo() {
         fetch(API_URL).then(res => res.json()).then(data => {
             const lista = document.getElementById('listaProductosGrupo');
             lista.innerHTML = '';
             data.forEach(p => {
                 lista.innerHTML += `
-                <label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer; padding-bottom:5px; border-bottom:1px solid var(--border-color);">
+                <label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer;">
                     <input type="checkbox" class="check-grupo" value="${p.ID_Publicidad}"> 
-                    <span><strong>${p.Nombre_Material}</strong> <br><small style="color:var(--btn-success);">En bodega: ${p.Cantidad_Guardados}</small></span>
+                    <span><strong>${p.Nombre_Material}</strong> <small style="color:var(--btn-success);">Bodega: ${p.Cantidad_Guardados}</small></span>
                 </label>`;
             });
             abrirModal('modalGrupo');
         });
     }
-
+    
     function guardarGrupo() {
-        const nombre = document.getElementById('nombreGrupo').value;
-        const checkboxes = document.querySelectorAll('.check-grupo:checked');
-        const productos = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        const nombre = document.getElementById('nombreGrupo').value.trim();
+        const checks = Array.from(document.querySelectorAll('.check-grupo:checked')).map(cb => parseInt(cb.value));
         
-        if(!nombre || productos.length === 0) { alert("⚠️ Ponle nombre a la caja y selecciona al menos un producto."); return; }
+        if(!nombre || checks.length === 0) return alert("Ponle nombre a la caja y selecciona productos.");
+        
+        const btn = document.getElementById('btnGuardarCaja');
+        btn.disabled = true;
+        btn.innerText = "Empacando...";
 
-        fetch(API_GRUPOS, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ nombre: nombre, productos: productos })
-        }).then(res => res.json()).then(data => {
-            alert("✅ Grupo creado con éxito.");
-            cerrarModal('modalGrupo');
-            document.getElementById('nombreGrupo').value = '';
+        fetch(API_GRUPOS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, productos: checks }) })
+        .then(() => { 
+            alert("Grupo creado."); 
+            cerrarModal('modalGrupo'); 
+            document.getElementById('nombreGrupo').value = ''; 
             cargarTabla(); 
+        }).finally(() => {
+            btn.disabled = false;
+            btn.innerText = "Guardar Grupo";
         });
     }
 
@@ -267,26 +426,19 @@
             const tbEntregadas = document.getElementById('tablaReservasEntregadas');
             tbPendientes.innerHTML = ''; tbEntregadas.innerHTML = '';
             
-            if(data.pendientes.length === 0) tbPendientes.innerHTML = "<tr><td colspan='5' style='text-align:center;'>No hay reservas pendientes</td></tr>";
-            data.pendientes.forEach(r => { tbPendientes.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><small>${r.Fecha_Reserva}</small></td><td><button class="btn btn-success" style="padding:5px 10px;" onclick="entregarReserva(${r.ID_Reserva})">Entregar ✔️</button></td></tr>`; });
+            if(data.pendientes.length === 0) tbPendientes.innerHTML = "<tr><td colspan='5'>No hay pendientes</td></tr>";
+            data.pendientes.forEach(r => { tbPendientes.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><small>${r.Fecha_Reserva}</small></td><td><button class="btn btn-success" onclick="entregarReserva(${r.ID_Reserva})">Entregar</button></td></tr>`; });
 
-            if(data.entregadas.length === 0) tbEntregadas.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Aún no hay entregas registradas</td></tr>";
+            if(data.entregadas.length === 0) tbEntregadas.innerHTML = "<tr><td colspan='4'>No hay entregas</td></tr>";
             data.entregadas.forEach(r => { tbEntregadas.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><small>${r.Fecha_Entrega}</small></td></tr>`; });
 
             abrirModal('modalReservas');
         });
     }
-
-    function entregarReserva(idReserva) {
-        if(confirm("¿Confirmar que ya le entregaste el material físicamente?")) {
-            fetch(`${API_RESERVAS}/${idReserva}/entregar`, { method: 'PUT' }).then(() => {
-                abrirModalReservas(); cargarTabla();
-            });
-        }
-    }
+    function entregarReserva(id) { if(confirm("¿Entregar material a la persona?")) { fetch(`${API_RESERVAS}/${id}/entregar`, { method: 'PUT' }).then(() => { abrirModalReservas(); cargarTabla(); }); } }
 </script>
 
-<!--  Firma digital  -->
+<!-- ================= EASTER EGG ================= -->
 <style>
     #sello-sk13 { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); font-size: 60px; font-family: 'Arial Black', sans-serif; color: rgba(220, 53, 69, 0.85); border: 10px solid rgba(220, 53, 69, 0.85); padding: 20px 40px; border-radius: 15px; text-transform: uppercase; z-index: 99999; pointer-events: none; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out; }
     #sello-sk13.mostrar { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }
