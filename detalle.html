@@ -3,194 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Operativo de Material</title>
+    <title>Detalles del Material</title>
     <style>
-        :root { 
-            --bg-color: #e9ecef; --text-color: #333; --box-bg: #fff; --border-color: #ddd; 
-            --primary: #0056b3; --th-bg: #f1f1f1; --th-text: #333;
-            --green: #28a745; --red: #d9534f; --badge-bg: #eee;
-        }
-        body.dark-mode { 
-            --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; 
-            --primary: #6ea8fe; --th-bg: #2c2c2c; --th-text: #e0e0e0;
-            --green: #75b798; --red: #ea868f; --badge-bg: #333;
-        }
-
+        :root { --bg-color: #e9ecef; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f1f1; --th-text: #333;}
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; box-sizing: border-box; transition: 0.3s;}
-        
+
         .theme-toggle { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; display: block; margin: 0 auto 20px auto; font-weight: bold;}
         body.dark-mode .theme-toggle { background: #f8f9fa; color: #121212; }
 
-        .card { background: var(--box-bg); padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 600px; margin: 0 auto 20px auto; border: 1px solid var(--border-color); transition: 0.3s;}
-        h1 { color: var(--primary); margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px;}
-        h2, h3 { color: var(--text-color); }
-        
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-box { background: var(--bg-color); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color);}
-        .highlight-green { font-size: 28px; font-weight: bold; color: var(--green); display: block;}
-        .highlight-red { font-size: 28px; font-weight: bold; color: var(--red); display: block;}
-        
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;}
-        button { border: none; padding: 12px; font-size: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; color: white;}
+        .card { background: var(--box-bg); padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 600px; margin: 0 auto; border: 1px solid var(--border-color); transition: 0.3s;}
+        h1 { color: #17a2b8; margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px;}
+        .badge { background: #ffc107; color: #000; font-size: 14px; padding: 5px 10px; border-radius: 15px; font-weight: bold;}
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .stat-box { background: var(--bg-color); padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; border: 1px solid var(--border-color); transition: 0.3s;}
+        .highlight-green { color: #28a745; font-size: 24px; display: block; margin-top: 5px;}
+        .highlight-red { color: #dc3545; font-size: 24px; display: block; margin-top: 5px;}
+
+        .action-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 20px;}
+        button { border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s;}
         button:hover { opacity: 0.8; }
-        .btn-sacar { background: #f0ad4e; color: #212529;} 
-        .btn-regresar { background: #0dcaf0; color: #212529;}
-        .btn-daño { background: #dc3545; } 
+        .btn-sacar { background: #0d6efd; }
+        .btn-regresar { background: #198754; }
+        .btn-daño { background: #dc3545; }
         .btn-reserva { background: #6f42c1; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; color: var(--text-color);}
+
+        .history-section { margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
         th, td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
-        th { background-color: var(--th-bg); color: var(--th-text); }
-        .badge { background: var(--badge-bg); padding: 3px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; color: var(--text-color);}
+        th { background: var(--th-bg); color: var(--th-text); }
+        
+        .oculto { display: none !important; }
     </style>
 </head>
 <body>
 
 <button class="theme-toggle" onclick="toggleDarkMode()">🌙 / ☀️ Cambiar Modo</button>
 
-<div class="card" id="tarjetaContenido"><h2>Cargando Base de Datos...</h2></div>
-<div class="card" id="seccionHistorial" style="display:none;"></div>
+<div class="card" id="tarjetaContenido">
+    <h2>Cargando datos del material...</h2>
+</div>
+
+<div class="card history-section" id="seccionHistorial" style="margin-top: 20px;">
+    <h3 id="zona-secreta" style="margin-top: 0; color: #6c757d; cursor: default;">📜 Historial de Movimientos</h3>
+    <table>
+        <thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead>
+        <tbody id="tablaHistorial"><tr><td colspan="3">Cargando historial...</td></tr></tbody>
+    </table>
+</div>
 
 <script>
-    window.onload = () => {
-        if(localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-        }
-    };
-
+    window.onload = () => { if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode'); };
+    
     function toggleDarkMode() {
         document.body.classList.toggle('dark-mode');
         localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    const idProducto = urlParams.get('id');
-    const API_URL = 'https://JonasSK13.pythonanywhere.com/api';
+    const idProd = urlParams.get('id');
+    const API_BASE = 'https://jonassk13.pythonanywhere.com/api/inventario';
+    const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
     let prodGlobal = null;
 
-    if (idProducto) cargarDatos();
-    else document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:var(--red);">Falta el ID.</h2>`;
+    const rolUsuario = localStorage.getItem('rolCine') || 'General';
+
+    if (rolUsuario === 'General') {
+        document.getElementById('seccionHistorial').classList.add('oculto');
+    }
+
+    if (idProd) { 
+        cargarDatos(); 
+        if (rolUsuario !== 'General') {
+            cargarHistorial(); 
+        }
+    } else { 
+        document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red;">Falta el ID del producto.</h2>`; 
+    }
 
     function cargarDatos() {
-        fetch(`${API_URL}/inventario/${idProducto}`)
+        fetch(`${API_BASE}/${idProd}`)
         .then(res => { if(!res.ok) throw new Error(); return res.json(); })
         .then(data => {
-            prodGlobal = data.producto;
+        
+            let item = Array.isArray(data) ? data[0] : data;
             
-            document.getElementById('tarjetaContenido').innerHTML = `
-                <h1>${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
-                
-                <div class="stats-grid">
-                    <div class="stat-box">Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
-                    <div class="stat-box">Piso/Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
-                </div>
-
-                <div class="action-grid">
-                    <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso</button>
+            prodGlobal = item;
+            
+            let botonesHTML = '';
+            
+            if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor') {
+                botonesHTML += `
+                    <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso/Dulcería</button>
                     <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
-                    <button class="btn-daño" onclick="registrarMovimiento('desecho')">🗑️ Reportar Daño</button>
-                    <button class="btn-reserva" onclick="hacerReserva()">📋 Apartar/Reservar</button>
-                </div>
-            `;
+                    <button class="btn-daño" onclick="registrarMovimiento('desecho')">🗑️ Reportar Daño / Merma</button>
+                    <button class="btn-reserva" onclick="hacerReserva()">📋 Apartar / Reservar</button>
+                `;
 
-            let htmlHistorial = `<h3>Reservas Pendientes de este producto</h3>`;
-            if(data.reservas.length > 0) {
-                htmlHistorial += `<table><tr><th>Para</th><th>Cant</th><th>Fecha</th></tr>`;
-                data.reservas.forEach(r => { htmlHistorial += `<tr><td><strong>${r.Nombre_Persona}</strong></td><td>${r.Cantidad}</td><td>${r.Fecha_Reserva}</td></tr>`; });
-                htmlHistorial += `</table><br>`;
+                document.getElementById('tarjetaContenido').innerHTML = `
+                    <h1>${item.Nombre_Material} <span class="badge">${item.Categoria}</span></h1>
+                    <div class="stats-grid">
+                        <div class="stat-box">Bodega <span class="highlight-green">${item.Cantidad_Guardados}</span></div>
+                        <div class="stat-box">Piso/Exhibición <span class="highlight-red">${item.Cantidad_Cartelera}</span></div>
+                    </div>
+                    <div class="action-grid">
+                        ${botonesHTML}
+                    </div>
+                `;
             } else {
-                htmlHistorial += `<p style="font-size:14px;">No hay apartados activos para este producto.</p>`;
+                botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()">📋 Apartar / Reservar</button>`;
+
+                document.getElementById('tarjetaContenido').innerHTML = `
+                    <h1 style="justify-content: center; text-align: center;">${item.Nombre_Material}</h1>
+                    <div class="stats-grid" style="grid-template-columns: 1fr;">
+                        <div class="stat-box">Piezas disponibles en Bodega <span class="highlight-green">${item.Cantidad_Guardados}</span></div>
+                    </div>
+                    <div class="action-grid">
+                        ${botonesHTML}
+                    </div>
+                `;
             }
-
-            htmlHistorial += `<h3>Historial de Movimientos</h3><table><tr><th>Acción</th><th>Detalle</th><th>Fecha y Hora</th></tr>`;
-            data.historial.forEach(h => {
-                htmlHistorial += `<tr><td><strong>${h.Accion}</strong></td><td>${h.Detalle}</td><td><small>${h.Fecha}</small></td></tr>`;
-            });
-            htmlHistorial += `</table>`;
-
-            const secHistorial = document.getElementById('seccionHistorial');
-            secHistorial.innerHTML = htmlHistorial;
-            secHistorial.style.display = 'block';
-        })
-        .catch(() => document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:var(--red);">Material no encontrado.</h2>`);
+        }).catch(() => { document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red;">Producto no encontrado.</h2>`; });
     }
 
     function registrarMovimiento(tipo) {
-        let mensaje = ""; let max = 0;
-        if(tipo === 'salida') { mensaje = "a Piso/Dulcería"; max = prodGlobal.Cantidad_Guardados; }
-        if(tipo === 'regreso') { mensaje = "sanos a Bodega"; max = prodGlobal.Cantidad_Cartelera; }
-        if(tipo === 'desecho') { mensaje = "para tirar a la basura (dañados)"; max = prodGlobal.Cantidad_Cartelera; }
+        let cantidad = prompt("¿Cuántas piezas vas a mover?");
+        if (!cantidad || isNaN(cantidad) || cantidad <= 0) return alert("Cantidad inválida.");
+        cantidad = parseInt(cantidad);
 
-        if(max <= 0) { alert(`⚠️ No hay piezas disponibles en esa ubicación para realizar el movimiento.`); return; }
+        if (tipo === 'salida' && cantidad > prodGlobal.Cantidad_Guardados) return alert("No hay suficientes en bodega.");
+        if (tipo === 'regreso' && cantidad > prodGlobal.Cantidad_Cartelera) return alert("No hay tantas en piso.");
+        if (tipo === 'desecho' && cantidad > (prodGlobal.Cantidad_Guardados + prodGlobal.Cantidad_Cartelera)) return alert("La cantidad excede el total existente.");
 
-        let resp = prompt(`¿Cuántas piezas vas a mover ${mensaje}? (Máximo disponible: ${max})`);
-        if(!resp) return;
-        
-        let cant = parseInt(resp);
-        if(isNaN(cant) || cant <= 0 || cant > max) { alert("⚠️ Cantidad inválida."); return; }
-
-        fetch(`${API_URL}/movimiento/${idProducto}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tipo: tipo, cantidad: cant })
-        }).then(() => { alert("✅ Movimiento registrado con éxito."); cargarDatos(); });
+        fetch(`${API_BASE}/${idProd}/movimiento`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: tipo, cantidad: cantidad })
+        }).then(() => { 
+            cargarDatos(); 
+            cargarHistorial(); 
+        });
     }
 
     function hacerReserva() {
-        if(prodGlobal.Cantidad_Guardados <= 0) { alert("⚠️ No hay piezas en bodega para apartar."); return; }
+        let nombre = prompt("¿A nombre de quién queda el apartado?");
+        if(!nombre || nombre.trim() === '') return;
+        nombre = nombre.trim();
+
+        let cantidad = prompt("¿Cuántas piezas vas a apartar?");
+        if(!cantidad || isNaN(cantidad) || cantidad <= 0) return alert("Cantidad inválida.");
+        cantidad = parseInt(cantidad);
         
-        let nombre = prompt("¿A nombre de quién estará la reserva? (Ej. Fer, Gerente, etc.)");
-        if(!nombre || nombre.trim() === "") return;
+        if(cantidad > prodGlobal.Cantidad_Guardados) return alert("No hay suficientes piezas en bodega para apartar.");
 
-        let resp = prompt(`¿Cuántas piezas le vas a apartar a ${nombre}? (Máximo en bodega: ${prodGlobal.Cantidad_Guardados})`);
-        let cant = parseInt(resp);
-        if(isNaN(cant) || cant <= 0 || cant > prodGlobal.Cantidad_Guardados) { alert("⚠️ Cantidad inválida."); return; }
+        fetch(API_RESERVAS, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_publicidad: idProd, nombre: nombre, cantidad: cantidad })
+        }).then(() => { 
+            alert(`✅ ${cantidad} piezas apartadas exitosamente para ${nombre}`); 
+            cargarDatos(); 
+            if (rolUsuario !== 'General') cargarHistorial(); 
+        });
+    }
 
-        fetch(`${API_URL}/reservas`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_publicidad: idProducto, nombre: nombre, cantidad: cant })
-        }).then(() => { alert("✅ Reserva guardada."); cargarDatos(); });
+    function cargarHistorial() {
+        fetch(`${API_BASE}/${idProd}/historial`)
+        .then(res => res.json())
+        .then(data => {
+            const tb = document.getElementById('tablaHistorial');
+            tb.innerHTML = '';
+            if(data.length === 0) tb.innerHTML = `<tr><td colspan="3" style="text-align:center;">Sin movimientos aún</td></tr>`;
+            data.forEach(h => {
+                tb.innerHTML += `<tr><td>${h.Fecha_Movimiento}</td><td><strong>${h.Tipo_Movimiento}</strong></td><td>${h.Detalle}</td></tr>`;
+            });
+        });
     }
 </script>
-<!-- Firma digital -->
+
 <style>
-    #sello-sk13 {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(5);
-        font-size: 60px;
-        font-family: 'Arial Black', sans-serif;
-        color: rgba(220, 53, 69, 0.85);
-        border: 10px solid rgba(220, 53, 69, 0.85);
-        padding: 20px 40px;
-        border-radius: 15px;
-        text-transform: uppercase;
-        z-index: 99999;
-        pointer-events: none;
-        text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-        box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4);
-        opacity: 0;
-        visibility: hidden;
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out;
-    }
-
-    #sello-sk13.mostrar {
-        visibility: visible;
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1) rotate(-15deg);
-    }
-
-    #zona-secreta {
-        position: fixed;
-        bottom: 0;
-        right: 0;
-        width: 50px;
-        height: 50px;
-        z-index: 99998; 
-        cursor: default; 
-    }
+    #sello-sk13 { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); font-size: 60px; font-family: 'Arial Black', sans-serif; color: rgba(220, 53, 69, 0.85); border: 10px solid rgba(220, 53, 69, 0.85); padding: 20px 40px; border-radius: 15px; text-transform: uppercase; z-index: 99999; pointer-events: none; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out; }
+    #sello-sk13.mostrar { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }
 </style>
+<div id="sello-sk13">Creado por SK13</div>
+<script>
+    let contadorClics = 0; let temporizadorClics;
+    document.addEventListener('click', (e) => { 
+        if(e.target && e.target.id === 'zona-secreta') {
+            contadorClics++; clearTimeout(temporizadorClics);
+            temporizadorClics = setTimeout(() => { contadorClics = 0; }, 1500);
+            if (contadorClics === 13) {
+                const sello = document.getElementById('sello-sk13');
+                if(!sello.classList.contains('mostrar')) { sello.classList.add('mostrar'); setTimeout(() => { sello.classList.remove('mostrar'); }, 13000); }
+                contadorClics = 0;
+            }
+        }
+    });
+</script>
 </body>
 </html>
