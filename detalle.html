@@ -5,229 +5,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles del Material</title>
     <style>
-        :root { --bg-color: #e9ecef; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f1f1; --th-text: #333;}
-        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; }
+        :root { --bg-color: #e9ecef; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f1f1; }
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; box-sizing: border-box; transition: 0.3s;}
 
         .theme-toggle { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; display: block; margin: 0 auto 20px auto; font-weight: bold;}
         body.dark-mode .theme-toggle { background: #f8f9fa; color: #121212; }
 
-        .card { background: var(--box-bg); padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 600px; margin: 0 auto; border: 1px solid var(--border-color); transition: 0.3s;}
-        h1 { color: #17a2b8; margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px;}
+        .card { background: var(--box-bg); padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 800px; margin: 0 auto; border: 1px solid var(--border-color); transition: 0.3s;}
+        
+        .detalle-layout { display: flex; gap: 20px; align-items: flex-start; }
+        .poster-img-container { width: 40%; text-align: center; }
+        .poster-img-container img { width: 100%; border-radius: 8px; box-shadow: 0 6px 12px rgba(0,0,0,0.3); border: 2px solid var(--border-color); object-fit: cover; }
+        .info-container { width: 60%; }
+
+        h1 { color: #17a2b8; margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 24px;}
         .badge { background: #ffc107; color: #000; font-size: 14px; padding: 5px 10px; border-radius: 15px; font-weight: bold;}
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .stat-box { background: var(--bg-color); padding: 15px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; border: 1px solid var(--border-color); transition: 0.3s;}
-        .highlight-green { color: #28a745; font-size: 24px; display: block; margin-top: 5px;}
-        .highlight-red { color: #dc3545; font-size: 24px; display: block; margin-top: 5px;}
+        .stat-box { background: var(--bg-color); padding: 15px; border-radius: 8px; text-align: center; font-size: 16px; font-weight: bold; border: 1px solid var(--border-color); transition: 0.3s;}
+        .highlight-green { color: #28a745; font-size: 22px; display: block; margin-top: 5px;}
+        .highlight-red { color: #dc3545; font-size: 22px; display: block; margin-top: 5px;}
 
         .action-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 20px;}
-        button { border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s;}
+        button { border: none; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s;}
         button:hover { opacity: 0.8; }
-        .btn-sacar { background: #0d6efd; }
-        .btn-regresar { background: #198754; }
-        .btn-daño { background: #dc3545; }
-        .btn-reserva { background: #6f42c1; }
+        .btn-sacar { background: #0d6efd; } .btn-regresar { background: #198754; } .btn-daño { background: #dc3545; } .btn-reserva { background: #6f42c1; }
+        .btn-dark { background: #212529; } .btn-info { background: #0dcaf0; color: #000; }
 
-        .history-section { margin-top: 30px; }
+        .editor-imagen { margin-top: 15px; text-align: left; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px; border: 1px dashed var(--border-color); }
+        body.dark-mode .editor-imagen { background: rgba(255,255,255,0.05); }
+
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
         th, td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
-        th { background: var(--th-bg); color: var(--th-text); }
+        th { background: var(--th-bg); }
         
-        .oculto { display: none !important; }
+        @media (max-width: 600px) {
+            .detalle-layout { flex-direction: column; align-items: center; }
+            .poster-img-container, .info-container { width: 100%; }
+            .poster-img-container img { width: 60%; }
+        }
     </style>
 </head>
 <body>
 
-<button class="theme-toggle" onclick="toggleDarkMode()">🌙 / ☀️ Cambiar Modo</button>
+<button class="theme-toggle" onclick="toggleDarkMode()">🌙 / ☀️</button>
 
 <div class="card" id="tarjetaContenido">
-    <h2>Cargando datos del material...</h2>
-</div>
-
-<div class="card history-section" id="seccionHistorial" style="margin-top: 20px;">
-    <h3 id="zona-secreta" style="margin-top: 0; color: #6c757d; cursor: default;">📜 Historial de Movimientos</h3>
-    <table>
-        <thead><tr><th>Fecha</th><th>Acción</th><th>Detalle</th></tr></thead>
-        <tbody id="tablaHistorial"><tr><td colspan="3">Cargando historial...</td></tr></tbody>
-    </table>
+    <h2 style="text-align:center;">Cargando datos del material...</h2>
 </div>
 
 <script>
     window.onload = () => { if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode'); };
-    
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-    }
+    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
 
     const urlParams = new URLSearchParams(window.location.search);
     const idProd = urlParams.get('id');
     const API_BASE = 'https://jonassk13.pythonanywhere.com/api/inventario';
     const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
     let prodGlobal = null;
-
     const rolUsuario = localStorage.getItem('rolCine') || 'General';
 
-    if (rolUsuario === 'General') {
-        document.getElementById('seccionHistorial').classList.add('oculto');
-    }
-
-    if (idProd) { 
-        cargarDatos(); 
-        if (rolUsuario !== 'General') {
-            cargarHistorial(); 
-        }
-    } else { 
-        document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red;">Falta el ID del producto.</h2>`; 
-    }
+    if (idProd) { cargarDatos(); } 
+    else { document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red; text-align:center;">Falta el ID del producto.</h2>`; }
 
     function cargarDatos() {
-        fetch(`${API_BASE}/${idProd}`)
-        .then(res => { if(!res.ok) throw new Error(); return res.json(); })
-        .then(data => {
-            
-            // --- INICIO DEL SISTEMA DE DEPURACIÓN (DEBUG TRAP) ---
-            let item = data;
-            
-            // 1. Intentamos desempaquetar si Python lo envolvió raro
-            if (data && data.producto) item = data.producto;
-            else if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object') item = data[0];
-            
-            // 2. Buscamos las variables (Sin importar si están en mayúsculas o minúsculas)
-            const nombre = item.Nombre_Material || item.nombre_material || item.nombre || item.Nombre;
-            const bodega = item.Cantidad_Guardados ?? item.cantidad_guardados ?? item.cantidad ?? item.bodega;
-            const cartelera = item.Cantidad_Cartelera ?? item.cantidad_cartelera ?? item.piso ?? 0;
-            const categoria = item.Categoria ?? item.categoria ?? "General";
-            
-            // 3. TRAMPA DE ERROR: Si el nombre de verdad no existe, mostramos el JSON crudo en la pantalla
-            if (nombre === undefined) {
-                document.getElementById('tarjetaContenido').innerHTML = `
-                    <h2 style="color:#dc3545; display:flex; align-items:center; gap:10px;">🕵️‍♂️ Error de Estructura Detectado</h2>
-                    <p style="font-size: 14px;">Python envió los datos, pero no encontramos la variable del nombre. Toma captura a la caja negra de abajo:</p>
-                    <pre style="background:#1e1e1e; color:#0dcaf0; padding:15px; border-radius:5px; overflow-x:auto; font-size: 14px;">${JSON.stringify(data, null, 2)}</pre>
-                `;
-                return; // Detenemos el código aquí
-            }
-
-            // 4. Si lo encontramos, normalizamos el objeto para que el sistema siga funcionando perfecto
-            prodGlobal = item;
-            prodGlobal.Nombre_Material = nombre;
-            prodGlobal.Cantidad_Guardados = bodega;
-            prodGlobal.Cantidad_Cartelera = cartelera;
-            prodGlobal.Categoria = categoria;
-            // --- FIN DEL SISTEMA ---
-
-            
-            // RENDERIZADO DE LA INTERFAZ
-            let botonesHTML = '';
-            
-            if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor') {
-                botonesHTML += `
-                    <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso/Dulcería</button>
-                    <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
-                    <button class="btn-daño" onclick="registrarMovimiento('desecho')">🗑️ Reportar Daño / Merma</button>
-                    <button class="btn-reserva" onclick="hacerReserva()">📋 Apartar / Reservar</button>
-                `;
-
-                document.getElementById('tarjetaContenido').innerHTML = `
-                    <h1>${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
-                    <div class="stats-grid">
-                        <div class="stat-box">Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
-                        <div class="stat-box">Piso/Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
-                    </div>
-                    <div class="action-grid">
-                        ${botonesHTML}
-                    </div>
-                `;
-            } else {
-                botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()">📋 Apartar / Reservar</button>`;
-
-                document.getElementById('tarjetaContenido').innerHTML = `
-                    <h1 style="justify-content: center; text-align: center; border-bottom:none;">${prodGlobal.Nombre_Material}</h1>
-                    <div class="stats-grid" style="grid-template-columns: 1fr;">
-                        <div class="stat-box">Piezas disponibles en Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
-                    </div>
-                    <div class="action-grid">
-                        ${botonesHTML}
-                    </div>
-                `;
-            }
-        }).catch(() => { document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red;">Error de Red o Producto no encontrado.</h2>`; });
+        fetch(`${API_BASE}/${idProd}`).then(res => res.json()).then(data => {
+            prodGlobal = data;
+            renderizarTarjeta();
+            cargarImagen();
+        });
     }
 
-    function registrarMovimiento(tipo) {
-        let cantidad = prompt("¿Cuántas piezas vas a mover?");
-        if (!cantidad || isNaN(cantidad) || cantidad <= 0) return alert("Cantidad inválida.");
-        cantidad = parseInt(cantidad);
+    function cargarImagen() {
+        const imgElement = document.getElementById('imagenMagicaPoster');
+        
+        if (prodGlobal.Imagen_URL && prodGlobal.Imagen_URL.trim() !== "") {
+            imgElement.src = prodGlobal.Imagen_URL;
+            imgElement.style.display = 'block';
+            return;
+        }
 
-        if (tipo === 'salida' && cantidad > prodGlobal.Cantidad_Guardados) return alert("No hay suficientes en bodega.");
-        if (tipo === 'regreso' && cantidad > prodGlobal.Cantidad_Cartelera) return alert("No hay tantas en piso.");
-        if (tipo === 'desecho' && cantidad > (prodGlobal.Cantidad_Guardados + prodGlobal.Cantidad_Cartelera)) return alert("La cantidad excede el total existente.");
-
-        fetch(`${API_BASE}/${idProd}/movimiento`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ tipo: tipo, cantidad: cantidad })
-        }).then(() => { 
-            cargarDatos(); 
-            cargarHistorial(); 
+        let nombreLimpio = prodGlobal.Nombre_Material.replace(/poster|cartel|loneta|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d/gi, '').trim();
+        fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(nombreLimpio)}&entity=movie&limit=1`)
+        .then(res => res.json())
+        .then(apiData => {
+            if(apiData.results && apiData.results.length > 0) {
+                imgElement.src = apiData.results[0].artworkUrl100.replace('100x100bb', '600x900bb');
+            } else {
+                imgElement.src = `https://via.placeholder.com/600x900/1e1e1e/0dcaf0?text=Poster+No+Disponible`;
+            }
+            imgElement.style.display = 'block';
+        })
+        .catch(() => {
+            imgElement.src = `https://via.placeholder.com/600x900/1e1e1e/dc3545?text=Error+de+Conexion`;
+            imgElement.style.display = 'block';
         });
+    }
+
+    function buscarEnGoogle() {
+        let nombreLimpio = prodGlobal.Nombre_Material.replace(/esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d/gi, '').trim();
+        let query = encodeURIComponent(`Poster Película Cinépolis ${nombreLimpio}`);
+        window.open(`https://www.google.com/search?tbm=isch&q=${query}`, '_blank');
+    }
+
+    function guardarImagenManual() {
+        const nuevaUrl = document.getElementById('urlManual').value.trim();
+        if (!nuevaUrl) return alert("Pega el link de la imagen primero.");
+        
+        fetch(`${API_BASE}/${idProd}/imagen`, {
+            method: 'PUT', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: nuevaUrl })
+        }).then(() => {
+            alert("✅ Imagen actualizada para todos los usuarios.");
+            cargarDatos();
+        });
+    }
+
+    function renderizarTarjeta() {
+        let botonesHTML = '';
+        let panelEditor = '';
+        
+        if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista' || rolUsuario === 'Visitante') {
+            
+            botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()" style="font-size: 16px; padding: 12px; margin-bottom: 10px;">📋 Quiero pedir este póster</button>`;
+            
+            if (rolUsuario === 'Admin' || rolUsuario === 'Supervisor') {
+                panelEditor = `
+                    <div class="editor-imagen">
+                        <label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta o no aparece?</label>
+                        <button class="btn-dark" style="width: 100%; margin-bottom: 5px; font-size: 12px; padding: 6px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button>
+                        <input type="text" id="urlManual" placeholder="Pega el link (URL) aquí..." style="width: 90%; font-size: 12px; padding: 6px; margin-bottom: 5px; border: 1px solid var(--border-color); border-radius: 4px;">
+                        <button class="btn-info" style="width: 100%; font-size: 12px; padding: 6px;" onclick="guardarImagenManual()">💾 Guardar Imagen</button>
+                    </div>
+                `;
+                
+                botonesHTML += `
+                    <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso (Directo)</button>
+                    <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
+                    <button class="btn-daño" onclick="registrarMovimiento('desecho')">🗑️ Reportar Merma</button>
+                `;
+            }
+        }
+
+        document.getElementById('tarjetaContenido').innerHTML = `
+            <div class="detalle-layout">
+                <div class="poster-img-container">
+                    <img id="imagenMagicaPoster" src="" style="display:none;" alt="Poster Oficial">
+                    ${panelEditor}
+                </div>
+                <div class="info-container">
+                    <h1 style="font-size: 18px;">${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
+                    <div class="stats-grid">
+                        <div class="stat-box">En Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
+                        <div class="stat-box">En Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
+                    </div>
+                    <div class="action-grid">
+                        ${botonesHTML}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    function registrarMovimiento(tipo) {
+        let cantidad = prompt("¿Cuántas piezas?");
+        if (!cantidad || isNaN(cantidad) || cantidad <= 0) return;
+        fetch(`${API_BASE}/${idProd}/movimiento`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo, cantidad: parseInt(cantidad) }) }).then(() => cargarDatos());
     }
 
     function hacerReserva() {
-        let nombre = prompt("¿A nombre de quién queda el apartado?");
-        if(!nombre || nombre.trim() === '') return;
-        nombre = nombre.trim();
-
-        let cantidad = prompt("¿Cuántas piezas vas a apartar?");
-        if(!cantidad || isNaN(cantidad) || cantidad <= 0) return alert("Cantidad inválida.");
-        cantidad = parseInt(cantidad);
+        let nombre = prompt("¿Quién solicita el material?");
+        if(!nombre) return;
+        let cantidad = prompt("¿Cuántos necesitas apartar?");
+        if(!cantidad || isNaN(cantidad) || cantidad <= 0) return;
         
-        if(cantidad > prodGlobal.Cantidad_Guardados) return alert("No hay suficientes piezas en bodega para apartar.");
-
-        fetch(API_RESERVAS, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_publicidad: idProd, nombre: nombre, cantidad: cantidad })
-        }).then(() => { 
-            alert(`✅ ${cantidad} piezas apartadas exitosamente para ${nombre}`); 
-            cargarDatos(); 
-            if (rolUsuario !== 'General') cargarHistorial(); 
+        fetch(API_RESERVAS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idProd, nombre, cantidad: parseInt(cantidad) }) }).then(() => { 
+            alert(`✅ Solicitud enviada a los supervisores para su autorización.`); cargarDatos(); 
         });
     }
-
-    function cargarHistorial() {
-        fetch(`${API_BASE}/${idProd}/historial`)
-        .then(res => res.json())
-        .then(data => {
-            const tb = document.getElementById('tablaHistorial');
-            tb.innerHTML = '';
-            if(data.length === 0) tb.innerHTML = `<tr><td colspan="3" style="text-align:center;">Sin movimientos aún</td></tr>`;
-            data.forEach(h => {
-                tb.innerHTML += `<tr><td>${h.Fecha_Movimiento}</td><td><strong>${h.Tipo_Movimiento}</strong></td><td>${h.Detalle}</td></tr>`;
-            });
-        });
-    }
-</script>
-
-<!-- ================= EASTER EGG ================= -->
-<style>
-    #sello-sk13 { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(5); font-size: 60px; font-family: 'Arial Black', sans-serif; color: rgba(220, 53, 69, 0.85); border: 10px solid rgba(220, 53, 69, 0.85); padding: 20px 40px; border-radius: 15px; text-transform: uppercase; z-index: 99999; pointer-events: none; text-shadow: 3px 3px 6px rgba(0,0,0,0.3); box-shadow: 0 0 25px rgba(220,53,69,0.4), inset 0 0 20px rgba(220,53,69,0.4); opacity: 0; visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease-in-out; }
-    #sello-sk13.mostrar { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-15deg); }
-</style>
-<div id="sello-sk13">Creado por SK13</div>
-<script>
-    let contadorClics = 0; let temporizadorClics;
-    document.addEventListener('click', (e) => { 
-        if(e.target && e.target.id === 'zona-secreta') {
-            contadorClics++; clearTimeout(temporizadorClics);
-            temporizadorClics = setTimeout(() => { contadorClics = 0; }, 1500);
-            if (contadorClics === 13) {
-                const sello = document.getElementById('sello-sk13');
-                if(!sello.classList.contains('mostrar')) { sello.classList.add('mostrar'); setTimeout(() => { sello.classList.remove('mostrar'); }, 13000); }
-                contadorClics = 0;
-            }
-        }
-    });
 </script>
 </body>
 </html>
