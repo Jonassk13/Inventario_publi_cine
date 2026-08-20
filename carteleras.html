@@ -3,31 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <title>Mapa de Carteleras</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545;}
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px;}
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; gap: 10px;}
         button.btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; }
         button.btn:hover { opacity: 0.8; }
-        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); }
+        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000; } .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 10px; }
 
-        /* ESTILOS DEL PLANO DEL CINE */
-        .mapa-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1000px; margin: 0 auto;}
-        .zona { border: 3px solid var(--border-color); background: var(--box-bg); border-radius: 10px; padding: 20px; position: relative;}
-        .zona-titulo { position: absolute; top: -15px; left: 20px; background: var(--box-bg); padding: 0 10px; font-weight: bold; color: var(--primary);}
+        .muro-taquilla { background-color: #111; border: 8px solid #2a2a2a; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 700px; margin: 0 auto 30px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
+        .muro-row { display: flex; align-items: center; justify-content: space-between;}
         
-        .slots-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;}
-        .slot { border: 2px dashed #999; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80px;}
+        .muro-logo { width: 30%; text-align: center; font-family: 'Arial Black', sans-serif; text-transform: uppercase;}
+        .logo-pluus { letter-spacing: 5px; font-weight: normal; color: white; }
+        .logo-4dx { font-style: italic; font-size: 35px; color: #ccc; text-shadow: -2px -2px 0px #fff, 3px 3px 0px #555; }
+        .logo-screenx { line-height: 1; }
+        .logo-screenx .rojo { color: #dc3545; font-size: 22px;}
+        .logo-screenx .blanco { color: white; display: block; font-size: 18px;}
+        .logo-jr { color: #ffc107; font-family: 'Comic Sans MS', cursive, sans-serif; text-transform: lowercase; font-size: 35px;}
+
+        .neon-divider { width: 12px; background-color: #0044ff; box-shadow: 0 0 10px #0044ff, 0 0 20px #0044ff, inset 0 0 5px #fff; height: 160px; border-radius: 5px; margin: 0 15px;}
+        
+        .muro-posters { display: flex; gap: 15px; width: 65%; }
+        .muro-slot { flex: 1; background: #050505; border: 2px dashed #444; min-height: 140px; border-radius: 3px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px; cursor:pointer; transition: 0.2s;}
+        .muro-slot:hover { border-color: #0dcaf0; background: rgba(13,202,240,0.1); }
+        .muro-slot.lleno { border: 2px solid #198754; background: rgba(25, 135, 84, 0.1); }
+        .muro-slot.info-panel { border: 2px solid #333; background: #1a1a1a; color: #666; cursor: default; justify-content: center;}
+        
+        .mapa-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .zona { background: var(--box-bg); border-radius: 10px; padding: 25px 20px 20px 20px; position: relative; border-top: 5px solid gray; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        .zona-titulo { position: absolute; top: -15px; left: 20px; background: var(--box-bg); padding: 5px 15px; font-weight: bold; font-size: 14px; border-radius: 15px; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .zona-izquierda { border-top-color: #6f42c1; } .zona-izquierda .zona-titulo { color: #6f42c1; }
+        .zona-derecha { border-top-color: #fd7e14; } .zona-derecha .zona-titulo { color: #fd7e14; }
+        
+        .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px;}
+        .slot { border: 2px dashed #999; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 90px;}
         .slot:hover { border-color: var(--primary); background: rgba(13, 110, 253, 0.1); }
         .slot.lleno { border: 2px solid var(--success); background: rgba(25, 135, 84, 0.1); border-style: solid;}
         
-        .slot-numero { font-size: 12px; color: gray; margin-bottom: 5px;}
-        .slot-titulo { font-weight: bold; font-size: 16px; margin-bottom: 10px;}
-        .poster-nombre { font-size: 18px; color: var(--primary); font-weight: bold;}
+        .slot-numero { font-size: 11px; color: gray; margin-bottom: 5px;}
+        .slot-titulo { font-weight: bold; font-size: 14px; margin-bottom: 8px;}
+        
+        .poster-nombre { font-size: 14px; color: var(--primary); font-weight: bold;}
+        .muro-slot .poster-nombre { color: white; font-size: 14px; }
 
-        /* MODAL */
+        .sugerencia-box { margin-top: 8px; padding: 8px; background: rgba(13, 202, 240, 0.15); border: 1px solid #0dcaf0; border-radius: 5px; font-size: 12px; color: var(--text-color); width: 90%; animation: parpadeo 1.5s infinite alternate;}
+        .muro-slot .sugerencia-box { color: white; background: rgba(13, 202, 240, 0.3); }
+        @keyframes parpadeo { from { box-shadow: 0 0 5px rgba(13, 202, 240, 0.2); } to { box-shadow: 0 0 15px rgba(13, 202, 240, 0.8); } }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; }
         select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; }
@@ -36,26 +62,57 @@
 <body>
 
 <div class="header">
-    <h1 style="margin:0;">🗺️ Mapa de Control de Exhibición</h1>
-    <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
+    <h1 style="margin:0;">🗺️ Plano de Exhibición: Plaza Morelia</h1>
+    <div style="display:flex; gap: 10px;">
+        <button class="btn btn-info" onclick="document.getElementById('archivoExcel').click()">🪄 Sugerir por Excel</button>
+        <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
+        <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
+    </div>
 </div>
 
-<!-- PLANO VIRTUAL DEL LOBBY -->
-<div class="mapa-container" id="planoCine">
-    <!-- Se dibuja dinámicamente -->
-    <h3 style="text-align:center; grid-column: span 2;">Cargando distribución de salas...</h3>
+<div class="muro-taquilla">
+    <!-- PLUUS -->
+    <div class="muro-row">
+        <div class="muro-logo logo-pluus">PLUUS</div>
+        <div class="neon-divider"></div>
+        <div class="muro-posters" id="taquilla-pluus">Cargando...</div>
+    </div>
+    <!-- 4DX -->
+    <div class="muro-row">
+        <div class="muro-logo logo-4dx">4DX</div>
+        <div class="neon-divider"></div>
+        <div class="muro-posters" id="taquilla-4dx"></div>
+    </div>
+    <!-- SCREENX -->
+    <div class="muro-row">
+        <div class="muro-logo logo-screenx"><span class="rojo">MACROXE</span><span class="blanco">SCREENX</span></div>
+        <div class="neon-divider"></div>
+        <div class="muro-posters" id="taquilla-screenx"></div>
+    </div>
+    <!-- JUNIOR -->
+    <div class="muro-row">
+        <div class="muro-logo logo-jr">junior</div>
+        <div class="neon-divider"></div>
+        <div class="muro-posters" id="taquilla-jr"></div>
+    </div>
 </div>
 
-<!-- MODAL PARA ELEGIR POSTER -->
+<div class="mapa-container">
+    <div class="zona zona-izquierda">
+        <div class="zona-titulo">⬅️ Ala Izquierda (Salas 1 al 7)</div>
+        <div class="slots-grid" id="ala-izquierda"></div>
+    </div>
+    <div class="zona zona-derecha">
+        <div class="zona-titulo">➡️ Ala Derecha (Salas 8 al 16)</div>
+        <div class="slots-grid" id="ala-derecha"></div>
+    </div>
+</div>
+
 <div id="modalAsignar" class="modal">
     <div class="modal-content">
         <h2 style="margin-top:0;">Colocar Póster en Cartelera</h2>
         <p id="textoUbicacion">Selecciona un material de la bodega para exhibirlo aquí:</p>
-        
-        <select id="selectorPosters">
-            <option value="">Cargando pósters en bodega...</option>
-        </select>
-        
+        <select id="selectorPosters"><option value="">Cargando pósters en bodega...</option></select>
         <div style="display:flex; justify-content: space-between; margin-top: 20px;">
             <button class="btn btn-dark" onclick="cerrarModal()">Cancelar</button>
             <button class="btn btn-primary" onclick="guardarAsignacion()">Instalar Póster</button>
@@ -80,78 +137,205 @@
 
     function cargarMapa() {
         fetch(API_CARTELERAS).then(res => res.json()).then(data => {
-            const plano = document.getElementById('planoCine');
-            plano.innerHTML = '';
             
-            // Agrupamos visualmente los slots en el plano
-            let zonasHTML = `
-                <div class="zona"><div class="zona-titulo">🎟️ Entrada y Taquilla</div><div class="slots-grid">
-                    ${crearSlotHTML(data[0])} ${crearSlotHTML(data[1])}
-                </div></div>
-                <div class="zona"><div class="zona-titulo">🍿 Zona de Dulcería</div><div class="slots-grid">
-                    ${crearSlotHTML(data[2])} ${crearSlotHTML(data[3])}
-                </div></div>
-                <div class="zona" style="grid-column: span 2;"><div class="zona-titulo">🎬 Pasillos a Salas</div><div class="slots-grid">
-                    ${crearSlotHTML(data[4])} ${crearSlotHTML(data[5])}
-                </div></div>
-            `;
-            plano.innerHTML = zonasHTML;
+            document.getElementById('taquilla-pluus').innerHTML = [1, 2].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
+            document.getElementById('taquilla-4dx').innerHTML = [3, 4].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
+            document.getElementById('taquilla-screenx').innerHTML = [5, 6].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
+            
+            document.getElementById('taquilla-jr').innerHTML = crearMuroSlot(data.find(c => c.ID_Slot === 7)) + 
+                `<div class="muro-slot info-panel">📄 Panel Fijo<br><small>Información de Sala</small></div>`;
+
+            const alaIzquierda = data.filter(c => c.ID_Slot >= 8 && c.ID_Slot <= 14);
+            const alaDerecha = data.filter(c => c.ID_Slot >= 15 && c.ID_Slot <= 23);
+            
+            document.getElementById('ala-izquierda').innerHTML = alaIzquierda.map(c => crearSlotEstandar(c)).join('');
+            document.getElementById('ala-derecha').innerHTML = alaDerecha.map(c => crearSlotEstandar(c)).join('');
         });
     }
 
-    function crearSlotHTML(cartelera) {
-        if(!cartelera) return '';
-        const estaLleno = cartelera.ID_Publicidad !== null;
+    function crearMuroSlot(c) {
+        if(!c) return '';
+        const estaLleno = c.ID_Publicidad !== null;
+        const clase = estaLleno ? 'muro-slot lleno' : 'muro-slot';
+        const contenido = estaLleno 
+            ? `<span class="poster-nombre">${c.Nombre_Material}</span><button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">Desmontar</button>`
+            : `<span style="color:gray; font-size:12px;">Slot #${c.ID_Slot}<br>Clic para Instalar</span>`;
+        return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})">${contenido}</div>`;
+    }
+
+    function crearSlotEstandar(c) {
+        if(!c) return '';
+        const estaLleno = c.ID_Publicidad !== null;
         const clase = estaLleno ? 'slot lleno' : 'slot';
         const contenido = estaLleno 
-            ? `<span class="poster-nombre">${cartelera.Nombre_Material}</span><br><button class="btn btn-danger" style="margin-top:10px; font-size:12px; padding:5px;" onclick="liberarCartelera(event, ${cartelera.ID_Slot})">Quitar y Regresar a Bodega</button>`
-            : `<span style="color:gray;">Espacio Vacío</span><br><span style="font-size:12px; margin-top:5px;">Clic para colocar póster</span>`;
-
+            ? `<span class="poster-nombre">${c.Nombre_Material}</span><button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">Desmontar</button>`
+            : `<span style="color:gray;">Espacio Vacío</span>`;
         return `
-            <div class="${clase}" onclick="abrirAsignacion(${cartelera.ID_Slot}, '${cartelera.Ubicacion}', ${estaLleno})">
-                <div class="slot-numero">Espacio #${cartelera.ID_Slot}</div>
-                <div class="slot-titulo">${cartelera.Ubicacion}</div>
+            <div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})">
+                <div class="slot-numero">Espacio #${c.ID_Slot}</div>
+                <div class="slot-titulo">${c.Ubicacion}</div>
                 ${contenido}
-            </div>
-        `;
+            </div>`;
+    }
+
+    function limpiarTitulo(titulo) {
+        if (!titulo) return "";
+        let limpio = titulo.replace(/\s+(ESP|SUB|3D|IMAX|4DX|SJ|XE|ATMOS|SP|LED|SCREENX|2D|FINB|Live Action|Versión Extendida)+\b/gi, '');
+        return limpio.replace(/\/2D/g, '').trim().toLowerCase();
+    }
+
+    function procesarExcel(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const data = new Uint8Array(e.target.result);
+            const workbook = XLSX.read(data, {type: 'array'});
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonRaw = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            
+            let headerRowIndex = 0;
+            for (let i = 0; i < Math.min(15, jsonRaw.length); i++) {
+                if (jsonRaw[i] && jsonRaw[i].map(c => String(c).trim().toLowerCase()).includes('película')) {
+                    headerRowIndex = i; break;
+                }
+            }
+            generarSugerencias(XLSX.utils.sheet_to_json(worksheet, {range: headerRowIndex}));
+        };
+        reader.readAsArrayBuffer(file);
+        event.target.value = '';
+    }
+
+    function generarSugerencias(datosExcel) {
+        let conteoSala = {}; 
+        let conteoSP = {}; let conteo4DX = {}; let conteoScreenX = {}; let conteoSJ = {};
+
+        datosExcel.forEach(row => {
+            let sala = parseInt(row['Sala']);
+            let peliRaw = row['Película'];
+            
+            if (peliRaw) {
+                let peliLimpia = limpiarTitulo(peliRaw);
+                
+                if (!isNaN(sala)) {
+                    if (!conteoSala[sala]) conteoSala[sala] = {};
+                    conteoSala[sala][peliLimpia] = (conteoSala[sala][peliLimpia] || 0) + 1;
+                }
+                
+                // Identificadores de formatos en Taquilla
+                if (/\bSP\b/i.test(peliRaw)) conteoSP[peliLimpia] = (conteoSP[peliLimpia] || 0) + 1;
+                if (/\b4DX\b/i.test(peliRaw)) conteo4DX[peliLimpia] = (conteo4DX[peliLimpia] || 0) + 1;
+                if (/\bSCREENX\b/i.test(peliRaw)) conteoScreenX[peliLimpia] = (conteoScreenX[peliLimpia] || 0) + 1;
+                if (/\bSJ\b/i.test(peliRaw)) conteoSJ[peliLimpia] = (conteoSJ[peliLimpia] || 0) + 1;
+            }
+        });
+
+        let topPorSala = {};
+        for (let s = 1; s <= 16; s++) { topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; }
+        
+        let topSP = Object.keys(conteoSP).sort((a, b) => conteoSP[b] - conteoSP[a]);
+        let top4DX = Object.keys(conteo4DX).sort((a, b) => conteo4DX[b] - conteo4DX[a]);
+        let topScreenX = Object.keys(conteoScreenX).sort((a, b) => conteoScreenX[b] - conteoScreenX[a]);
+        let topSJ = Object.keys(conteoSJ).sort((a, b) => conteoSJ[b] - conteoSJ[a]);
+
+        fetch(API_INVENTARIO).then(res => res.json()).then(inventarioData => {
+            let inventario = inventarioData.filter(p => p.Categoria === 'Poster' && p.Cantidad_Guardados > 0);
+            let sugerencias = [];
+            
+            let usadosTaquilla = new Set(); let usadosIzquierda = new Set(); let usadosDerecha = new Set();
+
+            function buscarPoster(peliLimpia, usadosSet) {
+                for (let i = 0; i < inventario.length; i++) {
+                    let p = inventario[i];
+                    if (p.Cantidad_Guardados > 0 && !usadosSet.has(p.ID_Publicidad)) {
+                        let n = limpiarTitulo(p.Nombre_Material).replace(/poster/gi, '').trim();
+                        if (n === peliLimpia || n.includes(peliLimpia) || peliLimpia.includes(n)) return p;
+                    }
+                }
+                return null;
+            }
+
+            function asignarMuro(listaPeliculas, slotsPermitidos) {
+                let asignados = 0;
+                for(let peli of listaPeliculas) {
+                    if (asignados >= slotsPermitidos.length) break;
+                    let match = buscarPoster(peli, usadosTaquilla);
+                    if (match) {
+                        usadosTaquilla.add(match.ID_Publicidad);
+                        match.Cantidad_Guardados--;
+                        sugerencias.push({ slot: slotsPermitidos[asignados], posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
+                        asignados++;
+                    }
+                }
+            }
+            asignarMuro(topSP, [1, 2]);       // Pluus
+            asignarMuro(top4DX, [3, 4]);      // 4DX
+            asignarMuro(topScreenX, [5, 6]);  // ScreenX
+            asignarMuro(topSJ, [7]);          // Junior
+
+            for(let i = 0; i <= 6; i++) {
+                let pelis = topPorSala[1 + i] || [];
+                for(let peli of pelis) {
+                    let match = buscarPoster(peli, usadosIzquierda);
+                    if (match) { usadosIzquierda.add(match.ID_Publicidad); match.Cantidad_Guardados--; sugerencias.push({ slot: 8 + i, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material }); break; }
+                }
+            }
+            for(let i = 0; i <= 8; i++) {
+                let pelis = topPorSala[8 + i] || [];
+                for(let peli of pelis) {
+                    let match = buscarPoster(peli, usadosDerecha);
+                    if (match) { usadosDerecha.add(match.ID_Publicidad); match.Cantidad_Guardados--; sugerencias.push({ slot: 15 + i, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material }); break; }
+                }
+            }
+            dibujarSugerencias(sugerencias);
+        });
+    }
+
+    function dibujarSugerencias(sugerencias) {
+        document.querySelectorAll('.sugerencia-box').forEach(e => e.remove());
+        let aplicadas = 0;
+        sugerencias.forEach(sug => {
+            let slotDiv = document.getElementById('slot-div-' + sug.slot);
+            if (slotDiv && !slotDiv.classList.contains('lleno')) {
+                let sugHTML = document.createElement('div');
+                sugHTML.className = 'sugerencia-box';
+                sugHTML.innerHTML = `💡 Sugerimos:<br><strong>${sug.posterNombre}</strong><br><button class="btn btn-success btn-sm" style="width:100%; border-radius:3px;" onclick="confirmarSugerencia(event, ${sug.slot}, ${sug.posterId})">✔️ Instalar</button>`;
+                slotDiv.appendChild(sugHTML);
+                aplicadas++;
+            }
+        });
+        if(aplicadas === 0) alert("Todos los espacios ya están llenos o no hay stock de las películas necesarias en bodega.");
+        else alert(`¡Se generaron ${aplicadas} sugerencias mágicas!`);
     }
 
     function abrirAsignacion(idSlot, ubicacion, estaLleno) {
-        if(estaLleno) return; // Si está lleno, el clic lo ignora (se usa el botón rojo de quitar)
-        
+        if(estaLleno) return; 
         slotSeleccionado = idSlot;
         document.getElementById('textoUbicacion').innerHTML = `Selecciona un material para: <strong>${ubicacion}</strong>`;
         document.getElementById('modalAsignar').style.display = 'flex';
-
-        // Cargar inventario para llenar el select (solo los que tienen stock en bodega)
         fetch(API_INVENTARIO).then(res => res.json()).then(data => {
             const select = document.getElementById('selectorPosters');
             select.innerHTML = '<option value="">-- Elige un póster disponible --</option>';
             data.forEach(p => {
-                if (p.Cantidad_Guardados > 0 && p.Categoria === 'Poster') {
-                    select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (Bodega: ${p.Cantidad_Guardados})</option>`;
-                }
+                if (p.Cantidad_Guardados > 0 && p.Categoria === 'Poster') { select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (Bodega: ${p.Cantidad_Guardados})</option>`; }
             });
         });
     }
 
     function cerrarModal() { document.getElementById('modalAsignar').style.display = 'none'; slotSeleccionado = null; }
-
     function guardarAsignacion() {
         const idPub = document.getElementById('selectorPosters').value;
-        if(!idPub) return alert("Selecciona un póster primero.");
-
-        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_publicidad: parseInt(idPub) })
-        }).then(() => { cerrarModal(); cargarMapa(); });
+        if(!idPub) return alert("Selecciona un póster.");
+        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { cerrarModal(); cargarMapa(); });
     }
-
+    function confirmarSugerencia(event, idSlot, idPub) {
+        event.stopPropagation();
+        fetch(`${API_CARTELERAS}/${idSlot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idPub }) }).then(() => cargarMapa());
+    }
     function liberarCartelera(event, idSlot) {
-        event.stopPropagation(); // Evita que se abra el modal de asignar
-        if(confirm("¿Seguro que deseas quitar este póster de la cartelera y regresarlo al inventario de la bodega?")) {
-            fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa());
-        }
+        event.stopPropagation();
+        if(confirm("¿Regresar póster a bodega?")) { fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa()); }
     }
 </script>
 </body>
