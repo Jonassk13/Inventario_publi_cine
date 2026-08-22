@@ -21,6 +21,10 @@
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-color); background: none; border: none; padding: 0;}
         .rol-badge { padding: 5px 10px; border-radius: 15px; font-size: 14px; font-weight: bold; background: var(--btn-success); color: white; margin-left: 10px;}
+        
+        /* 👑 Estilo exclusivo Verde Pino para la Subgerente */
+        .badge-subgerente { background-color: #0b5345 !important; color: white !important; }
+        
         .oculto { display: none !important; }
     </style>
 </head>
@@ -46,12 +50,17 @@
 
     <button class="btn btn-reserva req-staff req-auth" onclick="abrirModalReservas()">📋 Aprobaciones</button>
     <button class="btn btn-info req-staff" onclick="abrirModalGrupo()">📦 Armar Caja</button>
+    
     <a href="carteleras.html" target="_blank" class="btn btn-reserva req-staff" style="text-decoration:none;">🗺️ Mapa Carteleras</a>
+    
+    <!-- NUEVO: Botón Próximos Estrenos / Pósters Extra -->
+    <a href="proximos_estrenos.html" target="_blank" class="btn btn-success req-staff" style="text-decoration:none; background: #0b5345;">🚀 Próximos Estrenos</a>
+    
     <a href="formatos_especiales.html" target="_blank" class="btn btn-primary req-staff req-admin" style="text-align: center; background:#6f42c1; text-decoration:none;">⚙️ Control Áreas Extra</a>
     <a href="lobby_stands.html" target="_blank" class="btn btn-info req-staff" style="text-align: center; background: #fd7e14; color: white; text-decoration:none;">🎪 Stands de Lobby</a>
     <a href="imprimir_qrs.html" target="_blank" class="btn btn-dark req-staff" style="text-align: center; text-decoration:none;">🖨️ Centro QR</a>
     
-    <select id="filtroCategoria" onchange="renderizarTabla()" style="width: 200px; margin-bottom: 0; margin-left: auto;">
+    <select id="filtroCategoria" onchange="cargarTabla()" style="width: 200px; margin-bottom: 0; margin-left: auto;">
         <option value="Todos">Todas las categorías</option>
     </select>
 </div>
@@ -63,68 +72,11 @@
     </table>
 </div>
 
-
-<div id="modalQRVisitante" class="modal">
-    <div class="modal-content" style="max-width: 400px; text-align: center;">
-        <button class="close-btn" onclick="cerrarModal('modalQRVisitante')">&times;</button>
-        <h2 style="margin-top: 0; color: #20c997;">📲 Acceso Cinepolitos</h2>
-        <p style="font-size: 14px; color: gray;">Imprime este QR y pégalo en piso. Cualquiera que lo escanee podrá pedirte pósters directamente desde su celular.</p>
-        <div style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin: 15px 0;">
-            <div id="qrVisitanteContainer"></div>
-        </div>
-        <button class="btn btn-primary" style="width: 100%; font-size: 16px;" onclick="imprimirQR()">🖨️ Imprimir Hoja QR</button>
-    </div>
-</div>
-
-<div id="modalLogin" class="modal">
-    <div class="modal-content" style="max-width: 400px; text-align: center;">
-        <button class="close-btn" onclick="cerrarModal('modalLogin')">&times;</button>
-        <h2 style="margin-top: 0; color: var(--btn-primary);">👤 Acceso Restringido</h2>
-        <input type="password" id="claveAcceso" placeholder="Contraseña..." style="width: 90%; text-align:center; font-size:18px;">
-        <button class="btn btn-primary" onclick="iniciarSesion()" style="width: 95%; margin-top: 15px;">Ingresar</button>
-    </div>
-</div>
-
-<div id="modalPerfil" class="modal">
-    <div class="modal-content" style="max-width: 400px;">
-        <button class="close-btn" onclick="cerrarModal('modalPerfil')">&times;</button>
-        <h2 style="margin-top: 0;">⚙️ Editar Mi Perfil</h2>
-        <input type="text" id="perfilNombre" style="width: 100%; margin-bottom: 15px;">
-        <input type="password" id="perfilClave" placeholder="Nueva contraseña (opcional)..." style="width: 100%;">
-        <input type="password" id="perfilClaveConf" placeholder="Confirma tu nueva contraseña..." style="width: 100%;">
-        <button class="btn btn-success" onclick="guardarPerfil()" style="width: 100%; margin-top: 10px;">Guardar Cambios</button>
-    </div>
-</div>
-
-<div id="modalUsuarios" class="modal">
-    <div class="modal-content" style="max-width: 700px;">
-        <button class="close-btn" onclick="cerrarModal('modalUsuarios')">&times;</button>
-        <h2 style="margin-top: 0; color: var(--btn-danger);">👥 Gestión de Usuarios</h2>
-        <div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <h3 style="margin-top:0; color: var(--btn-primary);" id="tituloFormUsuario">Crear Nuevo Usuario</h3>
-            <input type="hidden" id="adminUsuarioId">
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="adminUsuarioNombre" placeholder="Nombre completo" style="width: 50%;">
-                <select id="adminUsuarioRol" style="width: 50%;">
-                    <option value="Publicista">Publicista</option>
-                    <option value="Supervisor">Supervisor</option>
-                    <option value="Admin">Administrador</option>
-                </select>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <input type="password" id="adminUsuarioClave" placeholder="Contraseña..." style="width: 50%;">
-                <input type="password" id="adminUsuarioClaveConf" placeholder="Confirmar Contraseña..." style="width: 50%;">
-            </div>
-            <button class="btn btn-success" onclick="guardarUsuarioAdmin()" style="width: 100%; margin-top: 10px;">Guardar Usuario</button>
-            <button class="btn btn-dark oculto" id="btnCancelarEdicionUsuario" onclick="cancelarEdicionUsuario()" style="width: 100%; margin-top: 10px;">Cancelar Edición</button>
-        </div>
-        <table>
-            <thead><tr><th>ID</th><th>Nombre</th><th>Rol</th><th>Acciones</th></tr></thead>
-            <tbody id="tablaUsuariosAdmin"></tbody>
-        </table>
-    </div>
-</div>
-
+<!-- ================= MODALES ================= -->
+<div id="modalQRVisitante" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalQRVisitante')">&times;</button><h2 style="margin-top: 0; color: #20c997;">📲 Acceso Cinepolitos</h2><p style="font-size: 14px; color: gray;">Imprime este QR y pégalo en piso. Cualquiera que lo escanee podrá pedirte pósters directamente desde su celular.</p><div style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin: 15px 0;"><div id="qrVisitanteContainer"></div></div><button class="btn btn-primary" style="width: 100%; font-size: 16px;" onclick="imprimirQR()">🖨️ Imprimir Hoja QR</button></div></div>
+<div id="modalLogin" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalLogin')">&times;</button><h2 style="margin-top: 0; color: var(--btn-primary);">👤 Acceso Restringido</h2><input type="password" id="claveAcceso" placeholder="Contraseña..." style="width: 90%; text-align:center; font-size:18px;"><button class="btn btn-primary" onclick="iniciarSesion()" style="width: 95%; margin-top: 15px;">Ingresar</button></div></div>
+<div id="modalPerfil" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalPerfil')">&times;</button><h2 style="margin-top: 0;">⚙️ Editar Mi Perfil</h2><input type="text" id="perfilNombre" style="width: 100%; margin-bottom: 15px;"><input type="password" id="perfilClave" placeholder="Nueva contraseña (opcional)..." style="width: 100%;"><input type="password" id="perfilClaveConf" placeholder="Confirma tu nueva contraseña..." style="width: 100%;"><button class="btn btn-success" onclick="guardarPerfil()" style="width: 100%; margin-top: 10px;">Guardar Cambios</button></div></div>
+<div id="modalUsuarios" class="modal"><div class="modal-content" style="max-width: 700px;"><button class="close-btn" onclick="cerrarModal('modalUsuarios')">&times;</button><h2 style="margin-top: 0; color: var(--btn-danger);">👥 Gestión de Usuarios</h2><div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 20px;"><h3 style="margin-top:0; color: var(--btn-primary);" id="tituloFormUsuario">Crear Nuevo Usuario</h3><input type="hidden" id="adminUsuarioId"><div style="display: flex; gap: 10px;"><input type="text" id="adminUsuarioNombre" placeholder="Nombre completo" style="width: 50%;"><select id="adminUsuarioRol" style="width: 50%;"><option value="Publicista">Publicista</option><option value="Supervisor">Supervisor</option><option value="Subgerente">Subgerente (VIP)</option><option value="Admin">Administrador</option></select></div><div style="display: flex; gap: 10px;"><input type="password" id="adminUsuarioClave" placeholder="Contraseña..." style="width: 50%;"><input type="password" id="adminUsuarioClaveConf" placeholder="Confirmar Contraseña..." style="width: 50%;"></div><button class="btn btn-success" onclick="guardarUsuarioAdmin()" style="width: 100%; margin-top: 10px;">Guardar Usuario</button><button class="btn btn-dark oculto" id="btnCancelarEdicionUsuario" onclick="cancelarEdicionUsuario()" style="width: 100%; margin-top: 10px;">Cancelar Edición</button></div><table><thead><tr><th>ID</th><th>Nombre</th><th>Rol</th><th>Acciones</th></tr></thead><tbody id="tablaUsuariosAdmin"></tbody></table></div></div>
 <div id="modalCategorias" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalCategorias')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">🏷️ Gestión de Categorías</h2><div style="display:flex; gap:10px; margin-bottom:20px;"><input type="hidden" id="catIdEdit"><input type="text" id="catNombre" placeholder="Nueva Categoría" style="width:100%;"><button class="btn btn-success" onclick="guardarCategoria()">Guardar</button></div><table><thead><tr><th>Categoría</th><th>Acciones</th></tr></thead><tbody id="tablaCategorias"></tbody></table></div></div>
 <div id="modalProducto" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button><h2 style="margin-top: 0;">Registro Individual</h2><input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" required><select id="categoria" class="select-dinamico-cat" style="width:100%;"></select><input type="number" id="cantidadTotal" placeholder="Cantidad Total Recibida" style="width:100%;" min="1" required><button class="btn btn-primary" onclick="guardarProducto()" style="width: 100%;">Guardar Registro</button></div></div>
 <div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">⚡ Ingreso Masivo de Productos</h2><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn btn-admin" style="float:right;" onclick="guardarIngresoMasivo()">Guardar Todo en BD</button></div></div>
@@ -132,13 +84,11 @@
 <div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados y Entregas</h2><h3>🟡 Esperando Autorización</h3><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th></tr></thead><tbody id="tablaPendientes"></tbody></table><h3 style="margin-top: 30px;">🟢 Aprobadas (Listas para Entregar)</h3><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div>
 <div id="modalGrupo" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button><h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2><input type="text" id="nombreGrupo" placeholder="Nombre de la Caja" style="width:100%;" required><div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px;"></div><button id="btnGuardarCaja" class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo</button></div></div>
 
+<!-- ================= SCRIPTS ================= -->
 <script>
+    // 🛡️ ESCUDO ANTI-ROBO
     document.addEventListener('contextmenu', event => event.preventDefault()); 
-    document.addEventListener('keydown', event => {
-        if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) {
-            event.preventDefault(); 
-        }
-    });
+    document.addEventListener('keydown', event => { if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); });
     document.body.style.userSelect = "none"; 
 
     const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
@@ -170,35 +120,23 @@
     function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
+    // --- GENERADOR DE QR ---
     function abrirModalQRVisitante() {
         const urlMagica = window.location.href.split('?')[0] + "?modo=visitante";
         document.getElementById('qrVisitanteContainer').innerHTML = "";
         new QRCode(document.getElementById('qrVisitanteContainer'), { text: urlMagica, width: 200, height: 200, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
         abrirModal('modalQRVisitante');
     }
-
-    function imprimirQR() {
-        const contenidoQR = document.getElementById('qrVisitanteContainer').innerHTML;
-        const ventana = window.open('', '_blank');
-        ventana.document.write(`<html><head><title>QR Cinepolitos</title></head><body style="text-align:center; font-family:sans-serif; margin-top:50px;"><h1 style="color:#0d6efd;">Catálogo de Publicidad</h1><h2>Escanéame para pedir pósters 📱</h2><p>Usa la cámara de tu celular, busca tu póster y anota tu nombre.</p><div style="margin-top: 30px; display:flex; justify-content:center;">${contenidoQR}</div></body></html>`);
-        ventana.document.close(); setTimeout(() => ventana.print(), 500); 
-    }
+    function imprimirQR() { const contenidoQR = document.getElementById('qrVisitanteContainer').innerHTML; const ventana = window.open('', '_blank'); ventana.document.write(`<html><head><title>QR Cinepolitos</title></head><body style="text-align:center; font-family:sans-serif; margin-top:50px;"><h1 style="color:#0d6efd;">Catálogo de Publicidad</h1><h2>Escanéame para pedir pósters 📱</h2><p>Usa la cámara de tu celular, busca tu póster y anota tu nombre.</p><div style="margin-top: 30px; display:flex; justify-content:center;">${contenidoQR}</div></body></html>`); ventana.document.close(); setTimeout(() => ventana.print(), 500); }
 
     function cargarCategoriasGlobales() {
-        fetch(API_CATEGORIAS)
-        .then(res => res.json())
-        .then(data => {
+        fetch(API_CATEGORIAS).then(res => res.json()).then(data => {
             listaCategorias = data;
             const filtro = document.getElementById('filtroCategoria');
             filtro.innerHTML = '<option value="Todos">Todas las categorías</option>';
             data.forEach(c => filtro.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`);
-            document.querySelectorAll('.select-dinamico-cat, .masivo-cat').forEach(sel => {
-                let actual = sel.value; sel.innerHTML = '';
-                data.forEach(c => sel.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`);
-                if(actual) sel.value = actual;
-            });
-        })
-        .catch(err => console.log("Omitiendo categorías por ahora..."));
+            document.querySelectorAll('.select-dinamico-cat, .masivo-cat').forEach(sel => { let actual = sel.value; sel.innerHTML = ''; data.forEach(c => sel.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); if(actual) sel.value = actual; });
+        }).catch(err => console.log("Omitiendo categorías..."));
     }
 
     function abrirModalCategorias() { fetch(API_CATEGORIAS).then(res => res.json()).then(data => { const tb = document.getElementById('tablaCategorias'); tb.innerHTML = ''; data.forEach(c => { tb.innerHTML += `<tr><td><strong>${c.Nombre}</strong></td><td><button class="btn btn-info" style="padding:5px;" onclick="editarCategoria(${c.ID_Categoria}, '${c.Nombre}')">✏️</button> <button class="btn btn-danger" style="padding:5px;" onclick="eliminarCategoria(${c.ID_Categoria})">🗑️</button></td></tr>`; }); abrirModal('modalCategorias'); }); }
@@ -210,109 +148,54 @@
         if(localStorage.getItem('rolCine')) { rolUsuario = localStorage.getItem('rolCine'); idUsuario = localStorage.getItem('idCine'); nombreUsuario = localStorage.getItem('nombreCine'); } 
         else { rolUsuario = 'General'; localStorage.setItem('rolCine', 'General'); }
         configurarInterfaz(); cargarTabla();
-        if (rolUsuario === 'Supervisor' || rolUsuario === 'Admin') revisarSolicitudesPendientes();
+        if (rolUsuario === 'Supervisor' || rolUsuario === 'Admin' || rolUsuario === 'Subgerente') revisarSolicitudesPendientes();
     }
 
     function iniciarSesion() {
         const claveTexto = document.getElementById('claveAcceso').value; 
         fetch(API_LOGIN, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({clave: claveTexto}) })
         .then(res => { if(!res.ok) throw new Error('Contraseña incorrecta'); return res.json(); })
-        .then(user => {
-            localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre);
-            document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion();
-        }).catch(err => alert(err.message));
+        .then(user => { localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); }).catch(err => alert(err.message));
     }
-
-    function cerrarSesion() { 
-        localStorage.setItem('rolCine', 'General'); 
-        localStorage.removeItem('idCine'); 
-        localStorage.removeItem('nombreCine'); 
-        location.reload(); 
-    }
+    function cerrarSesion() { localStorage.setItem('rolCine', 'General'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine'); location.reload(); }
 
     function configurarInterfaz() {
         let textoEtiqueta = rolUsuario;
         if(rolUsuario === 'Visitante') textoEtiqueta = '🎫 Cinepolito';
         else if (nombreUsuario && rolUsuario !== 'General') textoEtiqueta = `${rolUsuario}: ${nombreUsuario}`;
         
-        document.getElementById('etiquetaRol').innerText = `(${textoEtiqueta})`;
+        const badge = document.getElementById('etiquetaRol');
+        badge.innerText = `(${textoEtiqueta})`;
+        
+        // Asigna el color VIP a Jacqueline
+        badge.className = 'rol-badge'; 
+        if (rolUsuario === 'Subgerente') badge.classList.add('badge-subgerente');
+        
         document.querySelectorAll('.req-staff, .req-admin, .req-auth').forEach(el => el.classList.remove('oculto'));
 
         if(rolUsuario === 'General' || rolUsuario === 'Visitante') {
-            document.getElementById('btnIngresar').classList.remove('oculto'); 
-            document.getElementById('btnSalir').classList.add('oculto'); 
-            document.getElementById('btnPerfil').classList.add('oculto');
+            document.getElementById('btnIngresar').classList.remove('oculto'); document.getElementById('btnSalir').classList.add('oculto'); document.getElementById('btnPerfil').classList.add('oculto');
             document.querySelectorAll('.req-staff, .req-admin').forEach(el => el.classList.add('oculto'));
         } else {
-            document.getElementById('btnIngresar').classList.add('oculto'); 
-            document.getElementById('btnSalir').classList.remove('oculto'); 
-            document.getElementById('btnPerfil').classList.remove('oculto');
+            document.getElementById('btnIngresar').classList.add('oculto'); document.getElementById('btnSalir').classList.remove('oculto'); document.getElementById('btnPerfil').classList.remove('oculto');
             if(rolUsuario === 'Publicista') { document.querySelectorAll('.req-admin, .req-auth').forEach(el => el.classList.add('oculto')); } 
             else if(rolUsuario === 'Supervisor') { document.querySelectorAll('.req-admin').forEach(el => el.classList.add('oculto')); }
+            // Nota: "Admin" y "Subgerente" tienen los mismos privilegios, así que no se les oculta nada.
         }
     }
 
-    function abrirModalUsuarios() { fetch(API_USUARIOS).then(res => res.json()).then(data => { const tb = document.getElementById('tablaUsuariosAdmin'); tb.innerHTML = ''; data.forEach(u => { tb.innerHTML += `<tr><td>${u.ID_Usuario}</td><td><strong>${u.Nombre}</strong></td><td><span class="rol-badge">${u.Rol}</span></td><td><button class="btn btn-info" style="padding: 5px;" onclick="editarUsuarioAdmin(${u.ID_Usuario}, '${u.Nombre}', '${u.Rol}')">✏️</button> <button class="btn btn-danger" style="padding: 5px;" onclick="eliminarUsuarioAdmin(${u.ID_Usuario})">🗑️</button></td></tr>`; }); abrirModal('modalUsuarios'); }); }
-    
-    function guardarUsuarioAdmin() { 
-        const id = document.getElementById('adminUsuarioId').value; 
-        const nombre = document.getElementById('adminUsuarioNombre').value.trim(); 
-        const rol = document.getElementById('adminUsuarioRol').value; 
-        const clave = document.getElementById('adminUsuarioClave').value; 
-        const claveConf = document.getElementById('adminUsuarioClaveConf').value;
-        
-        if(!nombre) return alert("El nombre es obligatorio");
-        if(clave !== claveConf) return alert("❌ Error Humano: Las contraseñas no coinciden. Escríbelas de nuevo.");
-        if(!id && !clave) return alert("❌ Error: Necesitas ponerle una contraseña a un usuario nuevo.");
-
-        fetch(id ? `${API_USUARIOS}/${id}` : API_USUARIOS, { method: id ? 'PUT' : 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(id ? {nombre, rol, clave} : {nombre, rol, clave}) })
-        .then(() => { alert("Usuario guardado con éxito."); cancelarEdicionUsuario(); abrirModalUsuarios(); }); 
-    }
-
+    function abrirModalUsuarios() { fetch(API_USUARIOS).then(res => res.json()).then(data => { const tb = document.getElementById('tablaUsuariosAdmin'); tb.innerHTML = ''; data.forEach(u => { tb.innerHTML += `<tr><td>${u.ID_Usuario}</td><td><strong>${u.Nombre}</strong></td><td><span class="rol-badge ${u.Rol === 'Subgerente' ? 'badge-subgerente' : ''}">${u.Rol}</span></td><td><button class="btn btn-info" style="padding: 5px;" onclick="editarUsuarioAdmin(${u.ID_Usuario}, '${u.Nombre}', '${u.Rol}')">✏️</button> <button class="btn btn-danger" style="padding: 5px;" onclick="eliminarUsuarioAdmin(${u.ID_Usuario})">🗑️</button></td></tr>`; }); abrirModal('modalUsuarios'); }); }
+    function guardarUsuarioAdmin() { const id = document.getElementById('adminUsuarioId').value; const nombre = document.getElementById('adminUsuarioNombre').value.trim(); const rol = document.getElementById('adminUsuarioRol').value; const clave = document.getElementById('adminUsuarioClave').value; const claveConf = document.getElementById('adminUsuarioClaveConf').value; if(!nombre) return alert("El nombre es obligatorio"); if(clave !== claveConf) return alert("❌ Error Humano: Las contraseñas no coinciden. Escríbelas de nuevo."); if(!id && !clave) return alert("❌ Error: Necesitas ponerle una contraseña a un usuario nuevo."); fetch(id ? `${API_USUARIOS}/${id}` : API_USUARIOS, { method: id ? 'PUT' : 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(id ? {nombre, rol, clave} : {nombre, rol, clave}) }).then(() => { alert("Usuario guardado con éxito."); cancelarEdicionUsuario(); abrirModalUsuarios(); }); }
     function editarUsuarioAdmin(id, nombre, rol) { document.getElementById('adminUsuarioId').value = id; document.getElementById('adminUsuarioNombre').value = nombre; document.getElementById('adminUsuarioRol').value = rol; document.getElementById('btnCancelarEdicionUsuario').classList.remove('oculto'); }
     function cancelarEdicionUsuario() { document.getElementById('adminUsuarioId').value = ''; document.getElementById('adminUsuarioNombre').value = ''; document.getElementById('adminUsuarioClave').value = ''; document.getElementById('adminUsuarioClaveConf').value = ''; document.getElementById('btnCancelarEdicionUsuario').classList.add('oculto'); }
     function eliminarUsuarioAdmin(id) { if(id == idUsuario) return alert("❌ No puedes borrarte a ti mismo."); if(confirm("¿Eliminar usuario?")) { fetch(`${API_USUARIOS}/${id}`, { method: 'DELETE' }).then(() => abrirModalUsuarios()); } }
     
     function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; abrirModal('modalPerfil'); }
-    
-    function guardarPerfil() { 
-        const nombre = document.getElementById('perfilNombre').value; 
-        const clave = document.getElementById('perfilClave').value; 
-        const claveConf = document.getElementById('perfilClaveConf').value;
-        
-        if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden. Escríbelas de nuevo.");
+    function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden. Escríbelas de nuevo."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); } }); }
 
-        fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) })
-        .then(() => { alert("Perfil actualizado."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); } }); 
-    }
-
-    // INVENTARIO
-    function cargarTabla() { 
-        fetch(API_URL)
-        .then(res => {
-            if(!res.ok) throw new Error("Fallo de conexión con PythonAnywhere (" + res.status + ")");
-            return res.json();
-        })
-        .then(data => { 
-            if(!Array.isArray(data)) throw new Error("La base de datos devolvió un formato incorrecto.");
-            datosInventario = data; 
-            renderizarTabla(); 
-        })
-        .catch(err => {
-            document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center; padding: 20px;"><b>🛑 Error Detectado:</b> ${err.message}.<br><br>👉 <b>Solución:</b> Ve a PythonAnywhere, asegúrate de haber dado clic a <b>Save</b> y presiona el botón verde grande que dice <b>Reload</b>.</td></tr>`;
-        }); 
-    }
-
-    function renderizarTabla() {
-        const tbody = document.getElementById('tablaCuerpo'); const filtro = document.getElementById('filtroCategoria').value;
-        tbody.innerHTML = '';
-        if(datosInventario.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío o cargando...</td></tr>`; return; }
-
-        datosInventario.filter(item => filtro === "Todos" || item.Categoria === filtro).forEach(item => {
-            const btnBorrar = rolUsuario === 'Admin' ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : '';
-            tbody.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnBorrar}</td></tr>`;
-        });
-    }
+    // --- INVENTARIO Y DETECTOR DE ERRORES ---
+    function cargarTabla() { fetch(API_URL).then(res => { if(!res.ok) throw new Error("Fallo de conexión con PythonAnywhere (" + res.status + ")"); return res.json(); }).then(data => { if(!Array.isArray(data)) throw new Error("La base de datos devolvió un formato incorrecto."); datosInventario = data; renderizarTabla(); }).catch(err => { document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center; padding: 20px;"><b>🛑 Error Detectado:</b> ${err.message}.<br><br>👉 <b>Solución:</b> Ve a PythonAnywhere, asegúrate de haber dado clic a <b>Save</b> y presiona el botón verde grande que dice <b>Reload</b>.</td></tr>`; }); }
+    function renderizarTabla() { const tbody = document.getElementById('tablaCuerpo'); const filtro = document.getElementById('filtroCategoria').value; tbody.innerHTML = ''; if(datosInventario.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío o cargando...</td></tr>`; return; } datosInventario.filter(item => filtro === "Todos" || item.Categoria === filtro).forEach(item => { const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; tbody.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnBorrar}</td></tr>`; }); }
 
     function guardarProducto() { fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: document.getElementById('nombre').value, categoria: document.getElementById('categoria').value, cantidad_total: parseInt(document.getElementById('cantidadTotal').value) }) }).then(() => { cerrarModal('modalProducto'); cargarTabla(); }); }
     function eliminarProducto(id) { if(confirm("¿Eliminar registro?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
@@ -320,11 +203,9 @@
     function abrirModalMasivo() { document.getElementById('cuerpoMasivo').innerHTML = ''; agregarFilaMasivo(); abrirModal('modalMasivo'); }
     function guardarIngresoMasivo() { let productos = []; document.querySelectorAll('.fila-masiva').forEach(fila => { productos.push({ nombre: fila.querySelector('.masivo-nombre').value, categoria: fila.querySelector('.masivo-cat').value, cantidad_total: parseInt(fila.querySelector('.masivo-cant').value) }); }); fetch(API_URL + '/masivo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productos) }).then(() => { cerrarModal('modalMasivo'); cargarTabla(); }); }
 
-    // GRUPOS
     function abrirModalGrupo() { fetch(API_URL).then(res => res.json()).then(data => { const lista = document.getElementById('listaProductosGrupo'); lista.innerHTML = ''; data.forEach(p => { lista.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer;"><input type="checkbox" class="check-grupo" value="${p.ID_Publicidad}"> <span><strong>${p.Nombre_Material}</strong> <small style="color:var(--btn-success);">Bodega: ${p.Cantidad_Guardados}</small></span></label>`; }); abrirModal('modalGrupo'); }); }
     function guardarGrupo() { const nombre = document.getElementById('nombreGrupo').value.trim(); const checks = Array.from(document.querySelectorAll('.check-grupo:checked')).map(cb => parseInt(cb.value)); if(!nombre || checks.length === 0) return alert("Faltan datos."); document.getElementById('btnGuardarCaja').disabled = true; fetch(API_GRUPOS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, productos: checks }) }).then(() => { alert("Grupo creado."); cerrarModal('modalGrupo'); document.getElementById('nombreGrupo').value = ''; cargarTabla(); }).finally(() => { document.getElementById('btnGuardarCaja').disabled = false; }); }
 
-    // RESERVAS 
     function revisarSolicitudesPendientes() { fetch(API_RESERVAS).then(res => res.json()).then(data => { if(data.pendientes.length > 0) { const tb = document.getElementById('tablaAlertasAutorizacion'); tb.innerHTML = ''; data.pendientes.forEach(r => { tb.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><button class="btn btn-success" style="padding:5px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️</button> <button class="btn btn-danger" style="padding:5px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌</button></td></tr>`; }); abrirModal('modalAlertasSupervisor'); } }); }
     function autorizarSolicitud(id, accion) { fetch(`${API_RESERVAS}/${id}/autorizar`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({accion}) }).then(() => { cerrarModal('modalAlertasSupervisor'); cargarTabla(); revisarSolicitudesPendientes(); }); }
     function abrirModalReservas() { fetch(API_RESERVAS).then(res => res.json()).then(data => { document.getElementById('tablaPendientes').innerHTML = data.pendientes.map(r => `<tr><td>${r.Nombre_Material}</td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td></tr>`).join(''); document.getElementById('tablaAprobadas').innerHTML = data.aprobados.map(r => `<tr><td>${r.Nombre_Material}</td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><button class="btn btn-success" onclick="fetch('${API_RESERVAS}/${r.ID_Reserva}/entregar', {method: 'PUT'}).then(()=>abrirModalReservas())">Entregar</button></td></tr>`).join(''); abrirModal('modalReservas'); }); }
