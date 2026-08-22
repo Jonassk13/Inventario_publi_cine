@@ -81,7 +81,6 @@
         <button class="btn btn-info" onclick="document.getElementById('archivoExcel').click()">🪄 Sugerir por Excel</button>
         <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
         
-        <!-- BOTÓN MÁGICO PARA INSTALAR TODO DE GOLPE -->
         <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Todo</button>
         
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
@@ -118,8 +117,6 @@
     const API_CARTELERAS = 'https://jonassk13.pythonanywhere.com/api/carteleras';
     const API_INVENTARIO = 'https://jonassk13.pythonanywhere.com/api/inventario';
     let slotSeleccionado = null;
-    
-    // GUARDAMOS LAS SUGERENCIAS EN MEMORIA PARA QUE NO DESAPAREZCAN
     let sugerenciasGlobales = [];
 
     window.onload = () => {
@@ -149,10 +146,7 @@
             document.getElementById('ala-izquierda').innerHTML = alaIzquierda.map(c => crearSlotEstandar(c)).join('');
             document.getElementById('ala-derecha').innerHTML = alaDerecha.map(c => crearSlotEstandar(c)).join('');
             
-            // Re-dibujamos las sugerencias flotantes si hay alguna guardada en memoria
-            if (sugerenciasGlobales.length > 0) {
-                dibujarSugerenciasEnPantalla(mostrarAlerta);
-            }
+            if (sugerenciasGlobales.length > 0) dibujarSugerenciasEnPantalla(mostrarAlerta);
         });
     }
 
@@ -182,17 +176,13 @@
     }
 
     /* ============================================================== */
-    /* INTELIGENCIA DE BÚSQUEDA AVANZADA (RegEx y Normalización)      */
+    /* INTELIGENCIA ALGORÍTMICA (Anti-Inanición y Anti-Repetición)    */
     /* ============================================================== */
     function limpiarTitulo(titulo) {
         if (!titulo) return "";
-        // 1. Quitar acentos (Normalización NFD)
         let limpio = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-        // 2. Quitar etiquetas de cinepolitos (ESP, SUB, 3D, ATMOS, FINB, etc)
         limpio = limpio.replace(/\b(ESP|SUB|3D|IMAX|4DX|SJ|XE|ATMOS|SP|LED|SCREENX|2D|FINB|Live Action|Versión Extendida)\b/gi, '');
-        // 3. Eliminar caracteres especiales (como guiones, dos puntos) para que "Spider-Man" sea "Spiderman"
         limpio = limpio.replace(/[^a-zA-Z0-9\s]/g, '');
-        // 4. Quitar espacios dobles y pasar a minúsculas
         return limpio.replace(/\s+/g, ' ').trim().toLowerCase();
     }
 
@@ -208,7 +198,6 @@
             const jsonRaw = XLSX.utils.sheet_to_json(worksheet, {header: 1});
             
             let headerRowIndex = 0;
-            // Buscamos dinámicamente dónde empiezan los encabezados
             for (let i = 0; i < Math.min(15, jsonRaw.length); i++) {
                 if (jsonRaw[i] && jsonRaw[i].map(c => String(c).trim().toLowerCase()).includes('película')) {
                     headerRowIndex = i; break;
@@ -217,7 +206,7 @@
             
             let datosExcel = XLSX.utils.sheet_to_json(worksheet, {range: headerRowIndex});
             
-            // FILTRO ESTRICTO: Solo filas que sean de Plaza Morelia
+            // Filtro Plaza Morelia
             let datosMorelia = datosExcel.filter(row => {
                 let cine = (row['Cine'] || '').toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 return cine.includes('cinepolis plaza morelia') || cine.includes('plaza morelia');
@@ -237,7 +226,6 @@
     function generarSugerencias(datosMorelia) {
         let conteoSala = {}; 
 
-        // Extraemos las películas y asignamos el número de sala
         datosMorelia.forEach(row => {
             let sala = parseInt(row['Sala']);
             let peliRaw = row['Película'];
@@ -254,27 +242,29 @@
             topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; 
         }
         
-        // MAPEO EXACTO DE SALAS ESPECIALES (Las que definiste)
-        let topSP = [...new Set([...(topPorSala[1]||[]), ...(topPorSala[4]||[])])]; // Salas 1 y 4 a Pluus
-        let topScreenX = topPorSala[7] || []; // Sala 7 a ScreenX
-        let top4DX = topPorSala[8] || []; // Sala 8 a 4DX
-        let topSJ = topPorSala[17] || []; // Sala 17 a Junior
+        let topSP = [...new Set([...(topPorSala[1]||[]), ...(topPorSala[4]||[])])]; 
+        let topScreenX = topPorSala[7] || []; 
+        let top4DX = topPorSala[8] || []; 
+        let topSJ = topPorSala[17] || []; 
 
         fetch(API_INVENTARIO).then(res => res.json()).then(inventarioData => {
             let inventario = inventarioData.filter(p => p.Categoria === 'Poster' && p.Cantidad_Guardados > 0);
             
-            sugerenciasGlobales = []; // Reiniciamos la memoria global
+            sugerenciasGlobales = []; 
             
-            let usadosTaquilla = new Set(); let usadosIzquierda = new Set(); let usadosDerecha = new Set();
+            // Memoria Anti-Duplicación (Por Cartón Físico y por Película)
+            let usadosTaquillaIds = new Set(); let peliculasTaquilla = new Set();
+            let usadosIzquierdaIds = new Set(); let peliculasIzquierda = new Set();
+            let usadosDerechaIds = new Set(); let peliculasDerecha = new Set();
 
-            function buscarPoster(peliLimpia, usadosSet) {
+            function buscarPoster(peliLimpia, usadosIdsSet, peliculasUsadasSet) {
+                // BLINDAJE 1: Si esta película ya se sugirió en esta zona, bloquea la repetición.
+                if (peliculasUsadasSet.has(peliLimpia)) return null;
+
                 for (let i = 0; i < inventario.length; i++) {
                     let p = inventario[i];
-                    if (p.Cantidad_Guardados > 0 && !usadosSet.has(p.ID_Publicidad)) {
-                        // Limpiamos el nombre de la BD para que quede igual que el del Excel
+                    if (p.Cantidad_Guardados > 0 && !usadosIdsSet.has(p.ID_Publicidad)) {
                         let nombreInvLimpio = limpiarTitulo(p.Nombre_Material).replace(/poster/gi, '').trim();
-                        
-                        // Si es igual, o uno está contenido dentro del otro, lo damos por bueno
                         if (nombreInvLimpio === peliLimpia || peliLimpia.includes(nombreInvLimpio) || nombreInvLimpio.includes(peliLimpia)) {
                             return p;
                         }
@@ -283,54 +273,62 @@
                 return null;
             }
 
-            // ================= ASIGNACIÓN AL MURO DE TAQUILLA =================
-            function asignarMuro(listaPeliculas, slotsPermitidos) {
+            function asignarMuro(listaPeliculas, slotsPermitidos, usadosIdsSet, peliculasUsadasSet) {
                 let asignados = 0;
                 for(let peli of listaPeliculas) {
                     if (asignados >= slotsPermitidos.length) break;
-                    let match = buscarPoster(peli, usadosTaquilla);
+                    let match = buscarPoster(peli, usadosIdsSet, peliculasUsadasSet);
                     if (match) {
-                        usadosTaquilla.add(match.ID_Publicidad);
+                        usadosIdsSet.add(match.ID_Publicidad);
+                        peliculasUsadasSet.add(peli); // Memoria activa: Película registrada en la pared
                         match.Cantidad_Guardados--;
                         sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
                         asignados++;
                     }
                 }
             }
-            asignarMuro(topSP, [1, 2]);       // Pluus (Salas 1 y 4)
-            asignarMuro(top4DX, [3, 4]);      // 4DX (Sala 8)
-            asignarMuro(topScreenX, [5, 6]);  // ScreenX (Sala 7)
-            asignarMuro(topSJ, [7]);          // Junior (Sala 17)
 
-            // ================= ASIGNACIÓN A PASILLOS =================
-            // Ala Izquierda: Salas 1 a 7 (Mapeadas a los slots del 8 al 14)
-            for(let i = 0; i <= 6; i++) {
-                let pelis = topPorSala[1 + i] || [];
+            // BLINDAJE 2: ORDEN DE PRIORIDAD. 
+            // Evaluamos primero a los formatos que tienen MENOS películas disponibles (como Junior o ScreenX)
+            // para evitar que 4DX o Pluus les "roben" sus únicas opciones.
+            asignarMuro(topSJ, [7], usadosTaquillaIds, peliculasTaquilla);          // Junior (1 Sala)
+            asignarMuro(topScreenX, [5, 6], usadosTaquillaIds, peliculasTaquilla);  // ScreenX (1 Sala)
+            asignarMuro(top4DX, [3, 4], usadosTaquillaIds, peliculasTaquilla);      // 4DX (1 Sala)
+            asignarMuro(topSP, [1, 2], usadosTaquillaIds, peliculasTaquilla);       // Pluus (2 Salas)
+
+            // BLINDAJE 3: ALGORITMO GREEDY (Los más necesitados primero) para pasillos.
+            // Ordenamos las salas para procesar primero a las que tienen menos variedad de películas.
+            let ordenIzquierda = [1, 2, 3, 4, 5, 6, 7].sort((a, b) => (topPorSala[a]?.length || 0) - (topPorSala[b]?.length || 0));
+            for(let sala of ordenIzquierda) {
+                let pelis = topPorSala[sala] || [];
                 for(let peli of pelis) {
-                    let match = buscarPoster(peli, usadosIzquierda);
-                    if (match) { 
-                        usadosIzquierda.add(match.ID_Publicidad); 
-                        match.Cantidad_Guardados--; 
-                        sugerenciasGlobales.push({ slot: 8 + i, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material }); 
-                        break; 
+                    let match = buscarPoster(peli, usadosIzquierdaIds, peliculasIzquierda);
+                    if (match) {
+                        usadosIzquierdaIds.add(match.ID_Publicidad);
+                        peliculasIzquierda.add(peli); // Registra la peli para no repetirla en este pasillo
+                        match.Cantidad_Guardados--;
+                        sugerenciasGlobales.push({ slot: 7 + sala, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
+                        break;
                     }
                 }
             }
-            // Ala Derecha: Salas 8 a 16 (Mapeadas a los slots del 15 al 23)
-            for(let i = 0; i <= 8; i++) {
-                let pelis = topPorSala[8 + i] || [];
+
+            let ordenDerecha = [8, 9, 10, 11, 12, 13, 14, 15, 16].sort((a, b) => (topPorSala[a]?.length || 0) - (topPorSala[b]?.length || 0));
+            for(let sala of ordenDerecha) {
+                let pelis = topPorSala[sala] || [];
                 for(let peli of pelis) {
-                    let match = buscarPoster(peli, usadosDerecha);
-                    if (match) { 
-                        usadosDerecha.add(match.ID_Publicidad); 
-                        match.Cantidad_Guardados--; 
-                        sugerenciasGlobales.push({ slot: 15 + i, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material }); 
-                        break; 
+                    let match = buscarPoster(peli, usadosDerechaIds, peliculasDerecha);
+                    if (match) {
+                        usadosDerechaIds.add(match.ID_Publicidad);
+                        peliculasDerecha.add(peli); // Registra la peli para no repetirla en este pasillo
+                        match.Cantidad_Guardados--;
+                        sugerenciasGlobales.push({ slot: 7 + sala, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
+                        break;
                     }
                 }
             }
             
-            dibujarSugerenciasEnPantalla(true); // Redibujar y lanzar alerta de éxito
+            dibujarSugerenciasEnPantalla(true);
         });
     }
 
@@ -353,42 +351,31 @@
         if(aplicadas > 0) {
             btnAll.style.display = 'inline-block';
             btnAll.innerText = `✔️ Instalar ${aplicadas} sugerencias de golpe`;
-            if(mostrarAlerta) alert(`¡Se generaron ${aplicadas} sugerencias para Plaza Morelia! Puedes instalarlas una por una o usar el botón verde de arriba.`);
+            if(mostrarAlerta) alert(`¡Se generaron ${aplicadas} sugerencias para Plaza Morelia sin repeticiones!`);
         } else {
             btnAll.style.display = 'none';
-            if(mostrarAlerta) alert("Todos los espacios están llenos o no tienes stock en bodega de las películas marcadas para Cinépolis Plaza Morelia.");
+            if(mostrarAlerta) alert("Todos los espacios están llenos o no tienes stock en bodega de las películas marcadas.");
         }
     }
 
-    // BOTÓN MÁGICO: INSTALAR TODAS
     async function instalarTodasSugerencias() {
         const slotsParaInstalar = [];
-        
-        // Verificamos qué sugerencias siguen vigentes (slots vacíos)
         sugerenciasGlobales.forEach(sug => {
             let slotDiv = document.getElementById('slot-div-' + sug.slot);
-            if (slotDiv && !slotDiv.classList.contains('lleno')) {
-                slotsParaInstalar.push(sug);
-            }
+            if (slotDiv && !slotDiv.classList.contains('lleno')) slotsParaInstalar.push(sug);
         });
 
         if (slotsParaInstalar.length === 0) return;
         
         const btn = document.getElementById('btnInstalarTodas');
-        btn.disabled = true;
-        btn.innerText = "Instalando...";
+        btn.disabled = true; btn.innerText = "Instalando...";
 
-        // Enviamos al backend una por una (Bucle asíncrono)
         for (let sug of slotsParaInstalar) {
-            await fetch(`${API_CARTELERAS}/${sug.slot}/asignar`, { 
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
-                body: JSON.stringify({ id_publicidad: sug.posterId }) 
-            });
+            await fetch(`${API_CARTELERAS}/${sug.slot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: sug.posterId }) });
         }
         
-        sugerenciasGlobales = []; // Limpiamos la memoria
-        btn.style.display = 'none';
-        btn.disabled = false;
+        sugerenciasGlobales = []; 
+        btn.style.display = 'none'; btn.disabled = false;
         alert("¡Todas las sugerencias fueron instaladas exitosamente en los pasillos!");
         cargarMapa(false);
     }
