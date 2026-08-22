@@ -5,6 +5,9 @@
     <title>Mapa de Carteleras</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545;}
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
+        
         /* 👑 TEMA VIP DE JACQUELINE */
         body.theme-jacqui {
             --primary: #0b5345; --btn-primary: #0b5345; 
@@ -14,8 +17,7 @@
             --warning: #fd7e14; --btn-reserva: #fd7e14; --admin-bg: #fd7e14;
         }
         body.theme-jacqui.dark-mode { --primary: #148f77; --btn-primary: #148f77; --danger: #873600; --btn-danger: #873600; }
-        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545;}
-        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
+        
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; gap: 10px;}
@@ -121,8 +123,8 @@
     let sugerenciasGlobales = [];
 
     window.onload = () => {
-        if(localStorage.getItem('rolCine') === 'Subgerente') { document.body.classList.add('theme-jacqui'); }
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+        if(localStorage.getItem('rolCine') === 'Subgerente') document.body.classList.add('theme-jacqui');
         cargarMapa();
     };
 
@@ -180,12 +182,18 @@
     }
 
     /* ============================================================== */
-    /* MÓDULO INTELIGENTE EXCEL: LECTURA DE SALAS EXACTAS             */
+    /* INTELIGENCIA DE BÚSQUEDA AVANZADA (RegEx y Normalización)      */
     /* ============================================================== */
     function limpiarTitulo(titulo) {
         if (!titulo) return "";
-        let limpio = titulo.replace(/\s+(ESP|SUB|3D|IMAX|4DX|SJ|XE|ATMOS|SP|LED|SCREENX|2D|FINB|Live Action|Versión Extendida)+\b/gi, '');
-        return limpio.replace(/\/2D/g, '').trim().toLowerCase();
+        // 1. Quitar acentos (Normalización NFD)
+        let limpio = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        // 2. Quitar etiquetas de cinepolitos (ESP, SUB, 3D, ATMOS, FINB, etc)
+        limpio = limpio.replace(/\b(ESP|SUB|3D|IMAX|4DX|SJ|XE|ATMOS|SP|LED|SCREENX|2D|FINB|Live Action|Versión Extendida)\b/gi, '');
+        // 3. Eliminar caracteres especiales (como guiones, dos puntos) para que "Spider-Man" sea "Spiderman"
+        limpio = limpio.replace(/[^a-zA-Z0-9\s]/g, '');
+        // 4. Quitar espacios dobles y pasar a minúsculas
+        return limpio.replace(/\s+/g, ' ').trim().toLowerCase();
     }
 
     function procesarExcel(event) {
@@ -200,6 +208,7 @@
             const jsonRaw = XLSX.utils.sheet_to_json(worksheet, {header: 1});
             
             let headerRowIndex = 0;
+            // Buscamos dinámicamente dónde empiezan los encabezados
             for (let i = 0; i < Math.min(15, jsonRaw.length); i++) {
                 if (jsonRaw[i] && jsonRaw[i].map(c => String(c).trim().toLowerCase()).includes('película')) {
                     headerRowIndex = i; break;
@@ -208,16 +217,15 @@
             
             let datosExcel = XLSX.utils.sheet_to_json(worksheet, {range: headerRowIndex});
             
-            // FILTRO ESTRICTO: Solo Plaza Morelia
+            // FILTRO ESTRICTO: Solo filas que sean de Plaza Morelia
             let datosMorelia = datosExcel.filter(row => {
-                let cine = (row['Cine'] || '').toString().toLowerCase();
-                let ciudad = (row['Ciudad'] || '').toString().toLowerCase();
-                return cine.includes('morelia') || ciudad.includes('morelia');
+                let cine = (row['Cine'] || '').toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                return cine.includes('cinepolis plaza morelia') || cine.includes('plaza morelia');
             });
             
             if (datosMorelia.length === 0) {
-                alert("⚠️ Precaución: No se detectó la palabra 'Morelia' en la columna de Cine o Ciudad. Se analizará todo el archivo por seguridad.");
-                datosMorelia = datosExcel;
+                alert("⚠️ Error: No se encontró 'Cinepolis Plaza Morelia' en la columna de 'Cine'. Revisa el archivo.");
+                return;
             }
             
             generarSugerencias(datosMorelia);
@@ -229,7 +237,7 @@
     function generarSugerencias(datosMorelia) {
         let conteoSala = {}; 
 
-        // Escaneamos las películas y en qué sala van
+        // Extraemos las películas y asignamos el número de sala
         datosMorelia.forEach(row => {
             let sala = parseInt(row['Sala']);
             let peliRaw = row['Película'];
@@ -246,7 +254,7 @@
             topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; 
         }
         
-        // MAPEO EXACTO DE SALAS ESPECIALES
+        // MAPEO EXACTO DE SALAS ESPECIALES (Las que definiste)
         let topSP = [...new Set([...(topPorSala[1]||[]), ...(topPorSala[4]||[])])]; // Salas 1 y 4 a Pluus
         let topScreenX = topPorSala[7] || []; // Sala 7 a ScreenX
         let top4DX = topPorSala[8] || []; // Sala 8 a 4DX
@@ -263,8 +271,13 @@
                 for (let i = 0; i < inventario.length; i++) {
                     let p = inventario[i];
                     if (p.Cantidad_Guardados > 0 && !usadosSet.has(p.ID_Publicidad)) {
-                        let n = limpiarTitulo(p.Nombre_Material).replace(/poster/gi, '').trim();
-                        if (n === peliLimpia || n.includes(peliLimpia) || peliLimpia.includes(n)) return p;
+                        // Limpiamos el nombre de la BD para que quede igual que el del Excel
+                        let nombreInvLimpio = limpiarTitulo(p.Nombre_Material).replace(/poster/gi, '').trim();
+                        
+                        // Si es igual, o uno está contenido dentro del otro, lo damos por bueno
+                        if (nombreInvLimpio === peliLimpia || peliLimpia.includes(nombreInvLimpio) || nombreInvLimpio.includes(peliLimpia)) {
+                            return p;
+                        }
                     }
                 }
                 return null;
@@ -340,10 +353,10 @@
         if(aplicadas > 0) {
             btnAll.style.display = 'inline-block';
             btnAll.innerText = `✔️ Instalar ${aplicadas} sugerencias de golpe`;
-            if(mostrarAlerta) alert(`¡Se generaron ${aplicadas} sugerencias mágicas! Puedes instalarlas una por una o usar el botón verde de arriba para instalarlas todas a la vez.`);
+            if(mostrarAlerta) alert(`¡Se generaron ${aplicadas} sugerencias para Plaza Morelia! Puedes instalarlas una por una o usar el botón verde de arriba.`);
         } else {
             btnAll.style.display = 'none';
-            if(mostrarAlerta) alert("Todos los espacios ya están llenos o no hay stock de las películas necesarias en bodega.");
+            if(mostrarAlerta) alert("Todos los espacios están llenos o no tienes stock en bodega de las películas marcadas para Cinépolis Plaza Morelia.");
         }
     }
 
@@ -409,7 +422,6 @@
     function confirmarSugerencia(event, idSlot, idPub) {
         event.stopPropagation();
         fetch(`${API_CARTELERAS}/${idSlot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idPub }) }).then(() => {
-            // Eliminamos la sugerencia de la memoria global para que no intente re-dibujarla
             sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== idSlot);
             cargarMapa(false);
         });
