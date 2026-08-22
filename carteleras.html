@@ -11,9 +11,10 @@
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; gap: 10px;}
         button.btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; }
-        button.btn:hover { opacity: 0.8; }
-        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000; } .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 10px; }
+        button.btn:hover { opacity: 0.8; } button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000; } .btn-success { background: var(--success); } .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 10px; }
 
+        /* MURO DE TAQUILLA FÍSICO */
         .muro-taquilla { background-color: #111; border: 8px solid #2a2a2a; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 700px; margin: 0 auto 30px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
         .muro-row { display: flex; align-items: center; justify-content: space-between;}
         
@@ -33,6 +34,7 @@
         .muro-slot.lleno { border: 2px solid #198754; background: rgba(25, 135, 84, 0.1); }
         .muro-slot.info-panel { border: 2px solid #333; background: #1a1a1a; color: #666; cursor: default; justify-content: center;}
         
+        /* PASILLOS */
         .mapa-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
         .zona { background: var(--box-bg); border-radius: 10px; padding: 25px 20px 20px 20px; position: relative; border-top: 5px solid gray; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
         .zona-titulo { position: absolute; top: -15px; left: 20px; background: var(--box-bg); padding: 5px 15px; font-weight: bold; font-size: 14px; border-radius: 15px; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
@@ -54,6 +56,7 @@
         .muro-slot .sugerencia-box { color: white; background: rgba(13, 202, 240, 0.3); }
         @keyframes parpadeo { from { box-shadow: 0 0 5px rgba(13, 202, 240, 0.2); } to { box-shadow: 0 0 15px rgba(13, 202, 240, 0.8); } }
 
+        /* MODAL */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; }
         select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; }
@@ -62,50 +65,30 @@
 <body>
 
 <div class="header">
-    <h1 style="margin:0;">🗺️ Plano de Exhibición: Plaza Morelia</h1>
+    <h1 style="margin:0;">🗺️ Plano de Exhibición</h1>
     <div style="display:flex; gap: 10px;">
         <button class="btn btn-info" onclick="document.getElementById('archivoExcel').click()">🪄 Sugerir por Excel</button>
         <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
+        
+        <!-- BOTÓN MÁGICO PARA INSTALAR TODO DE GOLPE -->
+        <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Todo</button>
+        
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
     </div>
 </div>
 
+<!-- ================= MURO DE TAQUILLA VIRTUAL ================= -->
 <div class="muro-taquilla">
-    <!-- PLUUS -->
-    <div class="muro-row">
-        <div class="muro-logo logo-pluus">PLUUS</div>
-        <div class="neon-divider"></div>
-        <div class="muro-posters" id="taquilla-pluus">Cargando...</div>
-    </div>
-    <!-- 4DX -->
-    <div class="muro-row">
-        <div class="muro-logo logo-4dx">4DX</div>
-        <div class="neon-divider"></div>
-        <div class="muro-posters" id="taquilla-4dx"></div>
-    </div>
-    <!-- SCREENX -->
-    <div class="muro-row">
-        <div class="muro-logo logo-screenx"><span class="rojo">MACROXE</span><span class="blanco">SCREENX</span></div>
-        <div class="neon-divider"></div>
-        <div class="muro-posters" id="taquilla-screenx"></div>
-    </div>
-    <!-- JUNIOR -->
-    <div class="muro-row">
-        <div class="muro-logo logo-jr">junior</div>
-        <div class="neon-divider"></div>
-        <div class="muro-posters" id="taquilla-jr"></div>
-    </div>
+    <div class="muro-row"><div class="muro-logo logo-pluus">PLUUS</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-pluus">Cargando...</div></div>
+    <div class="muro-row"><div class="muro-logo logo-4dx">4DX</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-4dx"></div></div>
+    <div class="muro-row"><div class="muro-logo logo-screenx"><span class="rojo">MACROXE</span><span class="blanco">SCREENX</span></div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-screenx"></div></div>
+    <div class="muro-row"><div class="muro-logo logo-jr">junior</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-jr"></div></div>
 </div>
 
+<!-- ================= PASILLOS ESTÁNDAR ================= -->
 <div class="mapa-container">
-    <div class="zona zona-izquierda">
-        <div class="zona-titulo">⬅️ Ala Izquierda (Salas 1 al 7)</div>
-        <div class="slots-grid" id="ala-izquierda"></div>
-    </div>
-    <div class="zona zona-derecha">
-        <div class="zona-titulo">➡️ Ala Derecha (Salas 8 al 16)</div>
-        <div class="slots-grid" id="ala-derecha"></div>
-    </div>
+    <div class="zona zona-izquierda"><div class="zona-titulo">⬅️ Ala Izquierda (Salas 1 al 7)</div><div class="slots-grid" id="ala-izquierda"></div></div>
+    <div class="zona zona-derecha"><div class="zona-titulo">➡️ Ala Derecha (Salas 8 al 16)</div><div class="slots-grid" id="ala-derecha"></div></div>
 </div>
 
 <div id="modalAsignar" class="modal">
@@ -124,6 +107,9 @@
     const API_CARTELERAS = 'https://jonassk13.pythonanywhere.com/api/carteleras';
     const API_INVENTARIO = 'https://jonassk13.pythonanywhere.com/api/inventario';
     let slotSeleccionado = null;
+    
+    // GUARDAMOS LAS SUGERENCIAS EN MEMORIA PARA QUE NO DESAPAREZCAN
+    let sugerenciasGlobales = [];
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
@@ -135,7 +121,7 @@
         localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
     }
 
-    function cargarMapa() {
+    function cargarMapa(mostrarAlerta = false) {
         fetch(API_CARTELERAS).then(res => res.json()).then(data => {
             
             document.getElementById('taquilla-pluus').innerHTML = [1, 2].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
@@ -150,6 +136,11 @@
             
             document.getElementById('ala-izquierda').innerHTML = alaIzquierda.map(c => crearSlotEstandar(c)).join('');
             document.getElementById('ala-derecha').innerHTML = alaDerecha.map(c => crearSlotEstandar(c)).join('');
+            
+            // Re-dibujamos las sugerencias flotantes si hay alguna guardada en memoria
+            if (sugerenciasGlobales.length > 0) {
+                dibujarSugerenciasEnPantalla(mostrarAlerta);
+            }
         });
     }
 
@@ -178,6 +169,9 @@
             </div>`;
     }
 
+    /* ============================================================== */
+    /* MÓDULO INTELIGENTE EXCEL: LECTURA DE SALAS EXACTAS             */
+    /* ============================================================== */
     function limpiarTitulo(titulo) {
         if (!titulo) return "";
         let limpio = titulo.replace(/\s+(ESP|SUB|3D|IMAX|4DX|SJ|XE|ATMOS|SP|LED|SCREENX|2D|FINB|Live Action|Versión Extendida)+\b/gi, '');
@@ -201,47 +195,57 @@
                     headerRowIndex = i; break;
                 }
             }
-            generarSugerencias(XLSX.utils.sheet_to_json(worksheet, {range: headerRowIndex}));
+            
+            let datosExcel = XLSX.utils.sheet_to_json(worksheet, {range: headerRowIndex});
+            
+            // FILTRO ESTRICTO: Solo Plaza Morelia
+            let datosMorelia = datosExcel.filter(row => {
+                let cine = (row['Cine'] || '').toString().toLowerCase();
+                let ciudad = (row['Ciudad'] || '').toString().toLowerCase();
+                return cine.includes('morelia') || ciudad.includes('morelia');
+            });
+            
+            if (datosMorelia.length === 0) {
+                alert("⚠️ Precaución: No se detectó la palabra 'Morelia' en la columna de Cine o Ciudad. Se analizará todo el archivo por seguridad.");
+                datosMorelia = datosExcel;
+            }
+            
+            generarSugerencias(datosMorelia);
         };
         reader.readAsArrayBuffer(file);
         event.target.value = '';
     }
 
-    function generarSugerencias(datosExcel) {
+    function generarSugerencias(datosMorelia) {
         let conteoSala = {}; 
-        let conteoSP = {}; let conteo4DX = {}; let conteoScreenX = {}; let conteoSJ = {};
 
-        datosExcel.forEach(row => {
+        // Escaneamos las películas y en qué sala van
+        datosMorelia.forEach(row => {
             let sala = parseInt(row['Sala']);
             let peliRaw = row['Película'];
             
-            if (peliRaw) {
+            if (peliRaw && !isNaN(sala)) {
                 let peliLimpia = limpiarTitulo(peliRaw);
-                
-                if (!isNaN(sala)) {
-                    if (!conteoSala[sala]) conteoSala[sala] = {};
-                    conteoSala[sala][peliLimpia] = (conteoSala[sala][peliLimpia] || 0) + 1;
-                }
-                
-                // Identificadores de formatos en Taquilla
-                if (/\bSP\b/i.test(peliRaw)) conteoSP[peliLimpia] = (conteoSP[peliLimpia] || 0) + 1;
-                if (/\b4DX\b/i.test(peliRaw)) conteo4DX[peliLimpia] = (conteo4DX[peliLimpia] || 0) + 1;
-                if (/\bSCREENX\b/i.test(peliRaw)) conteoScreenX[peliLimpia] = (conteoScreenX[peliLimpia] || 0) + 1;
-                if (/\bSJ\b/i.test(peliRaw)) conteoSJ[peliLimpia] = (conteoSJ[peliLimpia] || 0) + 1;
+                if (!conteoSala[sala]) conteoSala[sala] = {};
+                conteoSala[sala][peliLimpia] = (conteoSala[sala][peliLimpia] || 0) + 1;
             }
         });
 
         let topPorSala = {};
-        for (let s = 1; s <= 16; s++) { topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; }
+        for (let s = 1; s <= 20; s++) { 
+            topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; 
+        }
         
-        let topSP = Object.keys(conteoSP).sort((a, b) => conteoSP[b] - conteoSP[a]);
-        let top4DX = Object.keys(conteo4DX).sort((a, b) => conteo4DX[b] - conteo4DX[a]);
-        let topScreenX = Object.keys(conteoScreenX).sort((a, b) => conteoScreenX[b] - conteoScreenX[a]);
-        let topSJ = Object.keys(conteoSJ).sort((a, b) => conteoSJ[b] - conteoSJ[a]);
+        // MAPEO EXACTO DE SALAS ESPECIALES
+        let topSP = [...new Set([...(topPorSala[1]||[]), ...(topPorSala[4]||[])])]; // Salas 1 y 4 a Pluus
+        let topScreenX = topPorSala[7] || []; // Sala 7 a ScreenX
+        let top4DX = topPorSala[8] || []; // Sala 8 a 4DX
+        let topSJ = topPorSala[17] || []; // Sala 17 a Junior
 
         fetch(API_INVENTARIO).then(res => res.json()).then(inventarioData => {
             let inventario = inventarioData.filter(p => p.Categoria === 'Poster' && p.Cantidad_Guardados > 0);
-            let sugerencias = [];
+            
+            sugerenciasGlobales = []; // Reiniciamos la memoria global
             
             let usadosTaquilla = new Set(); let usadosIzquierda = new Set(); let usadosDerecha = new Set();
 
@@ -256,6 +260,7 @@
                 return null;
             }
 
+            // ================= ASIGNACIÓN AL MURO DE TAQUILLA =================
             function asignarMuro(listaPeliculas, slotsPermitidos) {
                 let asignados = 0;
                 for(let peli of listaPeliculas) {
@@ -264,38 +269,53 @@
                     if (match) {
                         usadosTaquilla.add(match.ID_Publicidad);
                         match.Cantidad_Guardados--;
-                        sugerencias.push({ slot: slotsPermitidos[asignados], posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
+                        sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
                         asignados++;
                     }
                 }
             }
-            asignarMuro(topSP, [1, 2]);       // Pluus
-            asignarMuro(top4DX, [3, 4]);      // 4DX
-            asignarMuro(topScreenX, [5, 6]);  // ScreenX
-            asignarMuro(topSJ, [7]);          // Junior
+            asignarMuro(topSP, [1, 2]);       // Pluus (Salas 1 y 4)
+            asignarMuro(top4DX, [3, 4]);      // 4DX (Sala 8)
+            asignarMuro(topScreenX, [5, 6]);  // ScreenX (Sala 7)
+            asignarMuro(topSJ, [7]);          // Junior (Sala 17)
 
+            // ================= ASIGNACIÓN A PASILLOS =================
+            // Ala Izquierda: Salas 1 a 7 (Mapeadas a los slots del 8 al 14)
             for(let i = 0; i <= 6; i++) {
                 let pelis = topPorSala[1 + i] || [];
                 for(let peli of pelis) {
                     let match = buscarPoster(peli, usadosIzquierda);
-                    if (match) { usadosIzquierda.add(match.ID_Publicidad); match.Cantidad_Guardados--; sugerencias.push({ slot: 8 + i, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material }); break; }
+                    if (match) { 
+                        usadosIzquierda.add(match.ID_Publicidad); 
+                        match.Cantidad_Guardados--; 
+                        sugerenciasGlobales.push({ slot: 8 + i, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material }); 
+                        break; 
+                    }
                 }
             }
+            // Ala Derecha: Salas 8 a 16 (Mapeadas a los slots del 15 al 23)
             for(let i = 0; i <= 8; i++) {
                 let pelis = topPorSala[8 + i] || [];
                 for(let peli of pelis) {
                     let match = buscarPoster(peli, usadosDerecha);
-                    if (match) { usadosDerecha.add(match.ID_Publicidad); match.Cantidad_Guardados--; sugerencias.push({ slot: 15 + i, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material }); break; }
+                    if (match) { 
+                        usadosDerecha.add(match.ID_Publicidad); 
+                        match.Cantidad_Guardados--; 
+                        sugerenciasGlobales.push({ slot: 15 + i, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material }); 
+                        break; 
+                    }
                 }
             }
-            dibujarSugerencias(sugerencias);
+            
+            dibujarSugerenciasEnPantalla(true); // Redibujar y lanzar alerta de éxito
         });
     }
 
-    function dibujarSugerencias(sugerencias) {
+    function dibujarSugerenciasEnPantalla(mostrarAlerta) {
         document.querySelectorAll('.sugerencia-box').forEach(e => e.remove());
         let aplicadas = 0;
-        sugerencias.forEach(sug => {
+        
+        sugerenciasGlobales.forEach(sug => {
             let slotDiv = document.getElementById('slot-div-' + sug.slot);
             if (slotDiv && !slotDiv.classList.contains('lleno')) {
                 let sugHTML = document.createElement('div');
@@ -305,10 +325,52 @@
                 aplicadas++;
             }
         });
-        if(aplicadas === 0) alert("Todos los espacios ya están llenos o no hay stock de las películas necesarias en bodega.");
-        else alert(`¡Se generaron ${aplicadas} sugerencias mágicas!`);
+        
+        const btnAll = document.getElementById('btnInstalarTodas');
+        if(aplicadas > 0) {
+            btnAll.style.display = 'inline-block';
+            btnAll.innerText = `✔️ Instalar ${aplicadas} sugerencias de golpe`;
+            if(mostrarAlerta) alert(`¡Se generaron ${aplicadas} sugerencias mágicas! Puedes instalarlas una por una o usar el botón verde de arriba para instalarlas todas a la vez.`);
+        } else {
+            btnAll.style.display = 'none';
+            if(mostrarAlerta) alert("Todos los espacios ya están llenos o no hay stock de las películas necesarias en bodega.");
+        }
     }
 
+    // BOTÓN MÁGICO: INSTALAR TODAS
+    async function instalarTodasSugerencias() {
+        const slotsParaInstalar = [];
+        
+        // Verificamos qué sugerencias siguen vigentes (slots vacíos)
+        sugerenciasGlobales.forEach(sug => {
+            let slotDiv = document.getElementById('slot-div-' + sug.slot);
+            if (slotDiv && !slotDiv.classList.contains('lleno')) {
+                slotsParaInstalar.push(sug);
+            }
+        });
+
+        if (slotsParaInstalar.length === 0) return;
+        
+        const btn = document.getElementById('btnInstalarTodas');
+        btn.disabled = true;
+        btn.innerText = "Instalando...";
+
+        // Enviamos al backend una por una (Bucle asíncrono)
+        for (let sug of slotsParaInstalar) {
+            await fetch(`${API_CARTELERAS}/${sug.slot}/asignar`, { 
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ id_publicidad: sug.posterId }) 
+            });
+        }
+        
+        sugerenciasGlobales = []; // Limpiamos la memoria
+        btn.style.display = 'none';
+        btn.disabled = false;
+        alert("¡Todas las sugerencias fueron instaladas exitosamente en los pasillos!");
+        cargarMapa(false);
+    }
+
+    /* ================= FUNCIONES MANUALES ================= */
     function abrirAsignacion(idSlot, ubicacion, estaLleno) {
         if(estaLleno) return; 
         slotSeleccionado = idSlot;
@@ -324,18 +386,28 @@
     }
 
     function cerrarModal() { document.getElementById('modalAsignar').style.display = 'none'; slotSeleccionado = null; }
+    
     function guardarAsignacion() {
         const idPub = document.getElementById('selectorPosters').value;
         if(!idPub) return alert("Selecciona un póster.");
-        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { cerrarModal(); cargarMapa(); });
+        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { 
+            sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== slotSeleccionado);
+            cerrarModal(); cargarMapa(false); 
+        });
     }
+    
     function confirmarSugerencia(event, idSlot, idPub) {
         event.stopPropagation();
-        fetch(`${API_CARTELERAS}/${idSlot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idPub }) }).then(() => cargarMapa());
+        fetch(`${API_CARTELERAS}/${idSlot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idPub }) }).then(() => {
+            // Eliminamos la sugerencia de la memoria global para que no intente re-dibujarla
+            sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== idSlot);
+            cargarMapa(false);
+        });
     }
+    
     function liberarCartelera(event, idSlot) {
         event.stopPropagation();
-        if(confirm("¿Regresar póster a bodega?")) { fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa()); }
+        if(confirm("¿Regresar póster a bodega?")) { fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa(false)); }
     }
 </script>
 </body>
