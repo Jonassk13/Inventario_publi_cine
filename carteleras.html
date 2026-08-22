@@ -418,6 +418,7 @@
         event.stopPropagation();
         if(confirm("¿Regresar póster a bodega?")) { fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa(false)); }
     }
+    if(localStorage.getItem('rolCine') === 'Subgerente') { document.body.classList.add('theme-jacqui'); }
 </script>
 </body>
 </html>
