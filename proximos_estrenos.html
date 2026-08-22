@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Próximos Estrenos</title>
+    <style>
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f3f5; --primary: #0b5345; --success: #198754; --danger: #dc3545;}
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --primary: #145A32; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; border-top: 5px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        button.btn { padding: 8px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; }
+        button.btn:hover { opacity: 0.8; }
+        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-success { background: var(--success); }
+        
+        .container { max-width: 1000px; margin: 0 auto; background: var(--box-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 15px;}
+        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: left;}
+        th { background-color: var(--th-bg); }
+        
+        .badge { padding: 5px 10px; border-radius: 15px; font-weight: bold; font-size: 13px; color: white;}
+        .badge.disponible { background-color: var(--success); }
+        .badge.agotado { background-color: var(--danger); }
+        .badge.exhibido { background-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="header" style="max-width: 970px; margin: 0 auto 20px auto;">
+    <h1 style="margin:0; color: var(--primary);">🚀 Pósters Libres: Próximos Estrenos</h1>
+    <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
+</div>
+
+<div class="container">
+    <p style="color: gray; margin-top: 0;">Esta sección muestra todos los pósters que tienes almacenados. Usa el botón rápido para enviarlos a exhibición (marcos de pasillos que no forman parte del Mapa de Cartelera principal).</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Película (Póster)</th>
+                <th>Disponibilidad (Bodega)</th>
+                <th>Exhibiéndose Actualmente</th>
+                <th>Acción Rápida</th>
+            </tr>
+        </thead>
+        <tbody id="tablaEstrenos">
+            <tr><td colspan="4" style="text-align: center;">Cargando inventario...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
+
+    window.onload = () => {
+        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+        cargarEstrenos();
+    };
+
+    function toggleDarkMode() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    }
+
+    function cargarEstrenos() {
+        fetch(API_URL).then(res => res.json()).then(data => {
+            const tb = document.getElementById('tablaEstrenos');
+            tb.innerHTML = '';
+            
+            // Filtramos SOLAMENTE posters
+            let postersExtra = data.filter(item => item.Categoria === 'Poster');
+            
+            // Ordenamos para que los que SÍ tienen stock salgan primero
+            postersExtra.sort((a, b) => b.Cantidad_Guardados - a.Cantidad_Guardados);
+
+            if (postersExtra.length === 0) {
+                tb.innerHTML = '<tr><td colspan="4" style="text-align:center;">No hay pósters en el inventario.</td></tr>';
+                return;
+            }
+
+            postersExtra.forEach(item => {
+                const tieneBodega = item.Cantidad_Guardados > 0;
+                
+                const badgeBodega = tieneBodega 
+                    ? `<span class="badge disponible">✅ Sí hay (${item.Cantidad_Guardados})</span>` 
+                    : `<span class="badge agotado">❌ Agotado</span>`;
+                    
+                const badgeExhibido = item.Cantidad_Cartelera > 0
+                    ? `<span class="badge exhibido">🖼️ En Muro (${item.Cantidad_Cartelera})</span>`
+                    : `<span style="color:gray;">Ninguno afuera</span>`;
+
+                let botones = '';
+                if (tieneBodega) {
+                    botones += `<button class="btn btn-primary" style="padding: 5px 10px; font-size: 12px; margin-right: 5px;" onclick="moverPoster(${item.ID_Publicidad}, 'salida')">📤 Exhibir</button>`;
+                }
+                if (item.Cantidad_Cartelera > 0) {
+                    botones += `<button class="btn btn-dark" style="padding: 5px 10px; font-size: 12px; background: #6c757d;" onclick="moverPoster(${item.ID_Publicidad}, 'regreso')">📥 Regresar</button>`;
+                }
+
+                tb.innerHTML += `
+                    <tr>
+                        <td><strong>${item.Nombre_Material}</strong></td>
+                        <td>${badgeBodega}</td>
+                        <td>${badgeExhibido}</td>
+                        <td>${botones || '<span style="color:gray; font-size:12px;">Sin stock</span>'}</td>
+                    </tr>
+                `;
+            });
+        });
+    }
+
+    function moverPoster(idProd, tipoMovimiento) {
+        fetch(`${API_URL}/${idProd}/movimiento`, {
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tipo: tipoMovimiento, cantidad: 1 })
+        }).then(() => {
+            cargarEstrenos(); // Recargamos para actualizar números
+        });
+    }
+</script>
+</body>
+</html>
