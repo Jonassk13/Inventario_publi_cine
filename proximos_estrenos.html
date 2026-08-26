@@ -7,22 +7,20 @@
         :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545;}
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
         
-        /* 👑 TEMA VIP DE JACQUELINE (Inyectado si el rol es Subgerente) */
         body.theme-jacqui {
             --primary: #0b5345; --btn-primary: #0b5345; 
             --success: #1e8449; --btn-success: #1e8449;
             --danger: #6e2c00; --btn-danger: #6e2c00;
-            --info: #aec6cf; --btn-info: #aec6cf; 
-            --warning: #fd7e14; --btn-reserva: #fd7e14; --admin-bg: #fd7e14;
+            --warning: #fd7e14;
         }
         body.theme-jacqui.dark-mode { --primary: #148f77; --btn-primary: #148f77; --danger: #873600; --btn-danger: #873600; }
         
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; gap: 10px; border-top: 5px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; border-top: 5px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
         button.btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; }
         button.btn:hover { opacity: 0.8; }
-        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-success { background: var(--success); }
+        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-warning { background: var(--warning); color: #000; }
         
         .admin-panel { background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border: 1px dashed var(--border-color);}
         body.dark-mode .admin-panel { background: rgba(255,255,255,0.05); }
@@ -47,16 +45,14 @@
     <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
 </div>
 
-<!-- Panel de Administrador para agrandar o achicar el muro -->
 <div class="admin-panel req-admin" style="display: none;" id="panelAdminEstrenos">
     <strong>⚙️ Ajustar Tamaño del Muro:</strong>
     <input type="number" id="numSlots" min="1" max="100" style="padding:8px; border-radius:4px; width: 70px;">
-    <button class="btn btn-dark" onclick="actualizarConfiguracion()">Actualizar Espacios</button>
-    <small style="color:gray; margin-left:10px;">Si reduces el número, los pósters de los espacios borrados regresarán a bodega.</small>
+    <button class="btn btn-warning" onclick="actualizarConfiguracion()">Actualizar Espacios</button>
+    <small style="color:gray; margin-left:10px;">Si reduces el número, los pósters borrados regresarán a bodega.</small>
 </div>
 
 <div class="slots-grid" id="muroEstrenos">
-    <!-- Aquí se dibujarán los slots dinámicamente -->
     <h3 style="text-align: center; grid-column: 1 / -1;">Cargando muro...</h3>
 </div>
 
@@ -76,11 +72,11 @@
     const API_ESTRENOS = 'https://jonassk13.pythonanywhere.com/api/estrenos';
     const API_INVENTARIO = 'https://jonassk13.pythonanywhere.com/api/inventario';
     let slotSeleccionado = null;
+    let muroActualData = [];
     let rolUsuario = localStorage.getItem('rolCine') || 'General';
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        // Activamos los privilegios
         if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente') { document.getElementById('panelAdminEstrenos').style.display = 'flex'; }
         if(rolUsuario === 'Subgerente') { document.body.classList.add('theme-jacqui'); }
         cargarMuro();
@@ -88,11 +84,24 @@
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
 
+    // === ALGORITMO DE LIMPIEZA DE TEXTO (ANTI-DUPLICADOS) ===
+    function limpiarTextoDuro(texto) {
+        if (!texto) return "";
+        let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Quita acentos (ó -> o)
+        // Quita artículos y formatos de cine
+        limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, '');
+        // Quita TODO lo que no sean letras o números (espacios, guiones, dos puntos)
+        limpio = limpio.replace(/[^a-zA-Z0-9]/g, '');
+        return limpio.toLowerCase();
+    }
+
     function cargarMuro() {
         fetch(API_ESTRENOS).then(res => res.json()).then(data => {
             document.getElementById('numSlots').value = data.total;
+            muroActualData = data.slots; // Guardamos en memoria para validación
             const muro = document.getElementById('muroEstrenos');
             muro.innerHTML = '';
+            
             data.slots.forEach(slot => {
                 const estaLleno = slot.ID_Publicidad !== null;
                 const clase = estaLleno ? 'slot lleno' : 'slot';
@@ -113,10 +122,7 @@
         const nuevoTotal = document.getElementById('numSlots').value;
         if(!nuevoTotal || nuevoTotal < 1) return;
         if(confirm(`¿Estás seguro de que quieres cambiar el tamaño del muro a ${nuevoTotal} espacios?`)) {
-            fetch(`${API_ESTRENOS}/config`, {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ total: parseInt(nuevoTotal) })
-            }).then(() => cargarMuro());
+            fetch(`${API_ESTRENOS}/config`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ total: parseInt(nuevoTotal) }) }).then(() => cargarMuro());
         }
     }
 
@@ -125,13 +131,17 @@
         slotSeleccionado = idSlot;
         document.getElementById('textoUbicacion').innerHTML = `Selecciona un póster para el <strong>Espacio #${idSlot}</strong>:`;
         document.getElementById('modalAsignar').style.display = 'flex';
+        
         fetch(API_INVENTARIO).then(res => res.json()).then(data => {
             const select = document.getElementById('selectorPosters');
             select.innerHTML = '<option value="">-- Elige un póster disponible --</option>';
-            data.forEach(p => {
-                if (p.Cantidad_Guardados > 0 && p.Categoria === 'Poster') { 
-                    select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (En Bodega: ${p.Cantidad_Guardados})</option>`; 
-                }
+            
+            // FILTRO Y ORDEN ALFABÉTICO
+            let postersDisponibles = data.filter(p => p.Cantidad_Guardados > 0 && p.Categoria === 'Poster');
+            postersDisponibles.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); // A a la Z
+            
+            postersDisponibles.forEach(p => {
+                select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (En Bodega: ${p.Cantidad_Guardados})</option>`; 
             });
         });
     }
@@ -139,8 +149,31 @@
     function cerrarModal() { document.getElementById('modalAsignar').style.display = 'none'; slotSeleccionado = null; }
     
     function guardarAsignacion() {
-        const idPub = document.getElementById('selectorPosters').value;
+        const select = document.getElementById('selectorPosters');
+        const idPub = select.value;
         if(!idPub) return;
+
+        // VALIDADOR DE DUPLICADOS EN EL MURO
+        const textoSeleccionado = select.options[select.selectedIndex].text.split(' (En Bodega')[0].trim();
+        const tituloNuevoLimpio = limpiarTextoDuro(textoSeleccionado);
+        
+        let posibleDuplicado = null;
+        for(let slot of muroActualData) {
+            if(slot.ID_Publicidad !== null) {
+                let tituloSlotLimpio = limpiarTextoDuro(slot.Nombre_Material);
+                // Si la esencia de las palabras es idéntica o una contiene a la otra
+                if(tituloNuevoLimpio === tituloSlotLimpio || tituloNuevoLimpio.includes(tituloSlotLimpio) || tituloSlotLimpio.includes(tituloNuevoLimpio)) {
+                    posibleDuplicado = slot;
+                    break;
+                }
+            }
+        }
+
+        if(posibleDuplicado) {
+            let confirmar = confirm(`⚠️ POSIBLE DUPLICADO DETECTADO:\n\nEstás intentando agregar "${textoSeleccionado}", pero el sistema detectó que "${posibleDuplicado.Nombre_Material}" ya está exhibido en el Espacio #${posibleDuplicado.ID_Slot}.\n\n¿Estás seguro de que quieres agregarlo de todas formas?`);
+            if(!confirmar) return; // Si el usuario cancela, detenemos el proceso
+        }
+
         fetch(`${API_ESTRENOS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { cerrarModal(); cargarMuro(); });
     }
     
