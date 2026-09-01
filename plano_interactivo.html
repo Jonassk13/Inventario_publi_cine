@@ -24,7 +24,6 @@
         .controles-mapa { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px; border: 1px dashed var(--border-color);}
         body.dark-mode .controles-mapa { background: rgba(255,255,255,0.05); }
 
-        /* EL MOTOR DE ZOOM (VENTANA Y LIENZO) */
         .zoom-wrapper {
             width: 100%; aspect-ratio: 1.4; border: 2px solid #555; border-radius: 5px;
             overflow: hidden; position: relative; background: #e0e0e0; cursor: grab;
@@ -69,7 +68,6 @@
 <div class="layout">
     <div class="mapa-wrapper">
         
-        <!-- PANEL DE CONTROLES (EDITAR Y ZOOM) -->
         <div class="controles-mapa" id="panelControles">
             <div>
                 <button id="btnModoEdicion" class="btn btn-warning" onclick="toggleModoEdicion()" style="display: none;">🔓 Editar Posiciones</button>
@@ -85,7 +83,6 @@
             </div>
         </div>
         
-        <!-- LIENZO CON MOTOR DE PAN/ZOOM -->
         <div class="zoom-wrapper" id="zoomWrapper">
             <div class="plano-container" id="contenedorPlano"></div>
         </div>
@@ -111,7 +108,6 @@
     let isEditing = false;
     let marcadorSize = 26;
 
-    // Variables del Motor de Zoom y Paneo
     let currentScale = 1;
     let translateX = 0;
     let translateY = 0;
@@ -165,7 +161,6 @@
             marker.innerText = est.ID_Slot;
             marker.title = estaVacio ? `Espacio #${est.ID_Slot} (Vacío)` : `Espacio #${est.ID_Slot}: ${est.Nombre_Material}`;
 
-            // Aplicamos el tamaño de la base de datos
             marker.style.width = marcadorSize + 'px';
             marker.style.height = marcadorSize + 'px';
             marker.style.fontSize = (marcadorSize * 0.5) + 'px';
@@ -180,7 +175,6 @@
         });
     }
 
-    // === MODO EDICIÓN Y TAMAÑOS ===
     function toggleModoEdicion() {
         isEditing = !isEditing;
         const btn = document.getElementById('btnModoEdicion');
@@ -192,7 +186,7 @@
             btn.className = "btn btn-danger";
             slider.style.display = 'inline';
             txt.innerText = "Arrastra los números para moverlos. Zoom desactivado.";
-            resetearVista(); // Reseteamos el zoom para evitar que el mapeo % falle
+            resetearVista(); 
             document.querySelectorAll('.marcador-mini').forEach(m => m.classList.add('modo-edicion'));
             document.getElementById('zoomWrapper').style.cursor = 'default';
         } else {
@@ -217,12 +211,10 @@
         fetch(API_CONFIG_SIZE, { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({size: parseInt(val)}) });
     }
 
-    // === LÓGICA DE ARRASTRE DE MARCADORES ===
     function inicializarArrastreMarcador(elemento, idSlot) {
         elemento.onmousedown = function(e) {
-            if(!isEditing) return; // Si está bloqueado, ignoramos el clic para dejar que el mapa haga Zoom/Pan
-            e.stopPropagation(); // Evita que se mueva el fondo al mover un número
-
+            if(!isEditing) return; 
+            e.stopPropagation(); 
             document.querySelectorAll('.marcador-mini').forEach(el => el.style.zIndex = 10);
             elemento.style.zIndex = 100;
 
@@ -257,7 +249,6 @@
         elemento.ondragstart = function() { return false; }; 
     }
 
-    // === MOTOR DE ZOOM Y PANEO DEL MAPA ===
     const zoomWrapper = document.getElementById('zoomWrapper');
     const planoContainer = document.getElementById('contenedorPlano');
 
@@ -266,10 +257,10 @@
     }
 
     function aplicarZoom(delta) {
-        if(isEditing) return; // No permitimos zoom mientras se editan las coordenadas
+        if(isEditing) return; 
         currentScale += delta;
-        if(currentScale < 1) currentScale = 1; // Límite para no alejarse de más
-        if(currentScale > 5) currentScale = 5; // Límite de acercamiento máximo
+        if(currentScale < 1) currentScale = 1; 
+        if(currentScale > 5) currentScale = 5; 
         actualizarTransformacion();
     }
 
@@ -278,14 +269,12 @@
         actualizarTransformacion();
     }
 
-    // Zoom con la Rueda del Ratón
     zoomWrapper.addEventListener('wheel', (e) => {
         if(isEditing) return;
-        e.preventDefault(); // Evita que la página completa haga scroll
+        e.preventDefault(); 
         aplicarZoom(e.deltaY < 0 ? 0.2 : -0.2);
     });
 
-    // Paneo (Arrastrar la Imagen de fondo)
     zoomWrapper.addEventListener('mousedown', (e) => {
         if(isEditing) return;
         isDraggingMap = true;
