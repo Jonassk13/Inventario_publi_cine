@@ -3,161 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalles del Material</title>
+    <title>Detalle del Póster</title>
     <style>
-        /* 👑 TEMA VIP DE JACQUELINE */
-        body.theme-jacqui {
-            --primary: #0b5345; --btn-primary: #0b5345; 
-            --success: #1e8449; --btn-success: #1e8449;
-            --danger: #6e2c00; --btn-danger: #6e2c00;
-            --info: #aec6cf; --btn-info: #aec6cf; 
-            --warning: #fd7e14; --btn-reserva: #fd7e14; --admin-bg: #fd7e14;
-        }
-        body.theme-jacqui.dark-mode { --primary: #148f77; --btn-primary: #148f77; --danger: #873600; --btn-danger: #873600; }
-        :root { --bg-color: #e9ecef; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f1f1; }
-        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; box-sizing: border-box; transition: 0.3s;}
-
-        .theme-toggle { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; display: block; margin: 0 auto 20px auto; font-weight: bold;}
-        body.dark-mode .theme-toggle { background: #f8f9fa; color: #121212; }
-
-        .card { background: var(--box-bg); padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 800px; margin: 0 auto; border: 1px solid var(--border-color); transition: 0.3s;}
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545; --reserva: #6f42c1; }
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; --reserva: #b288e7; }
         
-        .detalle-layout { display: flex; gap: 20px; align-items: flex-start; }
-        .poster-img-container { width: 40%; text-align: center; }
-        .poster-img-container img { width: 100%; border-radius: 8px; box-shadow: 0 6px 12px rgba(0,0,0,0.3); border: 2px solid var(--border-color); object-fit: cover; }
-        .info-container { width: 60%; }
-
-        h1 { color: #17a2b8; margin-top: 0; border-bottom: 2px solid var(--border-color); padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 24px;}
-        .badge { background: #ffc107; color: #000; font-size: 14px; padding: 5px 10px; border-radius: 15px; font-weight: bold;}
-
+        body.theme-jacqui { --primary: #0b5345; --danger: #6e2c00; --success: #1e8449; --reserva: #fd7e14;}
+        body.theme-jacqui.dark-mode { --primary: #148f77; --danger: #873600; --success: #27ae60; --reserva: #f39c12;}
+        
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s; }
+        .container { max-width: 900px; margin: 0 auto; background: var(--box-bg); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* DISEÑO RESPONSIVO DE DETALLE */
+        .detalle-layout { display: flex; gap: 30px; align-items: stretch; flex-wrap: wrap; }
+        .poster-img-container { flex: 1; min-width: 280px; text-align: center; }
+        .poster-img-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); margin-bottom: 15px;}
+        .info-container { flex: 2; min-width: 280px; }
+        
+        .badge { padding: 5px 10px; border-radius: 15px; font-size: 14px; background: var(--primary); color: white; margin-left: 10px; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .stat-box { background: var(--bg-color); padding: 15px; border-radius: 8px; text-align: center; font-size: 16px; font-weight: bold; border: 1px solid var(--border-color); transition: 0.3s;}
-        .highlight-green { color: #28a745; font-size: 22px; display: block; margin-top: 5px;}
-        .highlight-red { color: #dc3545; font-size: 22px; display: block; margin-top: 5px;}
-
-        .action-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 20px;}
-        button { border: none; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s;}
-        button:hover { opacity: 0.8; }
-        .btn-sacar { background: #0d6efd; } .btn-regresar { background: #198754; } .btn-daño { background: #dc3545; } .btn-reserva { background: #6f42c1; }
-        .btn-dark { background: #212529; } .btn-info { background: #0dcaf0; color: #000; }
-
-        .editor-imagen { margin-top: 15px; text-align: left; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px; border: 1px dashed var(--border-color); }
-        body.dark-mode .editor-imagen { background: rgba(255,255,255,0.05); }
-
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { border: 1px solid var(--border-color); padding: 8px; text-align: left; }
-        th { background: var(--th-bg); }
+        .stat-box { background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color); }
+        body.dark-mode .stat-box { background: rgba(255,255,255,0.05); }
+        .stat-box span { display: block; font-size: 24px; font-weight: bold; margin-top: 5px; }
+        .highlight-green { color: var(--success); } .highlight-red { color: var(--danger); }
         
-        @media (max-width: 600px) {
-            .detalle-layout { flex-direction: column; align-items: center; }
-            .poster-img-container, .info-container { width: 100%; }
-            .poster-img-container img { width: 60%; }
-        }
+        button { border: none; cursor: pointer; border-radius: 5px; color: white; font-weight: bold; transition: 0.2s; width: 100%; box-sizing: border-box; }
+        button:hover { opacity: 0.8; }
+        .action-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 20px;}
+        .btn-reserva { background: var(--reserva); padding: 15px; font-size: 16px; border-radius: 8px;}
+        .btn-sacar { background: var(--primary); padding: 12px; }
+        .btn-regresar { background: #6c757d; padding: 12px; }
+        .btn-daño { background: var(--danger); padding: 12px; }
+        .btn-dark { background: #212529; padding: 8px; } .btn-info { background: #0dcaf0; color: #000; padding: 8px; }
+        
+        .advertencia-corp { background: rgba(253, 126, 20, 0.1); border-left: 5px solid #fd7e14; padding: 15px; margin-bottom: 20px; font-size: 14px; border-radius: 4px;}
+        
+        .editor-imagen { background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; border: 1px dashed #999; margin-top: 15px;}
+        body.dark-mode .editor-imagen { background: rgba(255,255,255,0.02); }
+        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--border-color); box-sizing: border-box; background: var(--bg-color); color: var(--text-color);}
     </style>
 </head>
 <body>
 
-<button class="theme-toggle" onclick="toggleDarkMode()">🌙 / ☀️</button>
-
-<div class="card" id="tarjetaContenido">
-    <h2 style="text-align:center;">Cargando datos del material...</h2>
+<div class="container" id="tarjetaContenido">
+    <h3 style="text-align:center;">Cargando información del póster...</h3>
+</div>
+<div id="modalMerma" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:9999;">
+    <div style="background:var(--box-bg); padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center;">
+        <h2 style="margin-top:0; color:var(--danger);">📸 Evidencia de Merma</h2>
+        <p style="font-size:13px; color:gray;">Para desechar material, la Subgerencia debe validar la foto del daño.</p>
+        
+        <input type="number" id="cantMerma" placeholder="¿Cuántas piezas se dañaron?" min="1" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box;">
+        <input type="text" id="motivoMerma" placeholder="Motivo (Ej. Roto por cliente, mojado...)" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box;">
+        
+        <label style="display:block; text-align:left; font-size:12px; font-weight:bold; margin-bottom:5px;">Toma una foto de la zona dañada:</label>
+        
+        <input type="file" id="fotoMerma" accept="image/*" capture="environment" style="width:100%; margin-bottom:20px;">
+        
+        <div style="display:flex; justify-content:space-between;">
+            <button onclick="document.getElementById('modalMerma').style.display='none'" style="background:#555; padding:10px; width:48%; border:none; color:white; border-radius:5px; font-weight:bold;">Cancelar</button>
+            <button onclick="enviarMerma()" style="background:var(--danger); padding:10px; width:48%; border:none; color:white; border-radius:5px; font-weight:bold;">Enviar Foto</button>
+        </div>
+    </div>
 </div>
 
 <script>
+    const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
+    const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
+    const urlParams = new URLSearchParams(window.location.search);
+    const idProducto = urlParams.get('id');
+    let prodGlobal = null;
+    let rolUsuario = localStorage.getItem('rolCine') || 'General';
+
+
     
     window.onload = () => {
+        if(!idProducto) { document.getElementById('tarjetaContenido').innerHTML = "<h1>No se especificó un producto.</h1>"; return; }
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        if(localStorage.getItem('rolCine') === 'Subgerente') { document.body.classList.add('theme-jacqui'); }
+        if(rolUsuario === 'Subgerente') document.body.classList.add('theme-jacqui');
+        cargarDetalle();
     };
-    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const idProd = urlParams.get('id');
-    const API_BASE = 'https://jonassk13.pythonanywhere.com/api/inventario';
-    const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
-    let prodGlobal = null;
-    const rolUsuario = localStorage.getItem('rolCine') || 'General';
-
-    if (idProd) { cargarDatos(); } 
-    else { document.getElementById('tarjetaContenido').innerHTML = `<h2 style="color:red; text-align:center;">Falta el ID del producto.</h2>`; }
-
-    function cargarDatos() {
-        fetch(`${API_BASE}/${idProd}`).then(res => res.json()).then(data => {
+    function cargarDetalle() {
+        fetch(`${API_URL}/${idProducto}`).then(res => res.json()).then(data => {
+            if(data.error) { document.getElementById('tarjetaContenido').innerHTML = "<h1>Producto no encontrado.</h1>"; return; }
             prodGlobal = data;
             renderizarTarjeta();
-            cargarImagen();
+            if(prodGlobal.Imagen_URL) {
+                document.getElementById('imagenMagicaPoster').src = prodGlobal.Imagen_URL;
+                document.getElementById('imagenMagicaPoster').style.display = 'inline-block';
+            }
         });
     }
 
-    function cargarImagen() {
-        const imgElement = document.getElementById('imagenMagicaPoster');
+    function abrirModalMerma() { document.getElementById('modalMerma').style.display = 'flex'; }
+    
+    function enviarMerma() {
+        const cant = document.getElementById('cantMerma').value;
+        const motivo = document.getElementById('motivoMerma').value.trim();
+        const fotoInput = document.getElementById('fotoMerma');
         
-        if (prodGlobal.Imagen_URL && prodGlobal.Imagen_URL.trim() !== "") {
-            imgElement.src = prodGlobal.Imagen_URL;
-            imgElement.style.display = 'block';
-            return;
+        if(!cant || cant <= 0 || !motivo || fotoInput.files.length === 0) {
+            alert("⚠️ Debes llenar la cantidad, el motivo y OBLIGATORIAMENTE subir la foto."); return;
         }
 
-        let nombreLimpio = prodGlobal.Nombre_Material.replace(/poster|cartel|loneta|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d/gi, '').trim();
-        fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(nombreLimpio)}&entity=movie&limit=1`)
-        .then(res => res.json())
-        .then(apiData => {
-            if(apiData.results && apiData.results.length > 0) {
-                imgElement.src = apiData.results[0].artworkUrl100.replace('100x100bb', '600x900bb');
-            } else {
-                imgElement.src = `https://via.placeholder.com/600x900/1e1e1e/0dcaf0?text=Poster+No+Disponible`;
-            }
-            imgElement.style.display = 'block';
-        })
-        .catch(() => {
-            imgElement.src = `https://via.placeholder.com/600x900/1e1e1e/dc3545?text=Error+de+Conexion`;
-            imgElement.style.display = 'block';
-        });
-    }
+        const btn = event.target;
+        btn.innerText = "Subiendo Evidencia..."; btn.disabled = true;
 
-    function buscarEnGoogle() {
-        let nombreLimpio = prodGlobal.Nombre_Material.replace(/esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d/gi, '').trim();
-        let query = encodeURIComponent(`Poster Película Cinépolis ${nombreLimpio}`);
-        window.open(`https://www.google.com/search?tbm=isch&q=${query}`, '_blank');
-    }
-
-    function guardarImagenManual() {
-        const nuevaUrl = document.getElementById('urlManual').value.trim();
-        if (!nuevaUrl) return alert("Pega el link de la imagen primero.");
-        
-        fetch(`${API_BASE}/${idProd}/imagen`, {
-            method: 'PUT', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: nuevaUrl })
-        }).then(() => {
-            alert("✅ Imagen actualizada para todos los usuarios.");
-            cargarDatos();
-        });
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Img = e.target.result;
+            
+            fetch('https://jonassk13.pythonanywhere.com/api/mermas', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_pub: idProducto, usuario: localStorage.getItem('nombreCine') || rolUsuario, cantidad: parseInt(cant), motivo: motivo, foto: base64Img })
+            }).then(() => {
+                alert("✅ Fotografía enviada al sistema. Esperando que la Subgerente o el Admin autoricen tirarlo.");
+                document.getElementById('modalMerma').style.display = 'none';
+                btn.innerText = "Enviar Foto"; btn.disabled = false;
+            });
+        };
+        reader.readAsDataURL(fotoInput.files[0]);
     }
 
     function renderizarTarjeta() {
         let botonesHTML = '';
         let panelEditor = '';
+        let advertenciaCinepolitos = '';
         
-        if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista' || rolUsuario === 'Visitante') {
+        if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista' || rolUsuario === 'Visitante' || rolUsuario === 'Subgerente') {
             
-            botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()" style="font-size: 16px; padding: 12px; margin-bottom: 10px;">📋 Quiero pedir este póster</button>`;
+            advertenciaCinepolitos = `
+                <div class="advertencia-corp">
+                    ⚠️ <b>Importante:</b> Al solicitar este póster, entras en una lista de espera. <b>Deberás esperar a que baje de cartelera</b> y la entrega final estará sujeta a que los de <b>Corporativo no exijan la devolución del material</b>.
+                </div>
+            `;
             
-            if (rolUsuario === 'Admin' || rolUsuario === 'Supervisor') {
+            botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()">📋 Quiero pedir este póster a mi nombre</button>`;
+            
+            if (rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Subgerente') {
                 panelEditor = `
                     <div class="editor-imagen">
                         <label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta o no aparece?</label>
-                        <button class="btn-dark" style="width: 100%; margin-bottom: 5px; font-size: 12px; padding: 6px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button>
-                        <input type="text" id="urlManual" placeholder="Pega el link (URL) aquí..." style="width: 90%; font-size: 12px; padding: 6px; margin-bottom: 5px; border: 1px solid var(--border-color); border-radius: 4px;">
-                        <button class="btn-info" style="width: 100%; font-size: 12px; padding: 6px;" onclick="guardarImagenManual()">💾 Guardar Imagen</button>
+                        <button class="btn-dark" style="margin-bottom: 5px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button>
+                        <input type="text" id="urlManual" placeholder="Pega el link de la imagen (.jpg, .png) aquí...">
+                        <button class="btn-info" onclick="guardarImagenManual()">💾 Guardar Imagen</button>
                     </div>
                 `;
                 
                 botonesHTML += `
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
                     <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso (Directo)</button>
                     <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
-                    <button class="btn-daño" onclick="registrarMovimiento('desecho')">🗑️ Reportar Merma</button>
-                `;
+                    <button class="btn-daño" onclick="abrirModalMerma()">📸 Tomar Foto para Merma</button>`;
             }
         }
 
@@ -168,7 +166,8 @@
                     ${panelEditor}
                 </div>
                 <div class="info-container">
-                    <h1 style="font-size: 18px;">${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
+                    <h1 style="font-size: 22px; margin-top:0;">${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
+                    ${advertenciaCinepolitos}
                     <div class="stats-grid">
                         <div class="stat-box">En Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
                         <div class="stat-box">En Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
@@ -180,21 +179,38 @@
             </div>
         `;
     }
-    function registrarMovimiento(tipo) {
-        let cantidad = prompt("¿Cuántas piezas?");
-        if (!cantidad || isNaN(cantidad) || cantidad <= 0) return;
-        fetch(`${API_BASE}/${idProd}/movimiento`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo, cantidad: parseInt(cantidad) }) }).then(() => cargarDatos());
-    }
 
     function hacerReserva() {
-        let nombre = prompt("¿Quién solicita el material?");
+        let nombreGuardado = localStorage.getItem('nombreCinepolito') || '';
+        let nombre = prompt("Ingresa tu nombre completo (y tu área, Ej. 'Jonas - Dulcería'):", nombreGuardado);
         if(!nombre) return;
-        let cantidad = prompt("¿Cuántos necesitas apartar?");
-        if(!cantidad || isNaN(cantidad) || cantidad <= 0) return;
         
-        fetch(API_RESERVAS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idProd, nombre, cantidad: parseInt(cantidad) }) }).then(() => { 
-            alert(`✅ Solicitud enviada a los supervisores para su autorización.`); cargarDatos(); 
+        localStorage.setItem('nombreCinepolito', nombre.trim());
+        
+        let cant = prompt(`¿Cuántas piezas de "${prodGlobal.Nombre_Material}" quieres pedir?`);
+        cant = parseInt(cant);
+        if(!cant || cant <= 0) return;
+        
+        fetch(API_RESERVAS, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_publicidad: idProducto, nombre: nombre.trim(), cantidad: cant })
+        }).then(() => {
+            alert(`¡Listo! Tu pedido quedó registrado a nombre de: ${nombre.trim()}.\n\nPuedes revisar si ya fue aprobado en la pantalla principal en el botón "Mis Pedidos".`);
         });
+    }
+
+    function registrarMovimiento(tipo) {
+        let cant = prompt(`¿Cuántas piezas vas a mover para la operación de: ${tipo}?`);
+        cant = parseInt(cant);
+        if(!cant || cant <= 0) return;
+        fetch(`${API_URL}/${idProducto}/movimiento`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo: tipo, cantidad: cant }) }).then(() => cargarDetalle());
+    }
+
+    function buscarEnGoogle() { window.open(`https://www.google.com/search?tbm=isch&q=poster+película+${encodeURIComponent(prodGlobal.Nombre_Material)}`, '_blank'); }
+    function guardarImagenManual() {
+        const url = document.getElementById('urlManual').value.trim();
+        if(!url) return alert("Pega una URL válida.");
+        fetch(`${API_URL}/${idProducto}/imagen`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url }) }).then(() => cargarDetalle());
     }
 </script>
 </body>
