@@ -84,13 +84,10 @@
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
 
-    // === ALGORITMO DE LIMPIEZA DE TEXTO (ANTI-DUPLICADOS) ===
     function limpiarTextoDuro(texto) {
         if (!texto) return "";
-        let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); // Quita acentos (ó -> o)
-        // Quita artículos y formatos de cine
+        let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
         limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, '');
-        // Quita TODO lo que no sean letras o números (espacios, guiones, dos puntos)
         limpio = limpio.replace(/[^a-zA-Z0-9]/g, '');
         return limpio.toLowerCase();
     }
@@ -98,7 +95,7 @@
     function cargarMuro() {
         fetch(API_ESTRENOS).then(res => res.json()).then(data => {
             document.getElementById('numSlots').value = data.total;
-            muroActualData = data.slots; // Guardamos en memoria para validación
+            muroActualData = data.slots; 
             const muro = document.getElementById('muroEstrenos');
             muro.innerHTML = '';
             
@@ -136,7 +133,6 @@
             const select = document.getElementById('selectorPosters');
             select.innerHTML = '<option value="">-- Elige un póster disponible --</option>';
             
-            // FILTRO Y ORDEN ALFABÉTICO
             let postersDisponibles = data.filter(p => p.Cantidad_Guardados > 0 && p.Categoria === 'Poster');
             postersDisponibles.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); // A a la Z
             
@@ -153,7 +149,6 @@
         const idPub = select.value;
         if(!idPub) return;
 
-        // VALIDADOR DE DUPLICADOS EN EL MURO
         const textoSeleccionado = select.options[select.selectedIndex].text.split(' (En Bodega')[0].trim();
         const tituloNuevoLimpio = limpiarTextoDuro(textoSeleccionado);
         
@@ -161,7 +156,6 @@
         for(let slot of muroActualData) {
             if(slot.ID_Publicidad !== null) {
                 let tituloSlotLimpio = limpiarTextoDuro(slot.Nombre_Material);
-                // Si la esencia de las palabras es idéntica o una contiene a la otra
                 if(tituloNuevoLimpio === tituloSlotLimpio || tituloNuevoLimpio.includes(tituloSlotLimpio) || tituloSlotLimpio.includes(tituloNuevoLimpio)) {
                     posibleDuplicado = slot;
                     break;
@@ -171,7 +165,7 @@
 
         if(posibleDuplicado) {
             let confirmar = confirm(`⚠️ POSIBLE DUPLICADO DETECTADO:\n\nEstás intentando agregar "${textoSeleccionado}", pero el sistema detectó que "${posibleDuplicado.Nombre_Material}" ya está exhibido en el Espacio #${posibleDuplicado.ID_Slot}.\n\n¿Estás seguro de que quieres agregarlo de todas formas?`);
-            if(!confirmar) return; // Si el usuario cancela, detenemos el proceso
+            if(!confirmar) return; 
         }
 
         fetch(`${API_ESTRENOS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { cerrarModal(); cargarMuro(); });
