@@ -2,21 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Mapa de Carteleras</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Carteleras Inteligente</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545;}
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
         
-        /* 👑 TEMA VIP DE JACQUELINE */
-        body.theme-jacqui {
-            --primary: #0b5345; --btn-primary: #0b5345; 
-            --success: #1e8449; --btn-success: #1e8449;
-            --danger: #6e2c00; --btn-danger: #6e2c00;
-            --info: #aec6cf; --btn-info: #aec6cf; 
-            --warning: #fd7e14; --btn-reserva: #fd7e14; --admin-bg: #fd7e14;
-        }
-        body.theme-jacqui.dark-mode { --primary: #148f77; --btn-primary: #148f77; --danger: #873600; --btn-danger: #873600; }
+        body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --danger: #6e2c00; --admin-bg: #fd7e14;}
+        body.theme-jacqui.dark-mode { --primary: #148f77; --danger: #873600; }
         
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
         
@@ -25,7 +19,7 @@
         button.btn:hover { opacity: 0.8; } button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000; } .btn-success { background: var(--success); } .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 10px; }
 
-        /* MURO DE TAQUILLA FÍSICO */
+        /* MURO DE TAQUILLA */
         .muro-taquilla { background-color: #111; border: 8px solid #2a2a2a; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 700px; margin: 0 auto 30px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
         .muro-row { display: flex; align-items: center; justify-content: space-between;}
         
@@ -38,56 +32,61 @@
         .logo-jr { color: #ffc107; font-family: 'Comic Sans MS', cursive, sans-serif; text-transform: lowercase; font-size: 35px;}
 
         .neon-divider { width: 12px; background-color: #0044ff; box-shadow: 0 0 10px #0044ff, 0 0 20px #0044ff, inset 0 0 5px #fff; height: 160px; border-radius: 5px; margin: 0 15px;}
-        
         .muro-posters { display: flex; gap: 15px; width: 65%; }
-        .muro-slot { flex: 1; background: #050505; border: 2px dashed #444; min-height: 140px; border-radius: 3px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px; cursor:pointer; transition: 0.2s;}
-        .muro-slot:hover { border-color: #0dcaf0; background: rgba(13,202,240,0.1); }
+        .muro-slot { flex: 1; background: #050505; border: 2px dashed #444; min-height: 140px; border-radius: 3px; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 10px; cursor:pointer; transition: 0.2s; position: relative;}
         .muro-slot.lleno { border: 2px solid #198754; background: rgba(25, 135, 84, 0.1); }
-        .muro-slot.info-panel { border: 2px solid #333; background: #1a1a1a; color: #666; cursor: default; justify-content: center;}
+        .muro-slot.info-panel { border: 2px solid #333; background: #1a1a1a; color: #666; cursor: default;}
         
+        .badge-clasif { background: #dc3545; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-right: 5px; border: 1px solid white;}
+        .badge-idioma { background: #0d6efd; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; border: 1px solid white;}
+
         /* PASILLOS */
         .mapa-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
         .zona { background: var(--box-bg); border-radius: 10px; padding: 25px 20px 20px 20px; position: relative; border-top: 5px solid gray; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
-        .zona-titulo { position: absolute; top: -15px; left: 20px; background: var(--box-bg); padding: 5px 15px; font-weight: bold; font-size: 14px; border-radius: 15px; border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .zona-titulo { position: absolute; top: -15px; left: 20px; background: var(--box-bg); padding: 5px 15px; font-weight: bold; font-size: 14px; border-radius: 15px; border: 1px solid var(--border-color);}
         .zona-izquierda { border-top-color: #6f42c1; } .zona-izquierda .zona-titulo { color: #6f42c1; }
         .zona-derecha { border-top-color: #fd7e14; } .zona-derecha .zona-titulo { color: #fd7e14; }
         
         .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px;}
         .slot { border: 2px dashed #999; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 90px;}
-        .slot:hover { border-color: var(--primary); background: rgba(13, 110, 253, 0.1); }
         .slot.lleno { border: 2px solid var(--success); background: rgba(25, 135, 84, 0.1); border-style: solid;}
         
         .slot-numero { font-size: 11px; color: gray; margin-bottom: 5px;}
         .slot-titulo { font-weight: bold; font-size: 14px; margin-bottom: 8px;}
-        
         .poster-nombre { font-size: 14px; color: var(--primary); font-weight: bold;}
         .muro-slot .poster-nombre { color: white; font-size: 14px; }
 
-        .sugerencia-box { margin-top: 8px; padding: 8px; background: rgba(13, 202, 240, 0.15); border: 1px solid #0dcaf0; border-radius: 5px; font-size: 12px; color: var(--text-color); width: 90%; animation: parpadeo 1.5s infinite alternate;}
-        .muro-slot .sugerencia-box { color: white; background: rgba(13, 202, 240, 0.3); }
-        @keyframes parpadeo { from { box-shadow: 0 0 5px rgba(13, 202, 240, 0.2); } to { box-shadow: 0 0 15px rgba(13, 202, 240, 0.8); } }
+        .sugerencia-box { margin-top: 8px; padding: 8px; border-radius: 5px; font-size: 12px; width: 90%; animation: parpadeo 1.5s infinite alternate; background: var(--box-bg);}
+        @keyframes parpadeo { from { opacity: 0.8; } to { opacity: 1; } }
 
-        /* MODAL */
+        @media (max-width: 800px) {
+            .mapa-container { grid-template-columns: 1fr; }
+            .muro-row { flex-direction: column; gap: 10px; padding: 10px 0; border-bottom: 1px solid #333;}
+            .neon-divider { height: 4px; width: 100%; margin: 5px 0; }
+            .muro-posters { width: 100%; flex-wrap: wrap;}
+            .slots-grid { grid-template-columns: repeat(2, 1fr); }
+            .header { flex-direction: column; align-items: stretch; text-align: center;}
+            .header div { display: flex; flex-direction: column; gap: 5px;}
+        }
+        @media (max-width: 480px) { .slots-grid { grid-template-columns: 1fr; } }
+
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; }
-        select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; }
+        select, input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid var(--border-color); box-sizing: border-box;}
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1 style="margin:0;">🗺️ Plano de Exhibición</h1>
-    <div style="display:flex; gap: 10px;">
+    <div>
         <button class="btn btn-info" onclick="document.getElementById('archivoExcel').click()">🪄 Sugerir por Excel</button>
         <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
-        
         <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Todo</button>
-        
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
     </div>
 </div>
 
-<!-- ================= MURO DE TAQUILLA VIRTUAL ================= -->
 <div class="muro-taquilla">
     <div class="muro-row"><div class="muro-logo logo-pluus">PLUUS</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-pluus">Cargando...</div></div>
     <div class="muro-row"><div class="muro-logo logo-4dx">4DX</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-4dx"></div></div>
@@ -95,7 +94,6 @@
     <div class="muro-row"><div class="muro-logo logo-jr">junior</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-jr"></div></div>
 </div>
 
-<!-- ================= PASILLOS ESTÁNDAR ================= -->
 <div class="mapa-container">
     <div class="zona zona-izquierda"><div class="zona-titulo">⬅️ Ala Izquierda (Salas 1 al 7)</div><div class="slots-grid" id="ala-izquierda"></div></div>
     <div class="zona zona-derecha"><div class="zona-titulo">➡️ Ala Derecha (Salas 8 al 16)</div><div class="slots-grid" id="ala-derecha"></div></div>
@@ -106,7 +104,18 @@
         <h2 style="margin-top:0;">Colocar Póster en Cartelera</h2>
         <p id="textoUbicacion">Selecciona un material de la bodega para exhibirlo aquí:</p>
         <select id="selectorPosters"><option value="">Cargando pósters en bodega...</option></select>
-        <div style="display:flex; justify-content: space-between; margin-top: 20px;">
+        
+        <div id="panelMetadatos" style="display:none; background: rgba(0,0,0,0.05); padding:10px; border-radius:5px; margin-bottom:15px;">
+            <p style="font-size:12px; margin-top:0;"><b>Opcional:</b> Etiquetas para el Muro de Taquilla</p>
+            <input type="text" id="manualClasif" placeholder="Clasificación (Ej. B15)">
+            <select id="manualIdioma">
+                <option value="">Selecciona Idioma...</option>
+                <option value="Doblada al español">Doblada al español</option>
+                <option value="Subtitulada">Subtitulada</option>
+            </select>
+        </div>
+
+        <div style="display:flex; justify-content: space-between; margin-top: 10px;">
             <button class="btn btn-dark" onclick="cerrarModal()">Cancelar</button>
             <button class="btn btn-primary" onclick="guardarAsignacion()">Instalar Póster</button>
         </div>
@@ -116,6 +125,8 @@
 <script>
     const API_CARTELERAS = 'https://jonassk13.pythonanywhere.com/api/carteleras';
     const API_INVENTARIO = 'https://jonassk13.pythonanywhere.com/api/inventario';
+    const API_ESTRENOS = 'https://jonassk13.pythonanywhere.com/api/estrenos'; 
+    
     let slotSeleccionado = null;
     let sugerenciasGlobales = [];
 
@@ -125,20 +136,14 @@
         cargarMapa();
     };
 
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-    }
+    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
 
     function cargarMapa(mostrarAlerta = false) {
         fetch(API_CARTELERAS).then(res => res.json()).then(data => {
-            
             document.getElementById('taquilla-pluus').innerHTML = [1, 2].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
             document.getElementById('taquilla-4dx').innerHTML = [3, 4].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
             document.getElementById('taquilla-screenx').innerHTML = [5, 6].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
-            
-            document.getElementById('taquilla-jr').innerHTML = crearMuroSlot(data.find(c => c.ID_Slot === 7)) + 
-                `<div class="muro-slot info-panel">📄 Panel Fijo<br><small>Información de Sala</small></div>`;
+            document.getElementById('taquilla-jr').innerHTML = crearMuroSlot(data.find(c => c.ID_Slot === 7)) + `<div class="muro-slot info-panel">📄 Panel Fijo<br><small>Info</small></div>`;
 
             const alaIzquierda = data.filter(c => c.ID_Slot >= 8 && c.ID_Slot <= 14);
             const alaDerecha = data.filter(c => c.ID_Slot >= 15 && c.ID_Slot <= 23);
@@ -154,8 +159,16 @@
         if(!c) return '';
         const estaLleno = c.ID_Publicidad !== null;
         const clase = estaLleno ? 'muro-slot lleno' : 'muro-slot';
+        
+        let extras = '';
+        if(estaLleno && (c.Clasificacion || c.Idioma)) {
+            let badgeClasif = c.Clasificacion ? `<span class="badge-clasif">${c.Clasificacion}</span>` : '';
+            let badgeIdioma = c.Idioma ? `<span class="badge-idioma">${c.Idioma}</span>` : '';
+            extras = `<div style="margin-top:8px;">${badgeClasif}${badgeIdioma}</div>`;
+        }
+
         const contenido = estaLleno 
-            ? `<span class="poster-nombre">${c.Nombre_Material}</span><button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">Desmontar</button>`
+            ? `<span class="poster-nombre">${c.Nombre_Material}</span>${extras}<button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">Desmontar</button>`
             : `<span style="color:gray; font-size:12px;">Slot #${c.ID_Slot}<br>Clic para Instalar</span>`;
         return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})">${contenido}</div>`;
     }
@@ -167,17 +180,9 @@
         const contenido = estaLleno 
             ? `<span class="poster-nombre">${c.Nombre_Material}</span><button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">Desmontar</button>`
             : `<span style="color:gray;">Espacio Vacío</span>`;
-        return `
-            <div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})">
-                <div class="slot-numero">Espacio #${c.ID_Slot}</div>
-                <div class="slot-titulo">${c.Ubicacion}</div>
-                ${contenido}
-            </div>`;
+        return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})"><div class="slot-numero">Espacio #${c.ID_Slot}</div><div class="slot-titulo">${c.Ubicacion}</div>${contenido}</div>`;
     }
 
-    /* ============================================================== */
-    /* INTELIGENCIA ALGORÍTMICA (Anti-Inanición y Anti-Repetición)    */
-    /* ============================================================== */
     function limpiarTitulo(titulo) {
         if (!titulo) return "";
         let limpio = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -189,7 +194,6 @@
     function procesarExcel(event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = function(e) {
             const data = new Uint8Array(e.target.result);
@@ -198,25 +202,14 @@
             const jsonRaw = XLSX.utils.sheet_to_json(worksheet, {header: 1});
             
             let headerRowIndex = 0;
-            for (let i = 0; i < Math.min(15, jsonRaw.length); i++) {
-                if (jsonRaw[i] && jsonRaw[i].map(c => String(c).trim().toLowerCase()).includes('película')) {
-                    headerRowIndex = i; break;
-                }
-            }
+            for (let i = 0; i < Math.min(15, jsonRaw.length); i++) { if (jsonRaw[i] && jsonRaw[i].map(c => String(c).trim().toLowerCase()).includes('película')) { headerRowIndex = i; break; } }
             
             let datosExcel = XLSX.utils.sheet_to_json(worksheet, {range: headerRowIndex});
-            
-            // Filtro Plaza Morelia
             let datosMorelia = datosExcel.filter(row => {
                 let cine = (row['Cine'] || '').toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 return cine.includes('cinepolis plaza morelia') || cine.includes('plaza morelia');
             });
-            
-            if (datosMorelia.length === 0) {
-                alert("⚠️ Error: No se encontró 'Cinepolis Plaza Morelia' en la columna de 'Cine'. Revisa el archivo.");
-                return;
-            }
-            
+            if (datosMorelia.length === 0) { alert("⚠️ Error: No se encontró 'Cinepolis Plaza Morelia' en la columna 'Cine'."); return; }
             generarSugerencias(datosMorelia);
         };
         reader.readAsArrayBuffer(file);
@@ -225,108 +218,91 @@
 
     function generarSugerencias(datosMorelia) {
         let conteoSala = {}; 
+        let metaPeliculas = {}; 
 
         datosMorelia.forEach(row => {
             let sala = parseInt(row['Sala']);
             let peliRaw = row['Película'];
+            let clasifRaw = row['Clasificación'];
             
             if (peliRaw && !isNaN(sala)) {
                 let peliLimpia = limpiarTitulo(peliRaw);
                 if (!conteoSala[sala]) conteoSala[sala] = {};
                 conteoSala[sala][peliLimpia] = (conteoSala[sala][peliLimpia] || 0) + 1;
+
+                if (!metaPeliculas[peliLimpia]) metaPeliculas[peliLimpia] = { esp: false, sub: false, clasif: '' };
+                let upper = peliRaw.toUpperCase();
+                if (upper.includes('ESP') || upper.includes('DOB')) metaPeliculas[peliLimpia].esp = true;
+                if (upper.includes('SUB')) metaPeliculas[peliLimpia].sub = true;
+                
+                if (clasifRaw && clasifRaw !== 'TBC') {
+                    let cParts = clasifRaw.toString().split('-');
+                    let c = cParts[cParts.length - 1].trim();
+                    if(c) metaPeliculas[peliLimpia].clasif = c;
+                }
             }
         });
 
         let topPorSala = {};
-        for (let s = 1; s <= 20; s++) { 
-            topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; 
-        }
+        for (let s = 1; s <= 20; s++) { topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; }
         
         let topSP = [...new Set([...(topPorSala[1]||[]), ...(topPorSala[4]||[])])]; 
-        let topScreenX = topPorSala[7] || []; 
-        let top4DX = topPorSala[8] || []; 
-        let topSJ = topPorSala[17] || []; 
+        let topScreenX = topPorSala[7] || []; let top4DX = topPorSala[8] || []; let topSJ = topPorSala[17] || []; 
 
-        fetch(API_INVENTARIO).then(res => res.json()).then(inventarioData => {
-            let inventario = inventarioData.filter(p => p.Categoria === 'Poster' && p.Cantidad_Guardados > 0);
-            
-            sugerenciasGlobales = []; 
-            
-            // Memoria Anti-Duplicación (Por Cartón Físico y por Película)
-            let usadosTaquillaIds = new Set(); let peliculasTaquilla = new Set();
-            let usadosIzquierdaIds = new Set(); let peliculasIzquierda = new Set();
-            let usadosDerechaIds = new Set(); let peliculasDerecha = new Set();
+        Promise.all([fetch(API_INVENTARIO).then(r => r.json()), fetch(API_ESTRENOS).then(r => r.json()), fetch(API_CARTELERAS).then(r => r.json())]).then(([inventarioData, estrenosData, carteleraData]) => {
+            sugerenciasGlobales = []; let usadosIds = new Set(); let peliculasEnMuro = new Set();
 
-            function buscarPoster(peliLimpia, usadosIdsSet, peliculasUsadasSet) {
-                // BLINDAJE 1: Si esta película ya se sugirió en esta zona, bloquea la repetición.
-                if (peliculasUsadasSet.has(peliLimpia)) return null;
-
-                for (let i = 0; i < inventario.length; i++) {
-                    let p = inventario[i];
-                    if (p.Cantidad_Guardados > 0 && !usadosIdsSet.has(p.ID_Publicidad)) {
-                        let nombreInvLimpio = limpiarTitulo(p.Nombre_Material).replace(/poster/gi, '').trim();
-                        if (nombreInvLimpio === peliLimpia || peliLimpia.includes(nombreInvLimpio) || nombreInvLimpio.includes(peliLimpia)) {
-                            return p;
-                        }
+            function buscarPosterInteligente(peliLimpia) {
+                if (peliculasEnMuro.has(peliLimpia)) return null; 
+                for (let p of inventarioData) {
+                    if (p.Categoria === 'Poster' && p.Cantidad_Guardados > 0 && !usadosIds.has(p.ID_Publicidad)) {
+                        let nombreInv = limpiarTitulo(p.Nombre_Material).replace(/poster/gi, '').trim();
+                        if (nombreInv === peliLimpia || peliLimpia.includes(nombreInv) || nombreInv.includes(peliLimpia)) return { origen: 'bodega', posterId: p.ID_Publicidad, posterNombre: p.Nombre_Material };
+                    }
+                }
+                for (let e of estrenosData.slots) {
+                    if (e.ID_Publicidad && !usadosIds.has(e.ID_Publicidad)) {
+                        let nombreInv = limpiarTitulo(e.Nombre_Material).replace(/poster/gi, '').trim();
+                        if (nombreInv === peliLimpia || peliLimpia.includes(nombreInv) || nombreInv.includes(peliLimpia)) return { origen: 'estrenos', origenId: e.ID_Slot, posterId: e.ID_Publicidad, posterNombre: e.Nombre_Material };
+                    }
+                }
+                for (let c of carteleraData) {
+                    if (c.ID_Publicidad && !usadosIds.has(c.ID_Publicidad)) {
+                        let nombreInv = limpiarTitulo(c.Nombre_Material).replace(/poster/gi, '').trim();
+                        if (nombreInv === peliLimpia || peliLimpia.includes(nombreInv) || nombreInv.includes(peliLimpia)) return { origen: 'cartelera', origenId: c.ID_Slot, ubicacion: c.Ubicacion, posterId: c.ID_Publicidad, posterNombre: c.Nombre_Material };
                     }
                 }
                 return null;
             }
 
-            function asignarMuro(listaPeliculas, slotsPermitidos, usadosIdsSet, peliculasUsadasSet) {
+            function asignarMuro(listaPeliculas, slotsPermitidos) {
                 let asignados = 0;
                 for(let peli of listaPeliculas) {
                     if (asignados >= slotsPermitidos.length) break;
-                    let match = buscarPoster(peli, usadosIdsSet, peliculasUsadasSet);
+                    let match = buscarPosterInteligente(peli);
                     if (match) {
-                        usadosIdsSet.add(match.ID_Publicidad);
-                        peliculasUsadasSet.add(peli); // Memoria activa: Película registrada en la pared
-                        match.Cantidad_Guardados--;
-                        sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
+                        usadosIds.add(match.posterId); peliculasEnMuro.add(peli);
+                        
+                        let meta = metaPeliculas[peli] || { esp: false, sub: false, clasif: '' };
+                        let idiomaText = "";
+                        if (meta.esp) idiomaText = "Doblada al español";
+                        else if (meta.sub) idiomaText = "Subtitulada";
+
+                        sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], match: match, idioma: idiomaText, clasificacion: meta.clasif });
                         asignados++;
                     }
                 }
             }
 
-            // BLINDAJE 2: ORDEN DE PRIORIDAD. 
-            // Evaluamos primero a los formatos que tienen MENOS películas disponibles (como Junior o ScreenX)
-            // para evitar que 4DX o Pluus les "roben" sus únicas opciones.
-            asignarMuro(topSJ, [7], usadosTaquillaIds, peliculasTaquilla);          // Junior (1 Sala)
-            asignarMuro(topScreenX, [5, 6], usadosTaquillaIds, peliculasTaquilla);  // ScreenX (1 Sala)
-            asignarMuro(top4DX, [3, 4], usadosTaquillaIds, peliculasTaquilla);      // 4DX (1 Sala)
-            asignarMuro(topSP, [1, 2], usadosTaquillaIds, peliculasTaquilla);       // Pluus (2 Salas)
+            asignarMuro(topSJ, [7]); asignarMuro(topScreenX, [5, 6]); asignarMuro(top4DX, [3, 4]); asignarMuro(topSP, [1, 2]);
 
-            // BLINDAJE 3: ALGORITMO GREEDY (Los más necesitados primero) para pasillos.
-            // Ordenamos las salas para procesar primero a las que tienen menos variedad de películas.
             let ordenIzquierda = [1, 2, 3, 4, 5, 6, 7].sort((a, b) => (topPorSala[a]?.length || 0) - (topPorSala[b]?.length || 0));
-            for(let sala of ordenIzquierda) {
-                let pelis = topPorSala[sala] || [];
-                for(let peli of pelis) {
-                    let match = buscarPoster(peli, usadosIzquierdaIds, peliculasIzquierda);
-                    if (match) {
-                        usadosIzquierdaIds.add(match.ID_Publicidad);
-                        peliculasIzquierda.add(peli); // Registra la peli para no repetirla en este pasillo
-                        match.Cantidad_Guardados--;
-                        sugerenciasGlobales.push({ slot: 7 + sala, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
-                        break;
-                    }
-                }
-            }
+            peliculasEnMuro.clear(); 
+            for(let sala of ordenIzquierda) { for(let peli of (topPorSala[sala] || [])) { let match = buscarPosterInteligente(peli); if (match) { usadosIds.add(match.posterId); peliculasEnMuro.add(peli); sugerenciasGlobales.push({ slot: 7 + sala, match: match }); break; } } }
 
             let ordenDerecha = [8, 9, 10, 11, 12, 13, 14, 15, 16].sort((a, b) => (topPorSala[a]?.length || 0) - (topPorSala[b]?.length || 0));
-            for(let sala of ordenDerecha) {
-                let pelis = topPorSala[sala] || [];
-                for(let peli of pelis) {
-                    let match = buscarPoster(peli, usadosDerechaIds, peliculasDerecha);
-                    if (match) {
-                        usadosDerechaIds.add(match.ID_Publicidad);
-                        peliculasDerecha.add(peli); // Registra la peli para no repetirla en este pasillo
-                        match.Cantidad_Guardados--;
-                        sugerenciasGlobales.push({ slot: 7 + sala, posterId: match.ID_Publicidad, posterNombre: match.Nombre_Material });
-                        break;
-                    }
-                }
-            }
+            peliculasEnMuro.clear();
+            for(let sala of ordenDerecha) { for(let peli of (topPorSala[sala] || [])) { let match = buscarPosterInteligente(peli); if (match) { usadosIds.add(match.posterId); peliculasEnMuro.add(peli); sugerenciasGlobales.push({ slot: 7 + sala, match: match }); break; } } }
             
             dibujarSugerenciasEnPantalla(true);
         });
@@ -339,59 +315,78 @@
         sugerenciasGlobales.forEach(sug => {
             let slotDiv = document.getElementById('slot-div-' + sug.slot);
             if (slotDiv && !slotDiv.classList.contains('lleno')) {
+                
+                let m = sug.match; let bgStyle, badge, btnText;
+                if (m.origen === 'estrenos') { bgStyle = "background: rgba(111, 66, 193, 0.15); border: 2px solid #6f42c1; color: var(--text-color);"; badge = `<span style="color:#6f42c1; font-size:11px; font-weight:bold;">🟪 Mover de Estrenos #${m.origenId}</span><br>`; btnText = "🔄 Mover"; } 
+                else if (m.origen === 'cartelera') { bgStyle = "background: rgba(253, 126, 20, 0.15); border: 2px solid #fd7e14; color: var(--text-color);"; badge = `<span style="color:#fd7e14; font-size:11px; font-weight:bold;">🟧 Mover de ${m.ubicacion}</span><br>`; btnText = "🔄 Mover"; } 
+                else { bgStyle = "background: rgba(13, 202, 240, 0.15); border: 2px solid #0dcaf0; color: var(--text-color);"; badge = `<span style="color:#0dcaf0; font-size:11px; font-weight:bold;">🟦 Desde Bodega</span><br>`; btnText = "✔️ Instalar"; }
+
+                if(slotDiv.classList.contains('muro-slot')) bgStyle += " color: white;";
+
+                let metaBadge = '';
+                if(sug.slot <= 7 && (sug.clasificacion || sug.idioma)) {
+                    metaBadge = `<div style="margin:5px 0;">`;
+                    if(sug.clasificacion) metaBadge += `<span class="badge-clasif">${sug.clasificacion}</span>`;
+                    if(sug.idioma) metaBadge += `<span class="badge-idioma">${sug.idioma}</span>`;
+                    metaBadge += `</div>`;
+                }
+
                 let sugHTML = document.createElement('div');
-                sugHTML.className = 'sugerencia-box';
-                sugHTML.innerHTML = `💡 Sugerimos:<br><strong>${sug.posterNombre}</strong><br><button class="btn btn-success btn-sm" style="width:100%; border-radius:3px;" onclick="confirmarSugerencia(event, ${sug.slot}, ${sug.posterId})">✔️ Instalar</button>`;
-                slotDiv.appendChild(sugHTML);
-                aplicadas++;
+                sugHTML.className = 'sugerencia-box'; sugHTML.style = bgStyle;
+                sugHTML.innerHTML = `${badge}<strong>${m.posterNombre}</strong>${metaBadge}<br><button class="btn btn-success btn-sm" style="width:100%; border-radius:3px; margin-top: 5px;" onclick="confirmarSugerencia(event, ${sug.slot}, ${m.posterId}, '${m.origen}', ${m.origenId || null}, '${sug.idioma || ''}', '${sug.clasificacion || ''}')">${btnText}</button>`;
+                
+                slotDiv.appendChild(sugHTML); aplicadas++;
             }
         });
         
         const btnAll = document.getElementById('btnInstalarTodas');
-        if(aplicadas > 0) {
-            btnAll.style.display = 'inline-block';
-            btnAll.innerText = `✔️ Instalar ${aplicadas} sugerencias de golpe`;
-            if(mostrarAlerta) alert(`¡Se generaron ${aplicadas} sugerencias para Plaza Morelia sin repeticiones!`);
-        } else {
-            btnAll.style.display = 'none';
-            if(mostrarAlerta) alert("Todos los espacios están llenos o no tienes stock en bodega de las películas marcadas.");
-        }
+        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Instalar/Mover ${aplicadas} pósters`; if(mostrarAlerta) alert(`Radar Terminado: ¡Se encontraron ${aplicadas} coincidencias!`); } 
+        else { btnAll.style.display = 'none'; if(mostrarAlerta) alert("Todos los espacios están llenos o no tienes stock en bodega."); }
+    }
+
+    async function confirmarSugerencia(event, idSlot, idPub, origen, origenId, idioma, clasif) {
+        event.stopPropagation();
+        if (origen === 'estrenos') await fetch(`${API_ESTRENOS}/${origenId}/liberar`, { method: 'POST' });
+        else if (origen === 'cartelera') await fetch(`${API_CARTELERAS}/${origenId}/liberar`, { method: 'POST' });
+        
+        await fetch(`${API_CARTELERAS}/${idSlot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idPub, idioma: idioma, clasificacion: clasif }) });
+        
+        sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== idSlot);
+        cargarMapa(false);
     }
 
     async function instalarTodasSugerencias() {
         const slotsParaInstalar = [];
-        sugerenciasGlobales.forEach(sug => {
-            let slotDiv = document.getElementById('slot-div-' + sug.slot);
-            if (slotDiv && !slotDiv.classList.contains('lleno')) slotsParaInstalar.push(sug);
-        });
-
+        sugerenciasGlobales.forEach(sug => { let slotDiv = document.getElementById('slot-div-' + sug.slot); if (slotDiv && !slotDiv.classList.contains('lleno')) slotsParaInstalar.push(sug); });
         if (slotsParaInstalar.length === 0) return;
         
         const btn = document.getElementById('btnInstalarTodas');
-        btn.disabled = true; btn.innerText = "Instalando...";
+        btn.disabled = true; btn.innerText = "Procesando...";
 
         for (let sug of slotsParaInstalar) {
-            await fetch(`${API_CARTELERAS}/${sug.slot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: sug.posterId }) });
+            let m = sug.match;
+            if (m.origen === 'estrenos') await fetch(`${API_ESTRENOS}/${m.origenId}/liberar`, { method: 'POST' });
+            else if (m.origen === 'cartelera') await fetch(`${API_CARTELERAS}/${m.origenId}/liberar`, { method: 'POST' });
+            
+            await fetch(`${API_CARTELERAS}/${sug.slot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: m.posterId, idioma: sug.idioma || '', clasificacion: sug.clasificacion || '' }) });
         }
         
-        sugerenciasGlobales = []; 
-        btn.style.display = 'none'; btn.disabled = false;
-        alert("¡Todas las sugerencias fueron instaladas exitosamente en los pasillos!");
-        cargarMapa(false);
+        sugerenciasGlobales = []; btn.style.display = 'none'; btn.disabled = false;
+        alert("¡Todos los movimientos y asignaciones logísticas se completaron con éxito!"); cargarMapa(false);
     }
 
-    /* ================= FUNCIONES MANUALES ================= */
     function abrirAsignacion(idSlot, ubicacion, estaLleno) {
         if(estaLleno) return; 
         slotSeleccionado = idSlot;
         document.getElementById('textoUbicacion').innerHTML = `Selecciona un material para: <strong>${ubicacion}</strong>`;
+        
+        document.getElementById('panelMetadatos').style.display = (idSlot <= 7) ? 'block' : 'none';
+        
         document.getElementById('modalAsignar').style.display = 'flex';
         fetch(API_INVENTARIO).then(res => res.json()).then(data => {
             const select = document.getElementById('selectorPosters');
             select.innerHTML = '<option value="">-- Elige un póster disponible --</option>';
-            data.forEach(p => {
-                if (p.Cantidad_Guardados > 0 && p.Categoria === 'Poster') { select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (Bodega: ${p.Cantidad_Guardados})</option>`; }
-            });
+            data.forEach(p => { if (p.Cantidad_Guardados > 0 && p.Categoria === 'Poster') { select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (Bodega: ${p.Cantidad_Guardados})</option>`; } });
         });
     }
 
@@ -399,18 +394,13 @@
     
     function guardarAsignacion() {
         const idPub = document.getElementById('selectorPosters').value;
+        const idioma = document.getElementById('manualIdioma').value;
+        const clasif = document.getElementById('manualClasif').value.trim();
+
         if(!idPub) return alert("Selecciona un póster.");
-        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { 
+        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub), idioma: idioma, clasificacion: clasif }) }).then(() => { 
             sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== slotSeleccionado);
             cerrarModal(); cargarMapa(false); 
-        });
-    }
-    
-    function confirmarSugerencia(event, idSlot, idPub) {
-        event.stopPropagation();
-        fetch(`${API_CARTELERAS}/${idSlot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idPub }) }).then(() => {
-            sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== idSlot);
-            cargarMapa(false);
         });
     }
     
