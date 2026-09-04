@@ -6,21 +6,15 @@
     <style>
         :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545;}
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
-        
-        body.theme-jacqui {
-            --primary: #0b5345; --btn-primary: #0b5345; 
-            --success: #1e8449; --btn-success: #1e8449;
-            --danger: #6e2c00; --btn-danger: #6e2c00;
-            --warning: #fd7e14;
-        }
-        body.theme-jacqui.dark-mode { --primary: #148f77; --btn-primary: #148f77; --danger: #873600; --btn-danger: #873600; }
+        body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --btn-success: #1e8449; --danger: #6e2c00; --warning: #fd7e14; }
+        body.theme-jacqui.dark-mode { --primary: #148f77; --danger: #873600; }
         
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; border-top: 5px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
         button.btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; }
         button.btn:hover { opacity: 0.8; }
-        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-warning { background: var(--warning); color: #000; }
+        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-warning { background: var(--warning); color: #000; } .btn-info { background: #0dcaf0; color: #000; }
         
         .admin-panel { background: rgba(0,0,0,0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; border: 1px dashed var(--border-color);}
         body.dark-mode .admin-panel { background: rgba(255,255,255,0.05); }
@@ -34,147 +28,195 @@
         .poster-nombre { font-size: 16px; color: var(--primary); font-weight: bold;}
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; }
-        select { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; }
+        .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto;}
+        select, textarea { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; box-sizing: border-box;}
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px;}
+        th, td { border: 1px solid var(--border-color); padding: 8px; text-align: left;}
+        th { background-color: rgba(0,0,0,0.05); }
+        body.dark-mode th { background-color: rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
 
 <div class="header">
     <h1 style="margin:0;">🚀 Muro de Próximos Estrenos</h1>
-    <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
+    <div style="display:flex; gap:10px;">
+        <button class="btn btn-info" onclick="abrirVerificador()">🔍 Verificador Masivo de Exhibición</button>
+        <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
+    </div>
 </div>
 
 <div class="admin-panel req-admin" style="display: none;" id="panelAdminEstrenos">
-    <strong>⚙️ Ajustar Tamaño del Muro:</strong>
+    <strong>⚙️ Tamaño del Muro:</strong>
     <input type="number" id="numSlots" min="1" max="100" style="padding:8px; border-radius:4px; width: 70px;">
-    <button class="btn btn-warning" onclick="actualizarConfiguracion()">Actualizar Espacios</button>
-    <small style="color:gray; margin-left:10px;">Si reduces el número, los pósters borrados regresarán a bodega.</small>
+    <button class="btn btn-warning" onclick="actualizarConfiguracion()">Actualizar</button>
 </div>
 
-<div class="slots-grid" id="muroEstrenos">
-    <h3 style="text-align: center; grid-column: 1 / -1;">Cargando muro...</h3>
-</div>
+<div class="slots-grid" id="muroEstrenos"></div>
 
 <div id="modalAsignar" class="modal">
     <div class="modal-content">
         <h2 style="margin-top:0;">Exhibir Póster</h2>
-        <p id="textoUbicacion">Selecciona un póster de la bodega para exhibirlo aquí:</p>
         <select id="selectorPosters"><option value="">Cargando pósters...</option></select>
         <div style="display:flex; justify-content: space-between; margin-top: 20px;">
-            <button class="btn btn-dark" onclick="cerrarModal()">Cancelar</button>
+            <button class="btn btn-dark" onclick="cerrarModal('modalAsignar')">Cancelar</button>
             <button class="btn btn-primary" onclick="guardarAsignacion()">Instalar Póster</button>
         </div>
+    </div>
+</div>
+
+<div id="modalVerificador" class="modal">
+    <div class="modal-content">
+        <h2 style="margin-top:0; color:var(--primary);">🔍 Verificador Logístico Inteligente</h2>
+        <p style="font-size:13px; color:gray;">Pega la lista de películas. El algoritmo ignorará números de lista iniciales (Ej. "12.") y buscará por similitud para evitar fallas por errores de dedo.</p>
+        <textarea id="textoVerificar" rows="6" placeholder="Ejemplo:&#10;12. Dune Parte 2&#10;11. 70 tour frances&#10;Moana Live Action"></textarea>
+        <button class="btn btn-primary" style="width:100%;" onclick="ejecutarVerificacion()">Escanear Inventario Global</button>
+        
+        <div id="tablaResultados" style="display:none; margin-top: 20px;">
+            <table>
+                <thead><tr><th>Búsqueda Original</th><th>Nombre Detectado</th><th>Estado Logístico</th></tr></thead>
+                <tbody id="cuerpoResultados"></tbody>
+            </table>
+        </div>
+        <button class="btn btn-dark" style="margin-top:20px; width:100%;" onclick="cerrarModal('modalVerificador')">Cerrar</button>
     </div>
 </div>
 
 <script>
     const API_ESTRENOS = 'https://jonassk13.pythonanywhere.com/api/estrenos';
     const API_INVENTARIO = 'https://jonassk13.pythonanywhere.com/api/inventario';
-    let slotSeleccionado = null;
-    let muroActualData = [];
+    const API_CARTELERAS = 'https://jonassk13.pythonanywhere.com/api/carteleras';
+    
+    let slotSeleccionado = null; let muroActualData = [];
     let rolUsuario = localStorage.getItem('rolCine') || 'General';
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente') { document.getElementById('panelAdminEstrenos').style.display = 'flex'; }
-        if(rolUsuario === 'Subgerente') { document.body.classList.add('theme-jacqui'); }
+        if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente') document.getElementById('panelAdminEstrenos').style.display = 'flex';
+        if(rolUsuario === 'Subgerente') document.body.classList.add('theme-jacqui');
         cargarMuro();
     };
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
+    
+    function limpiarTextoDuro(texto) { 
+        if (!texto) return ""; 
+        let limpio = texto.trim().replace(/^\d+\s*\.\s*/, '');
+        
+        limpio = limpio.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
+        limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, ''); 
+        return limpio.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(); 
+    }
 
-    function limpiarTextoDuro(texto) {
-        if (!texto) return "";
-        let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); 
-        limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, '');
-        limpio = limpio.replace(/[^a-zA-Z0-9]/g, '');
-        return limpio.toLowerCase();
+    function esSimilar(str1, str2) {
+        if (!str1 || !str2) return false;
+        if (str1 === str2 || str1.includes(str2) || str2.includes(str1)) return true;
+        
+        let longer = str1.length > str2.length ? str1 : str2;
+        let shorter = str1.length > str2.length ? str2 : str1;
+        if (longer.length === 0) return true;
+        
+        let costs = new Array();
+        for (let i = 0; i <= longer.length; i++) {
+            let lastValue = i;
+            for (let j = 0; j <= shorter.length; j++) {
+                if (i === 0) costs[j] = j;
+                else if (j > 0) {
+                    let newValue = costs[j - 1];
+                    if (longer.charAt(i - 1) !== shorter.charAt(j - 1)) {
+                        newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                    }
+                    costs[j - 1] = lastValue;
+                    lastValue = newValue;
+                }
+            }
+            if (i > 0) costs[shorter.length] = lastValue;
+        }
+        
+        return ((longer.length - costs[shorter.length]) / parseFloat(longer.length)) >= 0.75;
     }
 
     function cargarMuro() {
         fetch(API_ESTRENOS).then(res => res.json()).then(data => {
-            document.getElementById('numSlots').value = data.total;
-            muroActualData = data.slots; 
-            const muro = document.getElementById('muroEstrenos');
-            muro.innerHTML = '';
-            
+            document.getElementById('numSlots').value = data.total; muroActualData = data.slots;
+            const muro = document.getElementById('muroEstrenos'); muro.innerHTML = '';
             data.slots.forEach(slot => {
-                const estaLleno = slot.ID_Publicidad !== null;
-                const clase = estaLleno ? 'slot lleno' : 'slot';
-                const contenido = estaLleno 
-                    ? `<span class="poster-nombre">${slot.Nombre_Material}</span><button class="btn btn-danger" style="margin-top:10px; font-size:11px; padding:5px 8px;" onclick="liberarSlot(event, ${slot.ID_Slot})">Desmontar</button>`
-                    : `<span style="color:gray;">Slot Vacío</span>`;
-                
-                muro.innerHTML += `
-                    <div class="${clase}" onclick="abrirAsignacion(${slot.ID_Slot}, ${estaLleno})">
-                        <div class="slot-numero">Espacio #${slot.ID_Slot}</div>
-                        ${contenido}
-                    </div>`;
+                const estaLleno = slot.ID_Publicidad !== null; const clase = estaLleno ? 'slot lleno' : 'slot';
+                const contenido = estaLleno ? `<span class="poster-nombre">${slot.Nombre_Material}</span><button class="btn btn-danger" style="margin-top:10px; font-size:11px; padding:5px 8px;" onclick="liberarSlot(event, ${slot.ID_Slot})">Desmontar</button>` : `<span style="color:gray;">Slot Vacío</span>`;
+                muro.innerHTML += `<div class="${clase}" onclick="abrirAsignacion(${slot.ID_Slot}, ${estaLleno})"><div class="slot-numero">Espacio #${slot.ID_Slot}</div>${contenido}</div>`;
             });
         });
     }
 
     function actualizarConfiguracion() {
         const nuevoTotal = document.getElementById('numSlots').value;
-        if(!nuevoTotal || nuevoTotal < 1) return;
-        if(confirm(`¿Estás seguro de que quieres cambiar el tamaño del muro a ${nuevoTotal} espacios?`)) {
-            fetch(`${API_ESTRENOS}/config`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ total: parseInt(nuevoTotal) }) }).then(() => cargarMuro());
-        }
+        if(nuevoTotal >= 1 && confirm(`¿Cambiar tamaño a ${nuevoTotal}?`)) fetch(`${API_ESTRENOS}/config`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ total: parseInt(nuevoTotal) }) }).then(() => cargarMuro());
     }
 
     function abrirAsignacion(idSlot, estaLleno) {
-        if(estaLleno) return; 
-        slotSeleccionado = idSlot;
-        document.getElementById('textoUbicacion').innerHTML = `Selecciona un póster para el <strong>Espacio #${idSlot}</strong>:`;
-        document.getElementById('modalAsignar').style.display = 'flex';
-        
+        if(estaLleno) return; slotSeleccionado = idSlot; document.getElementById('modalAsignar').style.display = 'flex';
         fetch(API_INVENTARIO).then(res => res.json()).then(data => {
-            const select = document.getElementById('selectorPosters');
-            select.innerHTML = '<option value="">-- Elige un póster disponible --</option>';
-            
-            let postersDisponibles = data.filter(p => p.Cantidad_Guardados > 0 && p.Categoria === 'Poster');
-            postersDisponibles.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); // A a la Z
-            
-            postersDisponibles.forEach(p => {
-                select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (En Bodega: ${p.Cantidad_Guardados})</option>`; 
-            });
+            const select = document.getElementById('selectorPosters'); select.innerHTML = '<option value="">-- Elige un póster disponible --</option>';
+            let posters = data.filter(p => p.Cantidad_Guardados > 0 && p.Categoria === 'Poster'); posters.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+            posters.forEach(p => { select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (En Bodega: ${p.Cantidad_Guardados})</option>`; });
         });
     }
 
-    function cerrarModal() { document.getElementById('modalAsignar').style.display = 'none'; slotSeleccionado = null; }
+    function cerrarModal(id) { document.getElementById('id').style.display = 'none'; slotSeleccionado = null; }
     
     function guardarAsignacion() {
-        const select = document.getElementById('selectorPosters');
-        const idPub = select.value;
-        if(!idPub) return;
-
-        const textoSeleccionado = select.options[select.selectedIndex].text.split(' (En Bodega')[0].trim();
-        const tituloNuevoLimpio = limpiarTextoDuro(textoSeleccionado);
+        const select = document.getElementById('selectorPosters'); const idPub = select.value; if(!idPub) return;
+        const tituloNuevoLimpio = limpiarTextoDuro(select.options[select.selectedIndex].text.split(' (En Bodega')[0].trim());
         
-        let posibleDuplicado = null;
-        for(let slot of muroActualData) {
-            if(slot.ID_Publicidad !== null) {
-                let tituloSlotLimpio = limpiarTextoDuro(slot.Nombre_Material);
-                if(tituloNuevoLimpio === tituloSlotLimpio || tituloNuevoLimpio.includes(tituloSlotLimpio) || tituloSlotLimpio.includes(tituloNuevoLimpio)) {
-                    posibleDuplicado = slot;
-                    break;
-                }
-            }
-        }
-
-        if(posibleDuplicado) {
-            let confirmar = confirm(`⚠️ POSIBLE DUPLICADO DETECTADO:\n\nEstás intentando agregar "${textoSeleccionado}", pero el sistema detectó que "${posibleDuplicado.Nombre_Material}" ya está exhibido en el Espacio #${posibleDuplicado.ID_Slot}.\n\n¿Estás seguro de que quieres agregarlo de todas formas?`);
-            if(!confirmar) return; 
-        }
-
-        fetch(`${API_ESTRENOS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { cerrarModal(); cargarMuro(); });
+        let posDup = muroActualData.find(s => s.ID_Publicidad !== null && esSimilar(tituloNuevoLimpio, limpiarTextoDuro(s.Nombre_Material)));
+        if(posDup && !confirm(`⚠️ ALERTA DE SIMILITUD:\n\nDetectamos que algo muy parecido a "${posDup.Nombre_Material}" ya está exhibido en el Espacio #${posDup.ID_Slot}.\n\n¿Agregar de todas formas?`)) return;
+        
+        fetch(`${API_ESTRENOS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { cerrarModal('modalAsignar'); cargarMuro(); });
     }
     
-    function liberarSlot(event, idSlot) {
-        event.stopPropagation();
-        if(confirm("¿Seguro que deseas desmontar este póster y regresarlo a la bodega?")) { fetch(`${API_ESTRENOS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMuro()); }
+    function liberarSlot(event, idSlot) { event.stopPropagation(); if(confirm("¿Regresar póster a bodega?")) fetch(`${API_ESTRENOS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMuro()); }
+
+    function abrirVerificador() { document.getElementById('textoVerificar').value = ''; document.getElementById('tablaResultados').style.display = 'none'; document.getElementById('modalVerificador').style.display = 'flex'; }
+    
+    function ejecutarVerificacion() {
+        let texto = document.getElementById('textoVerificar').value.trim();
+        if(!texto) return;
+        let lineas = texto.split('\n').filter(l => l.trim() !== '');
+        
+        Promise.all([fetch(API_INVENTARIO).then(r => r.json()), fetch(API_ESTRENOS).then(r => r.json()), fetch(API_CARTELERAS).then(r => r.json())]).then(([invData, estrenosData, cartData]) => {
+            const tbody = document.getElementById('cuerpoResultados'); tbody.innerHTML = '';
+            
+            lineas.forEach(lineaOriginal => {
+                let nomBuscadoLimpio = limpiarTextoDuro(lineaOriginal);
+                let estadoHTML = `<span style="color:var(--danger); font-weight:bold;">❌ No encontrado en el sistema</span>`;
+                let nombreDetectado = `<span style="color:gray;">-</span>`;
+                
+                let enEstrenos = estrenosData.slots.find(e => e.ID_Publicidad && esSimilar(nomBuscadoLimpio, limpiarTextoDuro(e.Nombre_Material)));
+                if(enEstrenos) { 
+                    estadoHTML = `<span style="color:#6f42c1; font-weight:bold;">🟪 Colgado en Estrenos (Slot #${enEstrenos.ID_Slot})</span>`; 
+                    nombreDetectado = `<b>${enEstrenos.Nombre_Material}</b>`;
+                } else {
+                    let enCartelera = cartData.find(c => c.ID_Publicidad && esSimilar(nomBuscadoLimpio, limpiarTextoDuro(c.Nombre_Material)));
+                    if(enCartelera) { 
+                        estadoHTML = `<span style="color:var(--success); font-weight:bold;">✅ Exhibido en ${enCartelera.Ubicacion}</span>`; 
+                        nombreDetectado = `<b>${enCartelera.Nombre_Material}</b>`;
+                    } else {
+                        let enBodega = invData.find(i => i.Categoria === 'Poster' && esSimilar(nomBuscadoLimpio, limpiarTextoDuro(i.Nombre_Material)));
+                        if(enBodega) {
+                            nombreDetectado = `<b>${enBodega.Nombre_Material}</b>`;
+                            if(enBodega.Cantidad_Guardados > 0) estadoHTML = `<span style="color:#0dcaf0; font-weight:bold;">📦 En Bodega (${enBodega.Cantidad_Guardados} pz)</span>`;
+                            else estadoHTML = `<span style="color:gray; font-weight:bold;">🗑️ Existe en inventario pero stock es 0</span>`;
+                        }
+                    }
+                }
+                tbody.innerHTML += `<tr><td>${lineaOriginal}</td><td>${nombreDetectado}</td><td>${estadoHTML}</td></tr>`;
+            });
+            document.getElementById('tablaResultados').style.display = 'block';
+        });
     }
+    
+    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 </script>
 </body>
 </html>
