@@ -6,8 +6,8 @@
     <title>Inventario de Publicidad</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f3f5; --th-text: #333; --btn-primary: #0d6efd; --btn-success: #198754; --btn-danger: #dc3545; --btn-info: #0dcaf0; --btn-reserva: #6f42c1; --btn-dark: #212529; --btn-text: #fff; --admin-bg: #ffc107; }
-        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; --btn-primary: #6ea8fe; --btn-success: #75b798; --btn-danger: #ea868f; --btn-info: #6edff6; --btn-reserva: #b288e7; --btn-dark: #f8f9fa; --btn-text: #121212; --admin-bg: #ffca2c; }
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f3f5; --th-text: #333; --btn-primary: #0d6efd; --btn-success: #198754; --btn-danger: #dc3545; --btn-info: #0dcaf0; --btn-reserva: #6f42c1; --btn-dark: #212529; --btn-text: #fff; --admin-bg: #ffc107; --btn-warning: #ffc107;}
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; --btn-primary: #6ea8fe; --btn-success: #75b798; --btn-danger: #ea868f; --btn-info: #6edff6; --btn-reserva: #b288e7; --btn-dark: #f8f9fa; --btn-text: #121212; --admin-bg: #ffca2c; --btn-warning: #ffca2c;}
         
         body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --btn-success: #1e8449; --danger: #6e2c00; --btn-danger: #6e2c00; --info: #aec6cf; --btn-info: #aec6cf; --warning: #fd7e14; --btn-reserva: #fd7e14; --admin-bg: #fd7e14; }
         body.theme-jacqui.dark-mode { --primary: #148f77; --btn-primary: #148f77; --danger: #873600; --btn-danger: #873600; }
@@ -28,11 +28,13 @@
         input, select { padding: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 5px; background: var(--box-bg); color: var(--text-color); box-sizing: border-box; }
         .btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; width: auto; border-radius: 5px; color: var(--btn-text); transition: 0.2s; text-decoration: none; display: inline-block;}
         .btn:hover { opacity: 0.8; }
-        .btn-primary { background: var(--btn-primary); } .btn-success { background: var(--btn-success); } .btn-danger { background: var(--btn-danger); } .btn-info { background: var(--btn-info); color: #000; } .btn-reserva { background: var(--btn-reserva); } .btn-dark { background: var(--btn-dark); color: var(--bg-color); } .btn-admin { background: var(--admin-bg); color: #000; }
+        .btn-primary { background: var(--btn-primary); } .btn-success { background: var(--btn-success); } .btn-danger { background: var(--btn-danger); } .btn-info { background: var(--btn-info); color: #000; } .btn-reserva { background: var(--btn-reserva); } .btn-dark { background: var(--btn-dark); color: var(--bg-color); } .btn-admin { background: var(--admin-bg); color: #000; } .btn-warning { background: var(--btn-warning); color: #000; }
+        
         .box { background: var(--box-bg); padding: 20px; border-radius: 10px; overflow-x: auto;}
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;}
         th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left;}
         th { background-color: var(--th-bg); color: var(--th-text); }
+        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-color); background: none; border: none; padding: 0;}
@@ -75,6 +77,7 @@
     <a href="proximos_estrenos.html" target="_blank" class="btn btn-success req-staff" style="background: #0b5345;">🚀 Próximos Estrenos</a>
     <a href="plano_interactivo.html" target="_blank" class="btn btn-primary req-staff" style="background:#e83e8c;">📍 Plano del Cine</a>
     <a href="lobby_stands.html" target="_blank" class="btn btn-info req-staff" style="background: #fd7e14; color: white;">🎪 Stands de Lobby</a>
+    <a href="areas_cine.html" target="_blank" class="btn btn-admin req-staff" style="background: #d35400; color: white;">🏢 Áreas del Cine</a>
     
     <select id="filtroCategoria" onchange="renderizarTabla()" style="width: 200px; margin-bottom: 0; margin-left: auto;">
         <option value="Todos">Todas las categorías</option>
@@ -82,9 +85,19 @@
 </div>
 
 <div class="box">
+    <h2 style="margin-top:0; color: var(--primary);">🍿 Inventario General (Publicidad)</h2>
     <table>
         <thead><tr><th>Material</th><th>Categoría</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
         <tbody id="tablaCuerpo"></tbody>
+    </table>
+</div>
+
+<div class="box req-staff" id="cajaExclusiva" style="margin-top:20px; border: 2px solid var(--warning); display:none;">
+    <h2 style="margin-top:0; color: var(--warning);">🔒 Inventario Exclusivo (Áreas del Cine)</h2>
+    <p style="font-size: 13px; color: gray;">Este panel está oculto para los cinepolitos y visitantes.</p>
+    <table>
+        <thead><tr><th>Material</th><th>Categoría</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
+        <tbody id="tablaCuerpoExclusivo"></tbody>
     </table>
 </div>
 
@@ -107,7 +120,7 @@
         <h2 style="margin-top: 0; color: #e83e8c;">🎫 Historial de mis Pedidos</h2>
         <p style="font-size: 13px; color: gray;">Aquí puedes ver si los gerentes ya aprobaron tus pósters o si el corporativo los solicitó de regreso.</p>
         <table>
-            <thead><tr><th>Póster Solicitado</th><th>Piezas</th><th>Estado Actual</th></tr></thead>
+            <thead><tr><th>Producto Solicitado</th><th>Piezas</th><th>Estado Actual</th></tr></thead>
             <tbody id="tablaMisPedidosCuerpo"></tbody>
         </table>
     </div>
@@ -119,12 +132,28 @@
 <div id="modalCategorias" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalCategorias')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">🏷️ Gestión de Categorías</h2><div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap: wrap;"><input type="hidden" id="catIdEdit"><input type="text" id="catNombre" placeholder="Nueva Categoría" style="flex:1;"><button class="btn btn-success" onclick="guardarCategoria()">Guardar</button></div><table><thead><tr><th>Categoría</th><th>Acciones</th></tr></thead><tbody id="tablaCategorias"></tbody></table></div></div>
 <div id="modalProducto" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button><h2 style="margin-top: 0;">Registro Individual</h2><input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" required><select id="categoria" class="select-dinamico-cat" style="width:100%;"></select><input type="number" id="cantidadTotal" placeholder="Cantidad Total Recibida" style="width:100%;" min="1" required><button class="btn btn-primary" onclick="guardarProducto()" style="width: 100%;">Guardar Registro</button></div></div>
 <div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">⚡ Ingreso Masivo</h2><div style="overflow-x:auto;"><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table></div><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn btn-admin" style="float:right;" onclick="guardarIngresoMasivo()">Guardar Todo</button></div></div>
+
+<div id="modalEditarProducto" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+        <button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button>
+        <h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2>
+        <input type="hidden" id="editIdProd">
+        <input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre...">
+        <select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select>
+        <button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button>
+    </div>
+</div>
+
+<div id="modalGrupo" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button><h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2><input type="text" id="nombreGrupo" placeholder="Nombre de la Caja" style="width:100%;" required><div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px;"></div><button id="btnGuardarCaja" class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo</button></div></div>
+
+<div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados y Entregas</h2><h3>🟡 Esperando Autorización</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th></tr></thead><tbody id="tablaPendientes"></tbody></table></div><h3 style="margin-top: 30px;">🟢 Aprobadas (Listas para Entregar)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div></div>
+
 <div id="modalAlertasSupervisor" class="modal">
     <div class="modal-content" style="max-width: 800px;">
         <button class="close-btn" onclick="cerrarModal('modalAlertasSupervisor')">&times;</button>
         <h2 style="margin-top: 0; color: var(--btn-reserva);">⚠️ Bandeja de Autorizaciones</h2>
         
-        <h3 style="color: var(--primary);">1. Solicitudes de Pósters</h3>
+        <h3 style="color: var(--primary);">1. Solicitudes de Productos</h3>
         <div style="overflow-x:auto; margin-bottom: 20px;">
             <table>
                 <thead><tr><th>Material</th><th>Solicitado por</th><th>Piezas</th><th>Acción</th></tr></thead>
@@ -135,20 +164,18 @@
         <h3 style="color: var(--danger);">2. Autorización de Mermas (Fotos Requeridas)</h3>
         <div style="overflow-x:auto;">
             <table>
-                <thead><tr><th>Póster</th><th>Cant.</th><th>Motivo y Evidencia</th><th>Decisión</th></tr></thead>
+                <thead><tr><th>Producto</th><th>Cant.</th><th>Motivo y Evidencia</th><th>Decisión</th></tr></thead>
                 <tbody id="tablaAlertasMermas"><tr><td colspan="4">Sin mermas por revisar.</td></tr></tbody>
             </table>
         </div>
     </div>
 </div>
-<div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados y Entregas</h2><h3>🟡 Esperando Autorización</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th></tr></thead><tbody id="tablaPendientes"></tbody></table></div><h3 style="margin-top: 30px;">🟢 Aprobadas (Listas para Entregar)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div></div>
-<div id="modalGrupo" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button><h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2><input type="text" id="nombreGrupo" placeholder="Nombre de la Caja" style="width:100%;" required><div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px;"></div><button id="btnGuardarCaja" class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo</button></div></div>
 
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault()); 
     document.addEventListener('keydown', event => { if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); });
     document.body.style.userSelect = "none"; 
-    document.addEventListener('selectstart', e => { if (e.target.tagName === 'INPUT') e.stopPropagation(); else e.preventDefault(); });
+    document.addEventListener('selectstart', e => { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') e.stopPropagation(); else e.preventDefault(); });
 
     const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
     const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
@@ -160,20 +187,7 @@
     let datosInventario = []; let listaCategorias = [];
     let rolUsuario = 'General'; let idUsuario = null; let nombreUsuario = '';
 
-    window.onload = () => {
-        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('modo') === 'visitante') {
-            localStorage.setItem('rolCine', 'Visitante');
-            localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine');
-            window.history.replaceState(null, null, window.location.pathname);
-        }
-
-        verificarSesion();
-        cargarCategoriasGlobales();
-    };
-    // Diseño exclusivo para jacqui
+    //  Diseño exclusivo para jacqui
     function validarMensajesVIP() {
         if(rolUsuario !== 'Subgerente') return; 
 
@@ -183,7 +197,6 @@
         
         let mensaje = null; let icono = '';
 
-        // easter egg de cumpleaños
         if (mes === 5 && dia >= 4 && dia <= 18) {
             if (dia === 18) mensaje = "¡FELIZ CUMPLEAÑOS JACQUI! 🎂 Que disfrutes tu día especial administrando con excelencia.";
             else mensaje = `¡Faltan ${18 - dia} días para tu cumpleaños, Jacqui! 🥳 Ve preparando el pastel.`;
@@ -205,14 +218,20 @@
         }
     }
     
-    function cerrarSaludoVIP(btn, fecha) {
-        localStorage.setItem('ultimoSaludoVIP', fecha);
-        btn.parentElement.remove(); document.getElementById('overlayVIP').remove();
-    }
-    
-    const originalWindowLoad = window.onload;
+    function cerrarSaludoVIP(btn, fecha) { localStorage.setItem('ultimoSaludoVIP', fecha); btn.parentElement.remove(); document.getElementById('overlayVIP').remove(); }
+
     window.onload = () => {
-        if(originalWindowLoad) originalWindowLoad();
+        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('modo') === 'visitante') {
+            localStorage.setItem('rolCine', 'Visitante');
+            localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine');
+            window.history.replaceState(null, null, window.location.pathname);
+        }
+
+        verificarSesion();
+        cargarCategoriasGlobales();
         setTimeout(validarMensajesVIP, 1000); 
     };
 
@@ -231,7 +250,7 @@
         const contenidoQR = document.getElementById('qrVisitanteContainer').innerHTML; 
         const ventana = window.open('', '_blank'); 
         ventana.document.write(`
-        <html><head><title>Ticket de Posters</title>
+        <html><head><title>Ticket de Productos</title>
         <style>
             body { background: #111; color: white; font-family: 'Arial', sans-serif; text-align: center; padding: 50px; }
             .ticket { border: 4px dashed gold; padding: 40px; border-radius: 15px; background: #222; max-width: 400px; margin: 0 auto; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
@@ -244,9 +263,9 @@
             <div class="ticket">
                 <h1>🎬 Cinepolitos 🍿</h1>
                 <h2 style="margin: 0; color: white;">Catálogo de Publicidad</h2>
-                <p>Escanea este código qr con tu celular para apartar los pósters que te gustan a tu nombre.</p>
+                <p>Escanea este código mágico con tu celular para apartar los productos a tu nombre.</p>
                 <div class="qr-box">${contenidoQR}</div>
-                <div class="footer">⚠️ Recuerda que la entrega está sujeta a que Corporativo no solicite el poster.</div>
+                <div class="footer">⚠️ La entrega está sujeta a que Corporativo no solicite el retorno de los materiales.</div>
             </div>
         </body></html>`); 
         ventana.document.close(); setTimeout(() => ventana.print(), 800); 
@@ -254,38 +273,25 @@
 
     function abrirModalMisPedidos() {
         const nombreCinepolito = localStorage.getItem('nombreCinepolito');
-        if(!nombreCinepolito) {
-            alert("Todavía no has pedido ningún póster. Abre un póster y dale clic a 'Quiero pedir este póster' primero.");
-            return;
-        }
+        if(!nombreCinepolito) { alert("Todavía no has pedido nada. Abre un producto y dale clic a 'Quiero pedir esto' primero."); return; }
 
         fetch(API_RESERVAS).then(res => res.json()).then(data => {
-            const tbody = document.getElementById('tablaMisPedidosCuerpo');
-            tbody.innerHTML = '';
-            
+            const tbody = document.getElementById('tablaMisPedidosCuerpo'); tbody.innerHTML = '';
             let todosMisPedidos = [];
             data.pendientes.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
             data.aprobados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
             data.entregadas.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
             data.rechazados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
 
-            if(todosMisPedidos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No encontramos historial a tu nombre.</td></tr>';
-            } else {
+            if(todosMisPedidos.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No encontramos historial a tu nombre.</td></tr>'; } 
+            else {
                 todosMisPedidos.forEach(pedido => {
-                    let badgeClass = `estado-${pedido.Estado}`;
-                    let textoEstado = pedido.Estado;
-                    
+                    let badgeClass = `estado-${pedido.Estado}`; let textoEstado = pedido.Estado;
                     if(pedido.Estado === 'Rechazado') textoEstado = 'Corporativo lo pidió 🔙';
                     if(pedido.Estado === 'Aprobado') textoEstado = 'Aprobado (Listo) ✅';
                     if(pedido.Estado === 'Pendiente') textoEstado = 'En Espera ⏳';
                     if(pedido.Estado === 'Entregado') textoEstado = 'Entregado 🎉';
-
-                    tbody.innerHTML += `<tr>
-                        <td><strong>${pedido.Nombre_Material}</strong></td>
-                        <td>${pedido.Cantidad} pz</td>
-                        <td><span class="estado-badge ${badgeClass}">${textoEstado}</span></td>
-                    </tr>`;
+                    tbody.innerHTML += `<tr><td><strong>${pedido.Nombre_Material}</strong></td><td>${pedido.Cantidad} pz</td><td><span class="estado-badge ${badgeClass}">${textoEstado}</span></td></tr>`;
                 });
             }
             abrirModal('modalMisPedidos');
@@ -314,22 +320,19 @@
     function cerrarSesion() { localStorage.setItem('rolCine', 'General'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine'); location.reload(); }
 
     function configurarInterfaz() {
-        let textoEtiqueta = rolUsuario;
-        const badge = document.getElementById('etiquetaRol');
+        let textoEtiqueta = rolUsuario; const badge = document.getElementById('etiquetaRol');
+        if(rolUsuario === 'Visitante') { textoEtiqueta = '🎫 Cinepolito'; let guardadoNombre = localStorage.getItem('nombreCinepolito'); if (guardadoNombre) textoEtiqueta += `: ${guardadoNombre}`; } 
+        else if (nombreUsuario && rolUsuario !== 'General') { textoEtiqueta = `${rolUsuario}: ${nombreUsuario}`; }
         
-        if(rolUsuario === 'Visitante') {
-            textoEtiqueta = '🎫 Cinepolito';
-            let guardadoNombre = localStorage.getItem('nombreCinepolito');
-            if (guardadoNombre) textoEtiqueta += `: ${guardadoNombre}`;
-        } else if (nombreUsuario && rolUsuario !== 'General') {
-            textoEtiqueta = `${rolUsuario}: ${nombreUsuario}`;
-        }
-        
-        badge.innerText = `(${textoEtiqueta})`;
-        badge.className = 'rol-badge'; 
+        badge.innerText = `(${textoEtiqueta})`; badge.className = 'rol-badge'; 
         if (rolUsuario === 'Subgerente') badge.classList.add('badge-subgerente');
         
         document.querySelectorAll('.req-staff, .req-admin, .req-auth').forEach(el => el.classList.remove('oculto'));
+        if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista') {
+            document.getElementById('cajaExclusiva').style.display = 'block';
+        } else {
+            document.getElementById('cajaExclusiva').style.display = 'none';
+        }
 
         if(rolUsuario === 'General' || rolUsuario === 'Visitante') {
             document.getElementById('btnIngresar').classList.remove('oculto'); document.getElementById('btnSalir').classList.add('oculto'); document.getElementById('btnPerfil').classList.add('oculto');
@@ -352,10 +355,58 @@
     function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; abrirModal('modalPerfil'); }
     function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden. Escríbelas de nuevo."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); } }); }
 
-    function limpiarTextoDuro(texto) { if (!texto) return ""; let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, ''); limpio = limpio.replace(/[^a-zA-Z0-9]/g, ''); return limpio.toLowerCase(); }
+    function limpiarTextoDuro(texto) { if (!texto) return ""; let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, ''); return limpio.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(); }
 
     function cargarTabla() { fetch(API_URL).then(res => { if(!res.ok) throw new Error("Fallo de conexión"); return res.json(); }).then(data => { if(!Array.isArray(data)) throw new Error("Formato incorrecto."); datosInventario = data; renderizarTabla(); }).catch(err => { document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;"><b>🛑 Error Detectado:</b> ${err.message}.</td></tr>`; }); }
-    function renderizarTabla() { const tbody = document.getElementById('tablaCuerpo'); const filtro = document.getElementById('filtroCategoria').value; tbody.innerHTML = ''; if(datosInventario.length === 0) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío o cargando...</td></tr>`; return; } let datosFiltrados = datosInventario.filter(item => filtro === "Todos" || item.Categoria === filtro); datosFiltrados.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); datosFiltrados.forEach(item => { const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; tbody.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnBorrar}</td></tr>`; }); }
+    
+    function renderizarTabla() { 
+        const tbodyNormal = document.getElementById('tablaCuerpo'); 
+        const tbodyExclusivo = document.getElementById('tablaCuerpoExclusivo'); 
+        const filtro = document.getElementById('filtroCategoria').value; 
+        
+        tbodyNormal.innerHTML = ''; tbodyExclusivo.innerHTML = ''; 
+        
+        if(datosInventario.length === 0) { 
+            tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío o cargando...</td></tr>`; 
+            tbodyExclusivo.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío...</td></tr>`; 
+            return; 
+        } 
+        
+        let datosNormales = datosInventario.filter(item => item.Categoria !== 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro));
+        let datosExclusivos = datosInventario.filter(item => item.Categoria === 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro));
+        
+        datosNormales.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        datosExclusivos.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+
+        if(datosNormales.length === 0) tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin resultados</td></tr>`;
+        datosNormales.forEach(item => { 
+            const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'");
+            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}')">✏️</button>` : '';
+            const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
+            
+            tbodyNormal.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
+        }); 
+
+        if(datosExclusivos.length === 0) tbodyExclusivo.innerHTML = `<tr><td colspan="5" style="text-align:center;">No hay materiales registrados en áreas internas.</td></tr>`;
+        datosExclusivos.forEach(item => { 
+            const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'");
+            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}')">✏️</button>` : '';
+            const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
+            
+            tbodyExclusivo.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td><span class="badge-subgerente" style="padding:3px 6px; border-radius:5px; font-size:11px;">${item.Categoria}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
+        });
+    }
+
+    function abrirModalEditar(id, nombre, categoria) {
+        document.getElementById('editIdProd').value = id; document.getElementById('editNombreProd').value = nombre; document.getElementById('editCategoriaProd').value = categoria;
+        abrirModal('modalEditarProducto');
+    }
+    
+    function guardarEdicionProducto() {
+        const id = document.getElementById('editIdProd').value; const nombre = document.getElementById('editNombreProd').value.trim(); const cat = document.getElementById('editCategoriaProd').value;
+        if(!nombre) return alert("El nombre no puede estar vacío");
+        fetch(`${API_URL}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, categoria: cat }) }).then(() => { cerrarModal('modalEditarProducto'); cargarTabla(); });
+    }
 
     function guardarProducto() { const nombreIn = document.getElementById('nombre').value.trim(); const catIn = document.getElementById('categoria').value; const cantIn = parseInt(document.getElementById('cantidadTotal').value); if(!nombreIn) return; const nombreNuevoLimpio = limpiarTextoDuro(nombreIn); let posibleDuplicado = datosInventario.find(p => { let nombreInvLimpio = limpiarTextoDuro(p.Nombre_Material); return nombreNuevoLimpio === nombreInvLimpio || nombreNuevoLimpio.includes(nombreInvLimpio) || nombreInvLimpio.includes(nombreNuevoLimpio); }); if(posibleDuplicado) { let confirmacion = confirm(`⚠️ POSIBLE MATERIAL DUPLICADO:\n\nEstás registrando "${nombreIn}", pero ya tienes un material llamado "${posibleDuplicado.Nombre_Material}".\n\n¿Estás completamente seguro de registrarlo como un material nuevo y separado?`); if(!confirmacion) return; } fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombreIn, categoria: catIn, cantidad_total: cantIn }) }).then(() => { cerrarModal('modalProducto'); document.getElementById('nombre').value = ''; cargarTabla(); }); }
     function eliminarProducto(id) { if(confirm("¿Eliminar registro?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
@@ -364,6 +415,13 @@
     function guardarIngresoMasivo() { let productos = []; document.querySelectorAll('.fila-masiva').forEach(fila => { productos.push({ nombre: fila.querySelector('.masivo-nombre').value, categoria: fila.querySelector('.masivo-cat').value, cantidad_total: parseInt(fila.querySelector('.masivo-cant').value) }); }); fetch(API_URL + '/masivo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productos) }).then(() => { cerrarModal('modalMasivo'); cargarTabla(); }); }
     function abrirModalGrupo() { fetch(API_URL).then(res => res.json()).then(data => { const lista = document.getElementById('listaProductosGrupo'); lista.innerHTML = ''; data.forEach(p => { lista.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer;"><input type="checkbox" class="check-grupo" value="${p.ID_Publicidad}"> <span><strong>${p.Nombre_Material}</strong> <small style="color:var(--btn-success);">Bodega: ${p.Cantidad_Guardados}</small></span></label>`; }); abrirModal('modalGrupo'); }); }
     function guardarGrupo() { const nombre = document.getElementById('nombreGrupo').value.trim(); const checks = Array.from(document.querySelectorAll('.check-grupo:checked')).map(cb => parseInt(cb.value)); if(!nombre || checks.length === 0) return alert("Faltan datos."); document.getElementById('btnGuardarCaja').disabled = true; fetch(API_GRUPOS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, productos: checks }) }).then(() => { alert("Grupo creado."); cerrarModal('modalGrupo'); document.getElementById('nombreGrupo').value = ''; cargarTabla(); }).finally(() => { document.getElementById('btnGuardarCaja').disabled = false; }); }
+
+    function abrirFotoEvidencia(btn) {
+        const base64Data = btn.getAttribute('data-foto');
+        const nuevaPestana = window.open();
+        nuevaPestana.document.write(`<html><head><title>Evidencia de Merma</title></head><body style="margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh;"><img src="${base64Data}" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow: 0 0 20px rgba(0,0,0,0.8);"></body></html>`);
+        nuevaPestana.document.close();
+    }
 
     function revisarSolicitudesPendientes() { 
         fetch(API_RESERVAS).then(res => res.json()).then(data => { 
@@ -377,50 +435,17 @@
             const tbMermas = document.getElementById('tablaAlertasMermas'); tbMermas.innerHTML = '';
             if(mermas.length > 0) {
                 mermas.forEach(m => {
-                    let imgHtml = m.Foto_Base64 
-                        ? `<div style="margin-top: 10px;">
-                               <img src="${m.Foto_Base64}" onclick="abrirFotoEvidencia(this)" data-foto="${m.Foto_Base64}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;" title="Clic para ver en grande" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                               <br><small style="color:var(--primary); font-size:10px; cursor:pointer;" onclick="this.previousElementSibling.click()">🔍 Ampliar</small>
-                           </div>` 
-                        : '<div style="margin-top:10px;"><span style="color:gray;">Sin foto</span></div>';
-                    
-                    tbMermas.innerHTML += `<tr>
-                        <td><strong>${m.Nombre_Material}</strong><br><small>Por: ${m.Usuario_Solicita}</small></td>
-                        <td>${m.Cantidad} pz</td>
-                        <td><i>"${m.Motivo}"</i>${imgHtml}</td>
-                        <td style="display:flex; flex-direction:column; gap:5px;">
-                            <button class="btn btn-success" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Autorizar (Tirar)</button> 
-                            <button class="btn btn-danger" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Negar (Guardar)</button>
-                        </td>
-                    </tr>`;
+                    let imgHtml = m.Foto_Base64 ? `<div style="margin-top: 10px;"><img src="${m.Foto_Base64}" onclick="abrirFotoEvidencia(this)" data-foto="${m.Foto_Base64}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;" title="Clic para ver en grande" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><br><small style="color:var(--primary); font-size:10px; cursor:pointer;" onclick="this.previousElementSibling.click()">🔍 Ampliar</small></div>` : '<div style="margin-top:10px;"><span style="color:gray;">Sin foto</span></div>';
+                    tbMermas.innerHTML += `<tr><td><strong>${m.Nombre_Material}</strong><br><small>Por: ${m.Usuario_Solicita}</small></td><td>${m.Cantidad} pz</td><td><i>"${m.Motivo}"</i>${imgHtml}</td><td style="display:flex; flex-direction:column; gap:5px;"><button class="btn btn-success" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Autorizar (Tirar)</button> <button class="btn btn-danger" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Negar (Guardar)</button></td></tr>`;
                 });
                 abrirModal('modalAlertasSupervisor'); 
             } else { tbMermas.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin mermas por revisar.</td></tr>'; }
         });
     }
-    function autorizarMerma(id, accion) {
-        if(!confirm(`¿Seguro que deseas ${accion === 'aprobar' ? 'TIRAR' : 'GUARDAR'} esta pieza?`)) return;
-        fetch(`https://jonassk13.pythonanywhere.com/api/mermas/${id}/${accion}`, { method: 'PUT' }).then(() => {
-            alert(`Merma procesada. El inventario ha sido actualizado.`);
-            cerrarModal('modalAlertasSupervisor'); cargarTabla(); revisarSolicitudesPendientes();
-        });
-    }
-    function autorizarSolicitud(id, accion) { fetch(`${API_RESERVAS}/${id}/autorizar`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({accion}) }).then(() => { cerrarModal('modalAlertasSupervisor'); cargarTabla(); revisarSolicitudesPendientes(); }); }
-    function abrirModalReservas() { fetch(API_RESERVAS).then(res => res.json()).then(data => { document.getElementById('tablaPendientes').innerHTML = data.pendientes.map(r => `<tr><td>${r.Nombre_Material}</td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td></tr>`).join(''); document.getElementById('tablaAprobadas').innerHTML = data.aprobados.map(r => `<tr><td>${r.Nombre_Material}</td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><button class="btn btn-success" onclick="fetch('${API_RESERVAS}/${r.ID_Reserva}/entregar', {method: 'PUT'}).then(()=>abrirModalReservas())">Entregar</button></td></tr>`).join(''); abrirModal('modalReservas'); }); }
-    function abrirFotoEvidencia(btn) {
-        const base64Data = btn.getAttribute('data-foto');
-        const nuevaPestana = window.open();
-        nuevaPestana.document.write(`
-            <html>
-            <head><title>Evidencia de Merma</title></head>
-            <body style="margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh;">
-                <img src="${base64Data}" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow: 0 0 20px rgba(0,0,0,0.8);">
-            </body>
-            </html>
-        `);
-        nuevaPestana.document.close();
-    } 
 
+    function autorizarSolicitud(id, accion) { fetch(`${API_RESERVAS}/${id}/autorizar`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({accion}) }).then(() => { cerrarModal('modalAlertasSupervisor'); cargarTabla(); revisarSolicitudesPendientes(); }); }
+    function autorizarMerma(id, accion) { if(!confirm(`¿Seguro que deseas ${accion === 'aprobar' ? 'TIRAR' : 'GUARDAR'} esta pieza?`)) return; fetch(`https://jonassk13.pythonanywhere.com/api/mermas/${id}/${accion}`, { method: 'PUT' }).then(() => { alert(`Merma procesada.`); cerrarModal('modalAlertasSupervisor'); cargarTabla(); revisarSolicitudesPendientes(); }); }
+    function abrirModalReservas() { fetch(API_RESERVAS).then(res => res.json()).then(data => { document.getElementById('tablaPendientes').innerHTML = data.pendientes.map(r => `<tr><td>${r.Nombre_Material}</td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td></tr>`).join(''); document.getElementById('tablaAprobadas').innerHTML = data.aprobados.map(r => `<tr><td>${r.Nombre_Material}</td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><button class="btn btn-success" onclick="fetch('${API_RESERVAS}/${r.ID_Reserva}/entregar', {method: 'PUT'}).then(()=>abrirModalReservas())">Entregar</button></td></tr>`).join(''); abrirModal('modalReservas'); }); }
 </script>
 </body>
 </html>
