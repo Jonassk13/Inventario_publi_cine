@@ -14,7 +14,6 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s; }
         .container { max-width: 900px; margin: 0 auto; background: var(--box-bg); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         
-        /* DISEÑO RESPONSIVO DE DETALLE */
         .detalle-layout { display: flex; gap: 30px; align-items: stretch; flex-wrap: wrap; }
         .poster-img-container { flex: 1; min-width: 280px; text-align: center; }
         .poster-img-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); margin-bottom: 15px;}
@@ -126,8 +125,61 @@
         reader.readAsDataURL(fotoInput.files[0]);
     }
 
-    function renderizarTarjeta() {
+function renderizarTarjeta() {
         let botonesHTML = '';
+        let panelEditor = '';
+        let advertenciaCinepolitos = '';
+        
+        let articulo = "este";
+        let catLower = prodGlobal.Categoria.toLowerCase();
+        if(catLower.includes('palomera') || catLower.includes('lona') || catLower.includes('área') || catLower.includes('area')) articulo = "esta";
+        
+        if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista' || rolUsuario === 'Visitante' || rolUsuario === 'Subgerente') {
+            
+            advertenciaCinepolitos = `
+                <div class="advertencia-corp">
+                    ⚠️ <b>Importante:</b> Al solicitar ${articulo} <b>${prodGlobal.Categoria}</b>, entras en una lista de espera. <b>Deberás esperar a que baje de exhibición</b> y la entrega final estará sujeta a que los de <b>Corporativo no exijan su devolución</b>.
+                </div>
+            `;
+            
+            botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()">📋 Quiero pedir ${articulo} ${prodGlobal.Categoria} a mi nombre</button>`;
+            
+            if (rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Subgerente') {
+                panelEditor = `
+                    <div class="editor-imagen">
+                        <label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta?</label>
+                        <button class="btn-dark" style="margin-bottom: 5px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button>
+                        <input type="text" id="urlManual" placeholder="Pega el link de la imagen (.jpg, .png)...">
+                        <button class="btn-info" onclick="guardarImagenManual()">💾 Guardar Imagen</button>
+                    </div>
+                `;
+                botonesHTML += `
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
+                    <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso (Directo)</button>
+                    <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
+                    <button class="btn-daño" onclick="abrirModalMerma()">📸 Tomar Foto para Merma</button>
+                `;
+            }
+        }
+
+        document.getElementById('tarjetaContenido').innerHTML = `
+            <div class="detalle-layout">
+                <div class="poster-img-container">
+                    <img id="imagenMagicaPoster" src="" style="display:none;" alt="Imagen Oficial">
+                    ${panelEditor}
+                </div>
+                <div class="info-container">
+                    <h1 style="font-size: 22px; margin-top:0;">${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
+                    ${advertenciaCinepolitos}
+                    <div class="stats-grid">
+                        <div class="stat-box">En Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
+                        <div class="stat-box">En Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
+                    </div>
+                    <div class="action-grid">${botonesHTML}</div>
+                </div>
+            </div>
+        `;
+    }        let botonesHTML = '';
         let panelEditor = '';
         let advertenciaCinepolitos = '';
         
@@ -178,7 +230,7 @@
                 </div>
             </div>
         `;
-    }
+
 
     function hacerReserva() {
         let nombreGuardado = localStorage.getItem('nombreCinepolito') || '';
@@ -187,7 +239,7 @@
         
         localStorage.setItem('nombreCinepolito', nombre.trim());
         
-        let cant = prompt(`¿Cuántas piezas de "${prodGlobal.Nombre_Material}" quieres pedir?`);
+        let cant = prompt(`¿Cuántas piezas de este(a) ${prodGlobal.Categoria} quieres pedir?`);
         cant = parseInt(cant);
         if(!cant || cant <= 0) return;
         
