@@ -69,6 +69,8 @@
     <button class="btn btn-admin req-admin" onclick="abrirModalCategorias()">🏷️ Categorías</button>
     
     <button class="btn btn-dark req-admin" style="background:#20c997; color:white;" onclick="abrirModalQRVisitante()">📲 QR para Cinepolitos</button>
+    <!-- BOTÓN PARA IMPRIMIR TODOS LOS QRs DEL INVENTARIO -->
+    <button class="btn btn-dark req-admin" style="background:#6f42c1; color:white;" onclick="imprimirQRsMasivo()">🖨️ QRs de Inventario</button>
 
     <button class="btn btn-reserva req-staff req-auth" onclick="abrirModalReservas()">📋 Aprobaciones</button>
     <button class="btn btn-info req-staff" onclick="abrirModalGrupo()">📦 Armar Caja</button>
@@ -101,7 +103,7 @@
     </table>
 </div>
 
-
+<!-- ================= MODALES ================= -->
 <div id="modalQRVisitante" class="modal">
     <div class="modal-content" style="max-width: 400px; text-align: center;">
         <button class="close-btn" onclick="cerrarModal('modalQRVisitante')">&times;</button>
@@ -132,27 +134,14 @@
 <div id="modalCategorias" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalCategorias')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">🏷️ Gestión de Categorías</h2><div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap: wrap;"><input type="hidden" id="catIdEdit"><input type="text" id="catNombre" placeholder="Nueva Categoría" style="flex:1;"><button class="btn btn-success" onclick="guardarCategoria()">Guardar</button></div><table><thead><tr><th>Categoría</th><th>Acciones</th></tr></thead><tbody id="tablaCategorias"></tbody></table></div></div>
 <div id="modalProducto" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button><h2 style="margin-top: 0;">Registro Individual</h2><input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" required><select id="categoria" class="select-dinamico-cat" style="width:100%;"></select><input type="number" id="cantidadTotal" placeholder="Cantidad Total Recibida" style="width:100%;" min="1" required><button class="btn btn-primary" onclick="guardarProducto()" style="width: 100%;">Guardar Registro</button></div></div>
 <div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">⚡ Ingreso Masivo</h2><div style="overflow-x:auto;"><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table></div><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn btn-admin" style="float:right;" onclick="guardarIngresoMasivo()">Guardar Todo</button></div></div>
-
-<div id="modalEditarProducto" class="modal">
-    <div class="modal-content" style="max-width: 400px;">
-        <button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button>
-        <h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2>
-        <input type="hidden" id="editIdProd">
-        <input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre...">
-        <select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select>
-        <button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button>
-    </div>
-</div>
-
+<div id="modalEditarProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button><h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2><input type="hidden" id="editIdProd"><input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre..."><select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select><button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button></div></div>
 <div id="modalGrupo" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button><h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2><input type="text" id="nombreGrupo" placeholder="Nombre de la Caja" style="width:100%;" required><div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px;"></div><button id="btnGuardarCaja" class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo</button></div></div>
-
 <div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados y Entregas</h2><h3>🟡 Esperando Autorización</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th></tr></thead><tbody id="tablaPendientes"></tbody></table></div><h3 style="margin-top: 30px;">🟢 Aprobadas (Listas para Entregar)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div></div>
 
 <div id="modalAlertasSupervisor" class="modal">
     <div class="modal-content" style="max-width: 800px;">
         <button class="close-btn" onclick="cerrarModal('modalAlertasSupervisor')">&times;</button>
         <h2 style="margin-top: 0; color: var(--btn-reserva);">⚠️ Bandeja de Autorizaciones</h2>
-        
         <h3 style="color: var(--primary);">1. Solicitudes de Productos</h3>
         <div style="overflow-x:auto; margin-bottom: 20px;">
             <table>
@@ -160,7 +149,6 @@
                 <tbody id="tablaAlertasAutorizacion"><tr><td colspan="4">Sin solicitudes pendientes.</td></tr></tbody>
             </table>
         </div>
-
         <h3 style="color: var(--danger);">2. Autorización de Mermas (Fotos Requeridas)</h3>
         <div style="overflow-x:auto;">
             <table>
@@ -171,6 +159,7 @@
     </div>
 </div>
 
+<!-- ================= SCRIPTS ================= -->
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault()); 
     document.addEventListener('keydown', event => { if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); });
@@ -187,14 +176,10 @@
     let datosInventario = []; let listaCategorias = [];
     let rolUsuario = 'General'; let idUsuario = null; let nombreUsuario = '';
 
-    //  Diseño exclusivo para jacqui
+    // === 👑 SISTEMA VIP DE SALUDOS PARA JACQUELINE ===
     function validarMensajesVIP() {
         if(rolUsuario !== 'Subgerente') return; 
-
-        const hoy = new Date();
-        const mes = hoy.getMonth() + 1; 
-        const dia = hoy.getDate();
-        
+        const hoy = new Date(); const mes = hoy.getMonth() + 1; const dia = hoy.getDate();
         let mensaje = null; let icono = '';
 
         if (mes === 5 && dia >= 4 && dia <= 18) {
@@ -210,34 +195,83 @@
             const banner = document.createElement('div');
             banner.style.cssText = "position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:var(--primary); color:white; padding:30px; border-radius:15px; box-shadow:0 15px 40px rgba(0,0,0,0.8); z-index:99999; border: 4px solid var(--warning); font-weight:bold; text-align:center; max-width: 80%; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
             banner.innerHTML = `<div style="font-size:50px; margin-bottom:10px;">${icono}</div><div style="font-size: 20px;">${mensaje}</div><button onclick="cerrarSaludoVIP(this, '${mes}-${dia}')" style="display:block; margin-top:20px; width:100%; background:#111; border:none; color:white; padding:12px; font-weight:bold; border-radius:5px; cursor:pointer;">Continuar 💚</button>`;
-            
-            const overlay = document.createElement('div');
-            overlay.id = "overlayVIP"; overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:99998;";
-            
+            const overlay = document.createElement('div'); overlay.id = "overlayVIP"; overlay.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:99998;";
             document.body.appendChild(overlay); document.body.appendChild(banner);
         }
     }
-    
     function cerrarSaludoVIP(btn, fecha) { localStorage.setItem('ultimoSaludoVIP', fecha); btn.parentElement.remove(); document.getElementById('overlayVIP').remove(); }
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('modo') === 'visitante') {
-            localStorage.setItem('rolCine', 'Visitante');
-            localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine');
+            localStorage.setItem('rolCine', 'Visitante'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine');
             window.history.replaceState(null, null, window.location.pathname);
         }
-
-        verificarSesion();
-        cargarCategoriasGlobales();
-        setTimeout(validarMensajesVIP, 1000); 
+        verificarSesion(); cargarCategoriasGlobales(); setTimeout(validarMensajesVIP, 1000); 
     };
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
     function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    // --- IMPRESIÓN MASIVA DE TODOS LOS QRs ---
+    function imprimirQRsMasivo() {
+        if(datosInventario.length === 0) return alert("No hay productos en el inventario para imprimir.");
+        
+        const ventana = window.open('', '_blank');
+        ventana.document.write(`
+        <html>
+        <head>
+            <title>QRs de Inventario</title>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+            <style>
+                body { font-family: 'Arial', sans-serif; text-align: center; background: #fff; color: #000; }
+                h2 { font-size: 24px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 2px solid #ccc; padding-bottom: 10px;}
+                .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; padding: 15px; }
+                .tarjeta-qr { border: 2px dashed #555; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; page-break-inside: avoid; }
+                .tarjeta-qr h3 { font-size: 13px; margin: 0 0 5px 0; color: #111; text-transform: uppercase;}
+                .tarjeta-qr p { font-size: 10px; margin: 0 0 10px 0; color: #666; font-weight: bold; background: #eee; padding: 3px 8px; border-radius: 4px;}
+                .qr-code { margin-bottom: 5px; }
+            </style>
+        </head>
+        <body>
+            <h2>🖨️ Etiquetas de Inventario Oficial</h2>
+            <div class="grid" id="qrGrid"></div>
+            <script>
+                const productos = ${JSON.stringify(datosInventario.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material, cat: p.Categoria})))};
+                const baseUrl = "${window.location.href.split('?')[0].replace('index.html', '')}detalle.html?id=";
+                const grid = document.getElementById('qrGrid');
+                
+                productos.forEach(p => {
+                    let div = document.createElement('div');
+                    div.className = 'tarjeta-qr';
+                    
+                    let title = document.createElement('h3');
+                    title.innerText = p.nombre;
+                    
+                    let cat = document.createElement('p');
+                    cat.innerText = p.cat;
+                    
+                    let qrContainer = document.createElement('div');
+                    qrContainer.className = 'qr-code';
+                    
+                    div.appendChild(title);
+                    div.appendChild(cat);
+                    div.appendChild(qrContainer);
+                    grid.appendChild(div);
+                    
+                    new QRCode(qrContainer, { text: baseUrl + p.id, width: 120, height: 120, colorDark : "#000", colorLight : "#fff" });
+                });
+                
+                // Dar tiempo a la librería para dibujar todos los QRs antes de abrir la impresora
+                setTimeout(() => window.print(), 1500); 
+            <\/script>
+        </body>
+        </html>
+        `);
+        ventana.document.close();
+    }
 
     function abrirModalQRVisitante() {
         const urlMagica = window.location.href.split('?')[0] + "?modo=visitante";
@@ -245,36 +279,16 @@
         new QRCode(document.getElementById('qrVisitanteContainer'), { text: urlMagica, width: 200, height: 200, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
         abrirModal('modalQRVisitante');
     }
-
     function imprimirQR() { 
         const contenidoQR = document.getElementById('qrVisitanteContainer').innerHTML; 
         const ventana = window.open('', '_blank'); 
-        ventana.document.write(`
-        <html><head><title>Ticket de Productos</title>
-        <style>
-            body { background: #111; color: white; font-family: 'Arial', sans-serif; text-align: center; padding: 50px; }
-            .ticket { border: 4px dashed gold; padding: 40px; border-radius: 15px; background: #222; max-width: 400px; margin: 0 auto; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-            h1 { color: gold; text-transform: uppercase; font-size: 28px; margin-bottom: 5px; }
-            p { font-size: 16px; color: #ccc; margin-bottom: 30px; }
-            .qr-box { background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 20px;}
-            .footer { font-size: 12px; color: #777; margin-top: 20px; font-style: italic;}
-        </style>
-        </head><body>
-            <div class="ticket">
-                <h1>🎬 Cinepolitos 🍿</h1>
-                <h2 style="margin: 0; color: white;">Catálogo de Publicidad</h2>
-                <p>Escanea este código mágico con tu celular para apartar los productos a tu nombre.</p>
-                <div class="qr-box">${contenidoQR}</div>
-                <div class="footer">⚠️ La entrega está sujeta a que Corporativo no solicite el retorno de los materiales.</div>
-            </div>
-        </body></html>`); 
+        ventana.document.write(`<html><head><title>Ticket Visitante</title><style>body { background: #111; color: white; font-family: 'Arial', sans-serif; text-align: center; padding: 50px; } .ticket { border: 4px dashed gold; padding: 40px; border-radius: 15px; background: #222; max-width: 400px; margin: 0 auto; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); } h1 { color: gold; text-transform: uppercase; font-size: 28px; margin-bottom: 5px; } p { font-size: 16px; color: #ccc; margin-bottom: 30px; } .qr-box { background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 20px;} .footer { font-size: 12px; color: #777; margin-top: 20px; font-style: italic;}</style></head><body><div class="ticket"><h1>🎬 Cinepolitos 🍿</h1><h2 style="margin: 0; color: white;">Catálogo de Publicidad</h2><p>Escanea este código mágico con tu celular para apartar los productos a tu nombre.</p><div class="qr-box">${contenidoQR}</div><div class="footer">⚠️ La entrega está sujeta a que Corporativo no solicite el retorno de los materiales.</div></div></body></html>`); 
         ventana.document.close(); setTimeout(() => ventana.print(), 800); 
     }
 
     function abrirModalMisPedidos() {
         const nombreCinepolito = localStorage.getItem('nombreCinepolito');
         if(!nombreCinepolito) { alert("Todavía no has pedido nada. Abre un producto y dale clic a 'Quiero pedir esto' primero."); return; }
-
         fetch(API_RESERVAS).then(res => res.json()).then(data => {
             const tbody = document.getElementById('tablaMisPedidosCuerpo'); tbody.innerHTML = '';
             let todosMisPedidos = [];
@@ -282,7 +296,6 @@
             data.aprobados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
             data.entregadas.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
             data.rechazados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
-
             if(todosMisPedidos.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No encontramos historial a tu nombre.</td></tr>'; } 
             else {
                 todosMisPedidos.forEach(pedido => {
@@ -310,29 +323,19 @@
         configurarInterfaz(); cargarTabla();
         if (rolUsuario === 'Supervisor' || rolUsuario === 'Admin' || rolUsuario === 'Subgerente') revisarSolicitudesPendientes();
     }
-
-    function iniciarSesion() {
-        const claveTexto = document.getElementById('claveAcceso').value; 
-        fetch(API_LOGIN, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({clave: claveTexto}) })
-        .then(res => { if(!res.ok) throw new Error('Contraseña incorrecta'); return res.json(); })
-        .then(user => { localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); }).catch(err => alert(err.message));
-    }
+    function iniciarSesion() { const claveTexto = document.getElementById('claveAcceso').value; fetch(API_LOGIN, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({clave: claveTexto}) }).then(res => { if(!res.ok) throw new Error('Contraseña incorrecta'); return res.json(); }).then(user => { localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); }).catch(err => alert(err.message)); }
     function cerrarSesion() { localStorage.setItem('rolCine', 'General'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine'); location.reload(); }
 
     function configurarInterfaz() {
         let textoEtiqueta = rolUsuario; const badge = document.getElementById('etiquetaRol');
         if(rolUsuario === 'Visitante') { textoEtiqueta = '🎫 Cinepolito'; let guardadoNombre = localStorage.getItem('nombreCinepolito'); if (guardadoNombre) textoEtiqueta += `: ${guardadoNombre}`; } 
         else if (nombreUsuario && rolUsuario !== 'General') { textoEtiqueta = `${rolUsuario}: ${nombreUsuario}`; }
-        
         badge.innerText = `(${textoEtiqueta})`; badge.className = 'rol-badge'; 
         if (rolUsuario === 'Subgerente') badge.classList.add('badge-subgerente');
         
         document.querySelectorAll('.req-staff, .req-admin, .req-auth').forEach(el => el.classList.remove('oculto'));
-        if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista') {
-            document.getElementById('cajaExclusiva').style.display = 'block';
-        } else {
-            document.getElementById('cajaExclusiva').style.display = 'none';
-        }
+        if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista') { document.getElementById('cajaExclusiva').style.display = 'block'; } 
+        else { document.getElementById('cajaExclusiva').style.display = 'none'; }
 
         if(rolUsuario === 'General' || rolUsuario === 'Visitante') {
             document.getElementById('btnIngresar').classList.remove('oculto'); document.getElementById('btnSalir').classList.add('oculto'); document.getElementById('btnPerfil').classList.add('oculto');
@@ -353,7 +356,7 @@
     function eliminarUsuarioAdmin(id) { if(id == idUsuario) return alert("❌ No puedes borrarte a ti mismo."); if(confirm("¿Eliminar usuario?")) { fetch(`${API_USUARIOS}/${id}`, { method: 'DELETE' }).then(() => abrirModalUsuarios()); } }
     
     function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; abrirModal('modalPerfil'); }
-    function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden. Escríbelas de nuevo."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); } }); }
+    function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); } }); }
 
     function limpiarTextoDuro(texto) { if (!texto) return ""; let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, ''); return limpio.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(); }
 
@@ -365,7 +368,6 @@
         const filtro = document.getElementById('filtroCategoria').value; 
         
         tbodyNormal.innerHTML = ''; tbodyExclusivo.innerHTML = ''; 
-        
         if(datosInventario.length === 0) { 
             tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío o cargando...</td></tr>`; 
             tbodyExclusivo.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío...</td></tr>`; 
@@ -374,16 +376,13 @@
         
         let datosNormales = datosInventario.filter(item => item.Categoria !== 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro));
         let datosExclusivos = datosInventario.filter(item => item.Categoria === 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro));
-        
-        datosNormales.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
-        datosExclusivos.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        datosNormales.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); datosExclusivos.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
 
         if(datosNormales.length === 0) tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin resultados</td></tr>`;
         datosNormales.forEach(item => { 
             const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'");
             const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}')">✏️</button>` : '';
             const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
-            
             tbodyNormal.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
         }); 
 
@@ -392,21 +391,12 @@
             const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'");
             const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}')">✏️</button>` : '';
             const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
-            
             tbodyExclusivo.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td><span class="badge-subgerente" style="padding:3px 6px; border-radius:5px; font-size:11px;">${item.Categoria}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
         });
     }
 
-    function abrirModalEditar(id, nombre, categoria) {
-        document.getElementById('editIdProd').value = id; document.getElementById('editNombreProd').value = nombre; document.getElementById('editCategoriaProd').value = categoria;
-        abrirModal('modalEditarProducto');
-    }
-    
-    function guardarEdicionProducto() {
-        const id = document.getElementById('editIdProd').value; const nombre = document.getElementById('editNombreProd').value.trim(); const cat = document.getElementById('editCategoriaProd').value;
-        if(!nombre) return alert("El nombre no puede estar vacío");
-        fetch(`${API_URL}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, categoria: cat }) }).then(() => { cerrarModal('modalEditarProducto'); cargarTabla(); });
-    }
+    function abrirModalEditar(id, nombre, categoria) { document.getElementById('editIdProd').value = id; document.getElementById('editNombreProd').value = nombre; document.getElementById('editCategoriaProd').value = categoria; abrirModal('modalEditarProducto'); }
+    function guardarEdicionProducto() { const id = document.getElementById('editIdProd').value; const nombre = document.getElementById('editNombreProd').value.trim(); const cat = document.getElementById('editCategoriaProd').value; if(!nombre) return alert("El nombre no puede estar vacío"); fetch(`${API_URL}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, categoria: cat }) }).then(() => { cerrarModal('modalEditarProducto'); cargarTabla(); }); }
 
     function guardarProducto() { const nombreIn = document.getElementById('nombre').value.trim(); const catIn = document.getElementById('categoria').value; const cantIn = parseInt(document.getElementById('cantidadTotal').value); if(!nombreIn) return; const nombreNuevoLimpio = limpiarTextoDuro(nombreIn); let posibleDuplicado = datosInventario.find(p => { let nombreInvLimpio = limpiarTextoDuro(p.Nombre_Material); return nombreNuevoLimpio === nombreInvLimpio || nombreNuevoLimpio.includes(nombreInvLimpio) || nombreInvLimpio.includes(nombreNuevoLimpio); }); if(posibleDuplicado) { let confirmacion = confirm(`⚠️ POSIBLE MATERIAL DUPLICADO:\n\nEstás registrando "${nombreIn}", pero ya tienes un material llamado "${posibleDuplicado.Nombre_Material}".\n\n¿Estás completamente seguro de registrarlo como un material nuevo y separado?`); if(!confirmacion) return; } fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombreIn, categoria: catIn, cantidad_total: cantIn }) }).then(() => { cerrarModal('modalProducto'); document.getElementById('nombre').value = ''; cargarTabla(); }); }
     function eliminarProducto(id) { if(confirm("¿Eliminar registro?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
@@ -417,8 +407,7 @@
     function guardarGrupo() { const nombre = document.getElementById('nombreGrupo').value.trim(); const checks = Array.from(document.querySelectorAll('.check-grupo:checked')).map(cb => parseInt(cb.value)); if(!nombre || checks.length === 0) return alert("Faltan datos."); document.getElementById('btnGuardarCaja').disabled = true; fetch(API_GRUPOS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, productos: checks }) }).then(() => { alert("Grupo creado."); cerrarModal('modalGrupo'); document.getElementById('nombreGrupo').value = ''; cargarTabla(); }).finally(() => { document.getElementById('btnGuardarCaja').disabled = false; }); }
 
     function abrirFotoEvidencia(btn) {
-        const base64Data = btn.getAttribute('data-foto');
-        const nuevaPestana = window.open();
+        const base64Data = btn.getAttribute('data-foto'); const nuevaPestana = window.open();
         nuevaPestana.document.write(`<html><head><title>Evidencia de Merma</title></head><body style="margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh;"><img src="${base64Data}" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow: 0 0 20px rgba(0,0,0,0.8);"></body></html>`);
         nuevaPestana.document.close();
     }
@@ -430,7 +419,6 @@
                 data.pendientes.forEach(r => { tbPosters.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td style="display:flex; flex-wrap:wrap; gap:5px;"><button class="btn btn-success" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️</button> <button class="btn btn-danger" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌</button></td></tr>`; }); 
             } else { tbPosters.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin solicitudes de empleados.</td></tr>'; }
         });
-
         fetch('https://jonassk13.pythonanywhere.com/api/mermas').then(r => r.json()).then(mermas => {
             const tbMermas = document.getElementById('tablaAlertasMermas'); tbMermas.innerHTML = '';
             if(mermas.length > 0) {
