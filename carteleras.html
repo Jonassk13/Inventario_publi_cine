@@ -6,29 +6,34 @@
     <title>Mapa de Carteleras Inteligente</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545;}
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545; --warning: #ffc107;}
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
         
-        body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --danger: #6e2c00; --admin-bg: #fd7e14;}
-        body.theme-jacqui.dark-mode { --primary: #148f77; --danger: #873600; }
+        body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --danger: #6e2c00; --warning: #d35400;}
+        body.theme-jacqui.dark-mode { --primary: #148f77; --danger: #873600; --warning: #e67e22;}
         
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; gap: 10px;}
         button.btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; }
         button.btn:hover { opacity: 0.8; } button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000; } .btn-success { background: var(--success); } .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 10px; }
+        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000; } .btn-success { background: var(--success); } .btn-warning { background: var(--warning); color: #000;} .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 10px; }
 
-        /* MURO DE TAQUILLA */
+        .panel-semanas { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tarjeta-semana { flex: 1; background: var(--box-bg); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color); text-align: center; font-weight: bold; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-width: 250px;}
+        .tarjeta-semana small { display: block; font-weight: normal; font-size: 12px; color: gray; margin-top: 5px; }
+        .semana-anterior { border-color: #6c757d; color: #6c757d; }
+        .semana-actual { border-color: var(--primary); color: var(--primary); }
+        .semana-nueva { border-color: var(--warning); color: var(--warning); background: rgba(255, 193, 7, 0.05); }
+        body.dark-mode .semana-nueva { background: rgba(255, 193, 7, 0.1); }
+
         .muro-taquilla { background-color: #111; border: 8px solid #2a2a2a; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 700px; margin: 0 auto 30px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
         .muro-row { display: flex; align-items: center; justify-content: space-between;}
         
         .muro-logo { width: 30%; text-align: center; font-family: 'Arial Black', sans-serif; text-transform: uppercase;}
         .logo-pluus { letter-spacing: 5px; font-weight: normal; color: white; }
         .logo-4dx { font-style: italic; font-size: 35px; color: #ccc; text-shadow: -2px -2px 0px #fff, 3px 3px 0px #555; }
-        .logo-screenx { line-height: 1; }
-        .logo-screenx .rojo { color: #dc3545; font-size: 22px;}
-        .logo-screenx .blanco { color: white; display: block; font-size: 18px;}
+        .logo-screenx { line-height: 1; } .logo-screenx .rojo { color: #dc3545; font-size: 22px;} .logo-screenx .blanco { color: white; display: block; font-size: 18px;}
         .logo-jr { color: #ffc107; font-family: 'Comic Sans MS', cursive, sans-serif; text-transform: lowercase; font-size: 35px;}
 
         .neon-divider { width: 12px; background-color: #0044ff; box-shadow: 0 0 10px #0044ff, 0 0 20px #0044ff, inset 0 0 5px #fff; height: 160px; border-radius: 5px; margin: 0 15px;}
@@ -40,7 +45,6 @@
         .badge-clasif { background: #dc3545; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-right: 5px; border: 1px solid white;}
         .badge-idioma { background: #0d6efd; color: white; padding: 3px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; border: 1px solid white;}
 
-        /* PASILLOS */
         .mapa-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
         .zona { background: var(--box-bg); border-radius: 10px; padding: 25px 20px 20px 20px; position: relative; border-top: 5px solid gray; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
         .zona-titulo { position: absolute; top: -15px; left: 20px; background: var(--box-bg); padding: 5px 15px; font-weight: bold; font-size: 14px; border-radius: 15px; border: 1px solid var(--border-color);}
@@ -58,6 +62,9 @@
 
         .sugerencia-box { margin-top: 8px; padding: 8px; border-radius: 5px; font-size: 12px; width: 90%; animation: parpadeo 1.5s infinite alternate; background: var(--box-bg);}
         @keyframes parpadeo { from { opacity: 0.8; } to { opacity: 1; } }
+        
+        .badge-mover-sala { background: var(--danger); color: white; border-radius: 15px; padding: 4px 8px; font-weight: bold; font-size: 11px; margin-bottom: 5px; display: inline-block; animation: pulseMover 1s infinite alternate; }
+        @keyframes pulseMover { from { transform: scale(1); } to { transform: scale(1.05); } }
 
         @media (max-width: 800px) {
             .mapa-container { grid-template-columns: 1fr; }
@@ -67,8 +74,8 @@
             .slots-grid { grid-template-columns: repeat(2, 1fr); }
             .header { flex-direction: column; align-items: stretch; text-align: center;}
             .header div { display: flex; flex-direction: column; gap: 5px;}
+            .panel-semanas { flex-direction: column; }
         }
-        @media (max-width: 480px) { .slots-grid { grid-template-columns: 1fr; } }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; }
@@ -80,15 +87,22 @@
 <div class="header">
     <h1 style="margin:0;">🗺️ Plano de Exhibición</h1>
     <div>
+        <button class="btn btn-warning" onclick="guardarCarteleraEnHistorial()">💾 Guardar Semana Actual</button>
         <button class="btn btn-info" onclick="document.getElementById('archivoExcel').click()">🪄 Sugerir por Excel</button>
         <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
-        <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Todo</button>
+        <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Nueva Semana</button>
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
     </div>
 </div>
 
+<div class="panel-semanas">
+    <div class="tarjeta-semana semana-anterior" id="ui-semana-ant">No hay datos <small>Semana Anterior</small></div>
+    <div class="tarjeta-semana semana-actual" id="ui-semana-act">Cargando... <small>Cartelera Física Actual</small></div>
+    <div class="tarjeta-semana semana-nueva" id="ui-semana-nueva" style="display:none;">--- <small>Nueva Sugerencia</small></div>
+</div>
+
 <div class="muro-taquilla">
-    <div class="muro-row"><div class="muro-logo logo-pluus">PLUUS</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-pluus">Cargando...</div></div>
+    <div class="muro-row"><div class="muro-logo logo-pluus">PLUUS</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-pluus"></div></div>
     <div class="muro-row"><div class="muro-logo logo-4dx">4DX</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-4dx"></div></div>
     <div class="muro-row"><div class="muro-logo logo-screenx"><span class="rojo">MACROXE</span><span class="blanco">SCREENX</span></div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-screenx"></div></div>
     <div class="muro-row"><div class="muro-logo logo-jr">junior</div><div class="neon-divider"></div><div class="muro-posters" id="taquilla-jr"></div></div>
@@ -126,20 +140,51 @@
     const API_CARTELERAS = 'https://jonassk13.pythonanywhere.com/api/carteleras';
     const API_INVENTARIO = 'https://jonassk13.pythonanywhere.com/api/inventario';
     const API_ESTRENOS = 'https://jonassk13.pythonanywhere.com/api/estrenos'; 
+    const API_HISTORIAL_SEMANAS = 'https://jonassk13.pythonanywhere.com/api/carteleras/historial';
     
     let slotSeleccionado = null;
     let sugerenciasGlobales = [];
+    let numeroSemanaSugerida = null;
+    let carteleraVirtual = [];
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
         if(localStorage.getItem('rolCine') === 'Subgerente') document.body.classList.add('theme-jacqui');
         cargarMapa();
+        cargarHistorialSemanas();
     };
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
 
+    function cargarHistorialSemanas() {
+        fetch(API_HISTORIAL_SEMANAS).then(r => r.json()).then(data => {
+            if(data.length > 0) {
+                document.getElementById('ui-semana-act').innerHTML = `SEMANA ${data[0].Semana} <small>Guardada el ${data[0].Fecha.split(' ')[0]}</small>`;
+                if(data.length > 1) {
+                    document.getElementById('ui-semana-ant').innerHTML = `SEMANA ${data[1].Semana} <small>Guardada el ${data[1].Fecha.split(' ')[0]}</small>`;
+                }
+            } else {
+                document.getElementById('ui-semana-act').innerHTML = `Semana Desconocida <small>Nunca se ha guardado</small>`;
+            }
+        });
+    }
+
+    function guardarCarteleraEnHistorial() {
+        let nSemana = prompt("¿Qué número de semana vas a guardar? (Ejemplo: 34)");
+        if(!nSemana || isNaN(parseInt(nSemana))) return;
+        
+        let datosA_Guardar = carteleraVirtual.map(c => { return { slot: c.ID_Slot, peli: c.Nombre_Material } });
+        
+        fetch(API_HISTORIAL_SEMANAS, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ semana: parseInt(nSemana), datos: datosA_Guardar })
+        }).then(() => { alert("¡Cartelera física respaldada con éxito!"); cargarHistorialSemanas(); });
+    }
+
     function cargarMapa(mostrarAlerta = false) {
         fetch(API_CARTELERAS).then(res => res.json()).then(data => {
+            carteleraVirtual = data;
+            
             document.getElementById('taquilla-pluus').innerHTML = [1, 2].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
             document.getElementById('taquilla-4dx').innerHTML = [3, 4].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
             document.getElementById('taquilla-screenx').innerHTML = [5, 6].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
@@ -201,6 +246,28 @@
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
             const jsonRaw = XLSX.utils.sheet_to_json(worksheet, {header: 1});
             
+            numeroSemanaSugerida = null;
+            for(let i=0; i<15; i++) {
+                if(jsonRaw[i]) {
+                    let textFila = jsonRaw[i].join(' ').toUpperCase();
+                    let match = textFila.match(/SEMANA\s*(\d+)/);
+                    if(match) { numeroSemanaSugerida = match[1]; break; }
+                }
+            }
+
+            if(numeroSemanaSugerida) {
+                document.getElementById('ui-semana-nueva').style.display = 'block';
+                document.getElementById('ui-semana-nueva').innerHTML = `SEMANA ${numeroSemanaSugerida} <small>Sugerencia de Excel</small>`;
+                
+                let semanaAnteriorDedudica = parseInt(numeroSemanaSugerida) - 1;
+                let datosA_Guardar = carteleraVirtual.map(c => { return { slot: c.ID_Slot, peli: c.Nombre_Material } });
+                
+                fetch(API_HISTORIAL_SEMANAS, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ semana: semanaAnteriorDedudica, datos: datosA_Guardar })
+                }).then(() => { cargarHistorialSemanas(); });
+            }
+
             let headerRowIndex = 0;
             for (let i = 0; i < Math.min(15, jsonRaw.length); i++) { if (jsonRaw[i] && jsonRaw[i].map(c => String(c).trim().toLowerCase()).includes('película')) { headerRowIndex = i; break; } }
             
@@ -218,7 +285,7 @@
 
     function generarSugerencias(datosMorelia) {
         let conteoSala = {}; 
-        let metaPeliculas = {}; 
+        let metaPeliculas = {};
 
         datosMorelia.forEach(row => {
             let sala = parseInt(row['Sala']);
@@ -234,7 +301,6 @@
                 let upper = peliRaw.toUpperCase();
                 if (upper.includes('ESP') || upper.includes('DOB')) metaPeliculas[peliLimpia].esp = true;
                 if (upper.includes('SUB')) metaPeliculas[peliLimpia].sub = true;
-                
                 if (clasifRaw && clasifRaw !== 'TBC') {
                     let cParts = clasifRaw.toString().split('-');
                     let c = cParts[cParts.length - 1].trim();
@@ -282,12 +348,8 @@
                     let match = buscarPosterInteligente(peli);
                     if (match) {
                         usadosIds.add(match.posterId); peliculasEnMuro.add(peli);
-                        
                         let meta = metaPeliculas[peli] || { esp: false, sub: false, clasif: '' };
-                        let idiomaText = "";
-                        if (meta.esp) idiomaText = "Doblada al español";
-                        else if (meta.sub) idiomaText = "Subtitulada";
-
+                        let idiomaText = ""; if (meta.esp) idiomaText = "Doblada al español"; else if (meta.sub) idiomaText = "Subtitulada";
                         sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], match: match, idioma: idiomaText, clasificacion: meta.clasif });
                         asignados++;
                     }
@@ -317,9 +379,16 @@
             if (slotDiv && !slotDiv.classList.contains('lleno')) {
                 
                 let m = sug.match; let bgStyle, badge, btnText;
-                if (m.origen === 'estrenos') { bgStyle = "background: rgba(111, 66, 193, 0.15); border: 2px solid #6f42c1; color: var(--text-color);"; badge = `<span style="color:#6f42c1; font-size:11px; font-weight:bold;">🟪 Mover de Estrenos #${m.origenId}</span><br>`; btnText = "🔄 Mover"; } 
-                else if (m.origen === 'cartelera') { bgStyle = "background: rgba(253, 126, 20, 0.15); border: 2px solid #fd7e14; color: var(--text-color);"; badge = `<span style="color:#fd7e14; font-size:11px; font-weight:bold;">🟧 Mover de ${m.ubicacion}</span><br>`; btnText = "🔄 Mover"; } 
-                else { bgStyle = "background: rgba(13, 202, 240, 0.15); border: 2px solid #0dcaf0; color: var(--text-color);"; badge = `<span style="color:#0dcaf0; font-size:11px; font-weight:bold;">🟦 Desde Bodega</span><br>`; btnText = "✔️ Instalar"; }
+                
+                if (m.origen === 'cartelera') {
+                    bgStyle = "background: rgba(220, 53, 69, 0.15); border: 2px solid var(--danger); color: var(--text-color);";
+                    badge = `<span class="badge-mover-sala">🚨 Mudar desde ${m.ubicacion}</span><br>`;
+                    btnText = "🔄 Trasladar Muro";
+                } else if (m.origen === 'estrenos') { 
+                    bgStyle = "background: rgba(111, 66, 193, 0.15); border: 2px solid #6f42c1; color: var(--text-color);"; badge = `<span style="color:#6f42c1; font-size:11px; font-weight:bold;">🟪 Bajar de Estrenos #${m.origenId}</span><br>`; btnText = "🔄 Bajar a Cartelera"; 
+                } else { 
+                    bgStyle = "background: rgba(13, 202, 240, 0.15); border: 2px solid #0dcaf0; color: var(--text-color);"; badge = `<span style="color:#0dcaf0; font-size:11px; font-weight:bold;">🟦 Sacar de Bodega</span><br>`; btnText = "✔️ Colgar Póster"; 
+                }
 
                 if(slotDiv.classList.contains('muro-slot')) bgStyle += " color: white;";
 
@@ -340,7 +409,7 @@
         });
         
         const btnAll = document.getElementById('btnInstalarTodas');
-        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Instalar/Mover ${aplicadas} pósters`; if(mostrarAlerta) alert(`Radar Terminado: ¡Se encontraron ${aplicadas} coincidencias!`); } 
+        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Instalar/Mover ${aplicadas} pósters de la Semana ${numeroSemanaSugerida||'Nueva'}`; if(mostrarAlerta) alert(`Radar Terminado: ¡Se encontraron ${aplicadas} coincidencias!`); } 
         else { btnAll.style.display = 'none'; if(mostrarAlerta) alert("Todos los espacios están llenos o no tienes stock en bodega."); }
     }
 
@@ -367,21 +436,24 @@
             let m = sug.match;
             if (m.origen === 'estrenos') await fetch(`${API_ESTRENOS}/${m.origenId}/liberar`, { method: 'POST' });
             else if (m.origen === 'cartelera') await fetch(`${API_CARTELERAS}/${m.origenId}/liberar`, { method: 'POST' });
-            
             await fetch(`${API_CARTELERAS}/${sug.slot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: m.posterId, idioma: sug.idioma || '', clasificacion: sug.clasificacion || '' }) });
         }
         
+        if(numeroSemanaSugerida) {
+            let nD = carteleraVirtual.map(c => { return { slot: c.ID_Slot, peli: c.Nombre_Material } });
+            await fetch(API_HISTORIAL_SEMANAS, { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({semana: parseInt(numeroSemanaSugerida), datos: nD}) });
+        }
+        
         sugerenciasGlobales = []; btn.style.display = 'none'; btn.disabled = false;
-        alert("¡Todos los movimientos y asignaciones logísticas se completaron con éxito!"); cargarMapa(false);
+        alert("¡Todos los movimientos y asignaciones logísticas se completaron con éxito!"); 
+        cargarHistorialSemanas(); cargarMapa(false);
     }
 
     function abrirAsignacion(idSlot, ubicacion, estaLleno) {
         if(estaLleno) return; 
         slotSeleccionado = idSlot;
         document.getElementById('textoUbicacion').innerHTML = `Selecciona un material para: <strong>${ubicacion}</strong>`;
-        
         document.getElementById('panelMetadatos').style.display = (idSlot <= 7) ? 'block' : 'none';
-        
         document.getElementById('modalAsignar').style.display = 'flex';
         fetch(API_INVENTARIO).then(res => res.json()).then(data => {
             const select = document.getElementById('selectorPosters');
@@ -391,19 +463,13 @@
     }
 
     function cerrarModal() { document.getElementById('modalAsignar').style.display = 'none'; slotSeleccionado = null; }
-    
     function guardarAsignacion() {
         const idPub = document.getElementById('selectorPosters').value;
         const idioma = document.getElementById('manualIdioma').value;
         const clasif = document.getElementById('manualClasif').value.trim();
-
         if(!idPub) return alert("Selecciona un póster.");
-        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub), idioma: idioma, clasificacion: clasif }) }).then(() => { 
-            sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== slotSeleccionado);
-            cerrarModal(); cargarMapa(false); 
-        });
+        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub), idioma: idioma, clasificacion: clasif }) }).then(() => { sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== slotSeleccionado); cerrarModal(); cargarMapa(false); });
     }
-    
     function liberarCartelera(event, idSlot) {
         event.stopPropagation();
         if(confirm("¿Regresar póster a bodega?")) { fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa(false)); }
