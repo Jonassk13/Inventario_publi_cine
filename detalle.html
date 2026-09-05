@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle del Póster</title>
+    <title>Detalle del Producto</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545; --reserva: #6f42c1; }
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; --reserva: #b288e7; }
@@ -33,7 +34,7 @@
         .btn-sacar { background: var(--primary); padding: 12px; }
         .btn-regresar { background: #6c757d; padding: 12px; }
         .btn-daño { background: var(--danger); padding: 12px; }
-        .btn-dark { background: #212529; padding: 8px; } .btn-info { background: #0dcaf0; color: #000; padding: 8px; }
+        .btn-dark { background: #212529; padding: 12px; } .btn-info { background: #0dcaf0; color: #000; padding: 8px; }
         
         .advertencia-corp { background: rgba(253, 126, 20, 0.1); border-left: 5px solid #fd7e14; padding: 15px; margin-bottom: 20px; font-size: 14px; border-radius: 4px;}
         
@@ -45,20 +46,17 @@
 <body>
 
 <div class="container" id="tarjetaContenido">
-    <h3 style="text-align:center;">Cargando información del póster...</h3>
+    <h3 style="text-align:center;">Cargando información del producto...</h3>
 </div>
-<div id="modalMerma" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:9999;">
+
+<div id="modalMerma" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:9999;">
     <div style="background:var(--box-bg); padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center;">
         <h2 style="margin-top:0; color:var(--danger);">📸 Evidencia de Merma</h2>
         <p style="font-size:13px; color:gray;">Para desechar material, la Subgerencia debe validar la foto del daño.</p>
-        
         <input type="number" id="cantMerma" placeholder="¿Cuántas piezas se dañaron?" min="1" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box;">
         <input type="text" id="motivoMerma" placeholder="Motivo (Ej. Roto por cliente, mojado...)" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box;">
-        
         <label style="display:block; text-align:left; font-size:12px; font-weight:bold; margin-bottom:5px;">Toma una foto de la zona dañada:</label>
-        
         <input type="file" id="fotoMerma" accept="image/*" capture="environment" style="width:100%; margin-bottom:20px;">
-        
         <div style="display:flex; justify-content:space-between;">
             <button onclick="document.getElementById('modalMerma').style.display='none'" style="background:#555; padding:10px; width:48%; border:none; color:white; border-radius:5px; font-weight:bold;">Cancelar</button>
             <button onclick="enviarMerma()" style="background:var(--danger); padding:10px; width:48%; border:none; color:white; border-radius:5px; font-weight:bold;">Enviar Foto</button>
@@ -74,8 +72,6 @@
     let prodGlobal = null;
     let rolUsuario = localStorage.getItem('rolCine') || 'General';
 
-
-    
     window.onload = () => {
         if(!idProducto) { document.getElementById('tarjetaContenido').innerHTML = "<h1>No se especificó un producto.</h1>"; return; }
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
@@ -95,66 +91,21 @@
         });
     }
 
-    function abrirModalMerma() { document.getElementById('modalMerma').style.display = 'flex'; }
-    
-    function enviarMerma() {
-        const cant = document.getElementById('cantMerma').value;
-        const motivo = document.getElementById('motivoMerma').value.trim();
-        const fotoInput = document.getElementById('fotoMerma');
+    function renderizarTarjeta() {
+        let botonesHTML = ''; let panelEditor = ''; let advertenciaCinepolitos = '';
         
-        if(!cant || cant <= 0 || !motivo || fotoInput.files.length === 0) {
-            alert("⚠️ Debes llenar la cantidad, el motivo y OBLIGATORIAMENTE subir la foto."); return;
-        }
-
-        const btn = event.target;
-        btn.innerText = "Subiendo Evidencia..."; btn.disabled = true;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const base64Img = e.target.result;
-            
-            fetch('https://jonassk13.pythonanywhere.com/api/mermas', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id_pub: idProducto, usuario: localStorage.getItem('nombreCine') || rolUsuario, cantidad: parseInt(cant), motivo: motivo, foto: base64Img })
-            }).then(() => {
-                alert("✅ Fotografía enviada al sistema. Esperando que la Subgerente o el Admin autoricen tirarlo.");
-                document.getElementById('modalMerma').style.display = 'none';
-                btn.innerText = "Enviar Foto"; btn.disabled = false;
-            });
-        };
-        reader.readAsDataURL(fotoInput.files[0]);
-    }
-
-function renderizarTarjeta() {
-        let botonesHTML = '';
-        let panelEditor = '';
-        let advertenciaCinepolitos = '';
-        
-        let articulo = "este";
-        let catLower = prodGlobal.Categoria.toLowerCase();
+        let articulo = "este"; let catLower = prodGlobal.Categoria.toLowerCase();
         if(catLower.includes('palomera') || catLower.includes('lona') || catLower.includes('área') || catLower.includes('area')) articulo = "esta";
         
         if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista' || rolUsuario === 'Visitante' || rolUsuario === 'Subgerente') {
-            
-            advertenciaCinepolitos = `
-                <div class="advertencia-corp">
-                    ⚠️ <b>Importante:</b> Al solicitar ${articulo} <b>${prodGlobal.Categoria}</b>, entras en una lista de espera. <b>Deberás esperar a que baje de exhibición</b> y la entrega final estará sujeta a que los de <b>Corporativo no exijan su devolución</b>.
-                </div>
-            `;
-            
+            advertenciaCinepolitos = `<div class="advertencia-corp">⚠️ <b>Importante:</b> Al solicitar ${articulo} <b>${prodGlobal.Categoria}</b>, entras en una lista de espera. <b>Deberás esperar a que baje de exhibición</b> y la entrega final estará sujeta a que los de <b>Corporativo no exijan su devolución</b>.</div>`;
             botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()">📋 Quiero pedir ${articulo} ${prodGlobal.Categoria} a mi nombre</button>`;
             
             if (rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Subgerente') {
-                panelEditor = `
-                    <div class="editor-imagen">
-                        <label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta?</label>
-                        <button class="btn-dark" style="margin-bottom: 5px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button>
-                        <input type="text" id="urlManual" placeholder="Pega el link de la imagen (.jpg, .png)...">
-                        <button class="btn-info" onclick="guardarImagenManual()">💾 Guardar Imagen</button>
-                    </div>
-                `;
+                panelEditor = `<div class="editor-imagen"><label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta o no aparece?</label><button class="btn-info" style="margin-bottom: 5px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button><input type="text" id="urlManual" placeholder="Pega el link de la imagen (.jpg, .png) aquí..."><button class="btn-dark" style="padding: 6px;" onclick="guardarImagenManual()">💾 Guardar Imagen</button></div>`;
                 botonesHTML += `
                     <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
+                    <button class="btn-dark" onclick="imprimirQRPoster()">🖨️ Imprimir Etiqueta (19x4 cm)</button>
                     <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso (Directo)</button>
                     <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
                     <button class="btn-daño" onclick="abrirModalMerma()">📸 Tomar Foto para Merma</button>
@@ -164,105 +115,85 @@ function renderizarTarjeta() {
 
         document.getElementById('tarjetaContenido').innerHTML = `
             <div class="detalle-layout">
-                <div class="poster-img-container">
-                    <img id="imagenMagicaPoster" src="" style="display:none;" alt="Imagen Oficial">
-                    ${panelEditor}
-                </div>
+                <div class="poster-img-container"><img id="imagenMagicaPoster" src="" style="display:none;" alt="Imagen Oficial">${panelEditor}</div>
                 <div class="info-container">
                     <h1 style="font-size: 22px; margin-top:0;">${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
                     ${advertenciaCinepolitos}
-                    <div class="stats-grid">
-                        <div class="stat-box">En Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
-                        <div class="stat-box">En Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
-                    </div>
+                    <div class="stats-grid"><div class="stat-box">En Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div><div class="stat-box">En Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div></div>
                     <div class="action-grid">${botonesHTML}</div>
                 </div>
             </div>
         `;
-    }        let botonesHTML = '';
-        let panelEditor = '';
-        let advertenciaCinepolitos = '';
-        
-        if(rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista' || rolUsuario === 'Visitante' || rolUsuario === 'Subgerente') {
-            
-            advertenciaCinepolitos = `
-                <div class="advertencia-corp">
-                    ⚠️ <b>Importante:</b> Al solicitar este póster, entras en una lista de espera. <b>Deberás esperar a que baje de cartelera</b> y la entrega final estará sujeta a que los de <b>Corporativo no exijan la devolución del material</b>.
-                </div>
-            `;
-            
-            botonesHTML += `<button class="btn-reserva" onclick="hacerReserva()">📋 Quiero pedir este póster a mi nombre</button>`;
-            
-            if (rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Subgerente') {
-                panelEditor = `
-                    <div class="editor-imagen">
-                        <label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta o no aparece?</label>
-                        <button class="btn-dark" style="margin-bottom: 5px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button>
-                        <input type="text" id="urlManual" placeholder="Pega el link de la imagen (.jpg, .png) aquí...">
-                        <button class="btn-info" onclick="guardarImagenManual()">💾 Guardar Imagen</button>
-                    </div>
-                `;
-                
-                botonesHTML += `
-                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
-                    <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso (Directo)</button>
-                    <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
-                    <button class="btn-daño" onclick="abrirModalMerma()">📸 Tomar Foto para Merma</button>`;
-            }
-        }
+    }
 
-        document.getElementById('tarjetaContenido').innerHTML = `
-            <div class="detalle-layout">
-                <div class="poster-img-container">
-                    <img id="imagenMagicaPoster" src="" style="display:none;" alt="Poster Oficial">
-                    ${panelEditor}
-                </div>
-                <div class="info-container">
-                    <h1 style="font-size: 22px; margin-top:0;">${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
-                    ${advertenciaCinepolitos}
-                    <div class="stats-grid">
-                        <div class="stat-box">En Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div>
-                        <div class="stat-box">En Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div>
-                    </div>
-                    <div class="action-grid">
-                        ${botonesHTML}
-                    </div>
+    function imprimirQRPoster() {
+        const urlMaterial = window.location.href; 
+        const ventana = window.open('', '_blank');
+        ventana.document.write(`
+        <html><head><title>Etiqueta QR - ${prodGlobal.Nombre_Material}</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+        <style>
+            @page { size: A4 portrait; margin: 0; }
+            body { font-family: 'Arial', sans-serif; text-align: center; margin: 0; padding: 0; display: flex; justify-content: center; padding-top: 1cm;}
+            .etiqueta { 
+                width: 19cm; height: 4cm; 
+                border: 1px dashed #555; 
+                box-sizing: border-box; 
+                display: flex; align-items: center; 
+                padding: 0 1cm;
+            }
+            .qr-code { width: 3cm; height: 3cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+            .qr-code img { max-width: 100%; max-height: 100%; }
+            .info { flex-grow: 1; padding-left: 1cm; text-align: left; }
+            .titulo { font-size: 22px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000; letter-spacing: 1px;}
+        </style>
+        </head><body>
+            <div class="etiqueta">
+                <div class="qr-code" id="qrIndividual"></div>
+                <div class="info">
+                    <p class="titulo">${prodGlobal.Nombre_Material}</p>
                 </div>
             </div>
-        `;
-
+            <script>
+                new QRCode(document.getElementById('qrIndividual'), { text: "${urlMaterial}", width: 120, height: 120, colorDark : "#000", colorLight : "#fff" });
+                setTimeout(() => window.print(), 800);
+            <\/script>
+        </body></html>`);
+        ventana.document.close();
+    }
 
     function hacerReserva() {
         let nombreGuardado = localStorage.getItem('nombreCinepolito') || '';
         let nombre = prompt("Ingresa tu nombre completo (y tu área, Ej. 'Jonas - Dulcería'):", nombreGuardado);
         if(!nombre) return;
-        
         localStorage.setItem('nombreCinepolito', nombre.trim());
         
-        let cant = prompt(`¿Cuántas piezas de este(a) ${prodGlobal.Categoria} quieres pedir?`);
+        let cant = prompt(`¿Cuántas piezas quieres pedir?`);
         cant = parseInt(cant);
         if(!cant || cant <= 0) return;
         
-        fetch(API_RESERVAS, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_publicidad: idProducto, nombre: nombre.trim(), cantidad: cant })
-        }).then(() => {
-            alert(`¡Listo! Tu pedido quedó registrado a nombre de: ${nombre.trim()}.\n\nPuedes revisar si ya fue aprobado en la pantalla principal en el botón "Mis Pedidos".`);
-        });
+        fetch(API_RESERVAS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idProducto, nombre: nombre.trim(), cantidad: cant }) }).then(() => { alert(`¡Listo! Pedido registrado a nombre de: ${nombre.trim()}.`); });
     }
 
     function registrarMovimiento(tipo) {
-        let cant = prompt(`¿Cuántas piezas vas a mover para la operación de: ${tipo}?`);
-        cant = parseInt(cant);
-        if(!cant || cant <= 0) return;
+        let cant = prompt(`¿Cuántas piezas vas a mover para: ${tipo}?`);
+        cant = parseInt(cant); if(!cant || cant <= 0) return;
         fetch(`${API_URL}/${idProducto}/movimiento`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo: tipo, cantidad: cant }) }).then(() => cargarDetalle());
     }
 
     function buscarEnGoogle() { window.open(`https://www.google.com/search?tbm=isch&q=poster+película+${encodeURIComponent(prodGlobal.Nombre_Material)}`, '_blank'); }
-    function guardarImagenManual() {
-        const url = document.getElementById('urlManual').value.trim();
-        if(!url) return alert("Pega una URL válida.");
-        fetch(`${API_URL}/${idProducto}/imagen`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url }) }).then(() => cargarDetalle());
+    function guardarImagenManual() { const url = document.getElementById('urlManual').value.trim(); if(!url) return alert("Pega una URL válida."); fetch(`${API_URL}/${idProducto}/imagen`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url }) }).then(() => cargarDetalle()); }
+
+    function abrirModalMerma() { document.getElementById('modalMerma').style.display = 'flex'; }
+    function enviarMerma() {
+        const cant = document.getElementById('cantMerma').value; const motivo = document.getElementById('motivoMerma').value.trim(); const fotoInput = document.getElementById('fotoMerma');
+        if(!cant || cant <= 0 || !motivo || fotoInput.files.length === 0) { alert("⚠️ Faltan datos o la foto."); return; }
+        const btn = event.target; btn.innerText = "Subiendo Evidencia..."; btn.disabled = true;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            fetch('https://jonassk13.pythonanywhere.com/api/mermas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_pub: idProducto, usuario: localStorage.getItem('nombreCine') || rolUsuario, cantidad: parseInt(cant), motivo: motivo, foto: e.target.result }) }).then(() => { alert("✅ Fotografía enviada al sistema."); document.getElementById('modalMerma').style.display = 'none'; btn.innerText = "Enviar Foto"; btn.disabled = false; document.getElementById('cantMerma').value = ''; document.getElementById('motivoMerma').value = ''; fotoInput.value = ''; });
+        };
+        reader.readAsDataURL(fotoInput.files[0]);
     }
 </script>
 </body>
