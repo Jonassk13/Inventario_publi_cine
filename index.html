@@ -15,7 +15,6 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 20px; margin: 0; transition: background 0.3s, color 0.3s; }
         .header-top { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
         
-        /* 📱 DISEÑO RESPONSIVO (MÓVILES) */
         @media (max-width: 768px) {
             .header-top { flex-direction: column; text-align: center; gap: 15px; }
             .action-bar { flex-direction: column; align-items: stretch !important; gap: 5px !important; }
@@ -43,7 +42,6 @@
         .badge-subgerente { background-color: #0b5345 !important; color: white !important; }
         .oculto { display: none !important; }
 
-        /* Estilos para el estado de los pedidos */
         .estado-badge { padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; color: white; }
         .estado-Pendiente { background: #fd7e14; }
         .estado-Aprobado { background: #198754; }
@@ -58,7 +56,6 @@
     <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;">
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
         <button id="btnIngresar" class="btn btn-primary" onclick="abrirModal('modalLogin')">👤 Staff / Admin</button>
-        <!-- BOTÓN PARA CINEPOLITOS -->
         <button id="btnMisPedidos" class="btn btn-info oculto" style="background:#e83e8c; color:white;" onclick="abrirModalMisPedidos()">🎫 Mis Pedidos</button>
         <button id="btnPerfil" class="btn btn-info oculto" onclick="abrirModalPerfil()">⚙️ Mi Perfil</button>
         <button id="btnSalir" class="btn btn-danger oculto" onclick="cerrarSesion()">Salir</button>
@@ -72,8 +69,8 @@
     <button class="btn btn-admin req-admin" onclick="abrirModalCategorias()">🏷️ Categorías</button>
     
     <button class="btn btn-dark req-admin" style="background:#20c997; color:white;" onclick="abrirModalQRVisitante()">📲 QR para Cinepolitos</button>
-    <!-- BOTÓN PARA IMPRIMIR SOLO LOS QRs DE LOS POSTERS -->
-    <button class="btn btn-dark req-admin" style="background:#6f42c1; color:white;" onclick="imprimirQRsMasivo()">🖨️ QRs de Pósters</button>
+    
+    <button class="btn btn-dark req-admin" style="background:#6f42c1; color:white;" onclick="abrirModalImpresionQR()">🖨️ QRs de Pósters</button>
 
     <button class="btn btn-reserva req-staff req-auth" onclick="abrirModalReservas()">📋 Aprobaciones</button>
     <button class="btn btn-info req-staff" onclick="abrirModalGrupo()">📦 Armar Caja</button>
@@ -89,7 +86,6 @@
     </select>
 </div>
 
-<!-- TABLA GENERAL -->
 <div class="box">
     <h2 style="margin-top:0; color: var(--primary);">🍿 Inventario General (Publicidad)</h2>
     <table>
@@ -98,7 +94,6 @@
     </table>
 </div>
 
-<!-- TABLA EXCLUSIVA PARA EL STAFF -->
 <div class="box req-staff" id="cajaExclusiva" style="margin-top:20px; border: 2px solid var(--warning); display:none;">
     <h2 style="margin-top:0; color: var(--warning);">🔒 Inventario Exclusivo (Áreas del Cine)</h2>
     <p style="font-size: 13px; color: gray;">Este panel está oculto para los cinepolitos y visitantes.</p>
@@ -108,7 +103,30 @@
     </table>
 </div>
 
-<!-- ================= MODALES ================= -->
+
+<div id="modalImpresionQR" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <button class="close-btn" onclick="cerrarModal('modalImpresionQR')">&times;</button>
+        <h2 style="margin-top: 0; color: var(--btn-reserva);">🖨️ Opciones de Impresión</h2>
+        <p style="font-size: 13px; color: gray;">Selecciona qué pósters deseas imprimir. Las etiquetas medirán 19x4 cm para aprovechar toda la hoja.</p>
+        
+        <select id="tipoImpresionQR" onchange="cambiarOpcionImpresion()" style="margin-bottom:15px; font-weight:bold;">
+            <option value="todos">Todos los Pósters en Inventario</option>
+            <option value="grupo">Por Grupo / Caja Específica</option>
+            <option value="individual">Selección Individual de Pósters</option>
+        </select>
+        
+        <div id="divImpresionGrupo" style="display:none; margin-bottom: 15px;">
+            <label style="font-size:12px; font-weight:bold;">Selecciona la Caja/Grupo:</label>
+            <select id="selectGrupoImpresion"></select>
+        </div>
+        
+        <div id="divImpresionIndividual" style="display:none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+        </div>
+        
+        <button class="btn btn-primary" style="width: 100%; background: var(--btn-reserva);" onclick="ejecutarImpresionQR()">Generar Etiquetas QRs</button>
+    </div>
+</div>
 
 <div id="modalQRVisitante" class="modal">
     <div class="modal-content" style="max-width: 400px; text-align: center;">
@@ -122,40 +140,17 @@
     </div>
 </div>
 
-<div id="modalMisPedidos" class="modal">
-    <div class="modal-content">
-        <button class="close-btn" onclick="cerrarModal('modalMisPedidos')">&times;</button>
-        <h2 style="margin-top: 0; color: #e83e8c;">🎫 Historial de mis Pedidos</h2>
-        <p style="font-size: 13px; color: gray;">Aquí puedes ver si los gerentes ya aprobaron tus pósters o si el corporativo los solicitó de regreso.</p>
-        <table>
-            <thead><tr><th>Producto Solicitado</th><th>Piezas</th><th>Estado Actual</th></tr></thead>
-            <tbody id="tablaMisPedidosCuerpo"></tbody>
-        </table>
-    </div>
-</div>
-
+<div id="modalMisPedidos" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMisPedidos')">&times;</button><h2 style="margin-top: 0; color: #e83e8c;">🎫 Historial de mis Pedidos</h2><p style="font-size: 13px; color: gray;">Aquí puedes ver si los gerentes ya aprobaron tus pósters o si el corporativo los solicitó de regreso.</p><table><thead><tr><th>Producto Solicitado</th><th>Piezas</th><th>Estado Actual</th></tr></thead><tbody id="tablaMisPedidosCuerpo"></tbody></table></div></div>
 <div id="modalLogin" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalLogin')">&times;</button><h2 style="margin-top: 0; color: var(--btn-primary);">👤 Acceso Restringido</h2><input type="password" id="claveAcceso" placeholder="Contraseña..." style="width: 90%; text-align:center; font-size:18px;"><button class="btn btn-primary" onclick="iniciarSesion()" style="width: 95%; margin-top: 15px;">Ingresar</button></div></div>
 <div id="modalPerfil" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalPerfil')">&times;</button><h2 style="margin-top: 0;">⚙️ Editar Mi Perfil</h2><input type="text" id="perfilNombre" style="width: 100%; margin-bottom: 15px;"><input type="password" id="perfilClave" placeholder="Nueva contraseña (opcional)..." style="width: 100%;"><input type="password" id="perfilClaveConf" placeholder="Confirma tu nueva contraseña..." style="width: 100%;"><button class="btn btn-success" onclick="guardarPerfil()" style="width: 100%; margin-top: 10px;">Guardar Cambios</button></div></div>
 <div id="modalUsuarios" class="modal"><div class="modal-content" style="max-width: 700px;"><button class="close-btn" onclick="cerrarModal('modalUsuarios')">&times;</button><h2 style="margin-top: 0; color: var(--btn-danger);">👥 Gestión de Usuarios</h2><div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 20px;"><h3 style="margin-top:0; color: var(--btn-primary);" id="tituloFormUsuario">Crear Nuevo Usuario</h3><input type="hidden" id="adminUsuarioId"><div style="display: flex; gap: 10px; flex-wrap: wrap;"><input type="text" id="adminUsuarioNombre" placeholder="Nombre completo" style="flex:1;"><select id="adminUsuarioRol" style="flex:1;"><option value="Publicista">Publicista</option><option value="Supervisor">Supervisor</option><option value="Subgerente">Subgerente (VIP)</option><option value="Admin">Administrador</option></select></div><div style="display: flex; gap: 10px; margin-top:10px; flex-wrap: wrap;"><input type="password" id="adminUsuarioClave" placeholder="Contraseña..." style="flex:1;"><input type="password" id="adminUsuarioClaveConf" placeholder="Confirmar Contraseña..." style="flex:1;"></div><button class="btn btn-success" onclick="guardarUsuarioAdmin()" style="width: 100%; margin-top: 10px;">Guardar Usuario</button><button class="btn btn-dark oculto" id="btnCancelarEdicionUsuario" onclick="cancelarEdicionUsuario()" style="width: 100%; margin-top: 10px;">Cancelar Edición</button></div><div style="overflow-x:auto;"><table><thead><tr><th>ID</th><th>Nombre</th><th>Rol</th><th>Acciones</th></tr></thead><tbody id="tablaUsuariosAdmin"></tbody></table></div></div></div>
 <div id="modalCategorias" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalCategorias')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">🏷️ Gestión de Categorías</h2><div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap: wrap;"><input type="hidden" id="catIdEdit"><input type="text" id="catNombre" placeholder="Nueva Categoría" style="flex:1;"><button class="btn btn-success" onclick="guardarCategoria()">Guardar</button></div><table><thead><tr><th>Categoría</th><th>Acciones</th></tr></thead><tbody id="tablaCategorias"></tbody></table></div></div>
 <div id="modalProducto" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button><h2 style="margin-top: 0;">Registro Individual</h2><input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" required><select id="categoria" class="select-dinamico-cat" style="width:100%;"></select><input type="number" id="cantidadTotal" placeholder="Cantidad Total Recibida" style="width:100%;" min="1" required><button class="btn btn-primary" onclick="guardarProducto()" style="width: 100%;">Guardar Registro</button></div></div>
 <div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">⚡ Ingreso Masivo</h2><div style="overflow-x:auto;"><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table></div><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn btn-admin" style="float:right;" onclick="guardarIngresoMasivo()">Guardar Todo</button></div></div>
-
-<div id="modalEditarProducto" class="modal">
-    <div class="modal-content" style="max-width: 400px;">
-        <button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button>
-        <h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2>
-        <input type="hidden" id="editIdProd">
-        <input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre...">
-        <select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select>
-        <button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button>
-    </div>
-</div>
-
+<div id="modalEditarProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button><h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2><input type="hidden" id="editIdProd"><input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre..."><select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select><button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button></div></div>
 <div id="modalGrupo" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button><h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2><input type="text" id="nombreGrupo" placeholder="Nombre de la Caja" style="width:100%;" required><div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px;"></div><button id="btnGuardarCaja" class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo</button></div></div>
 <div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados y Entregas</h2><h3>🟡 Esperando Autorización</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th></tr></thead><tbody id="tablaPendientes"></tbody></table></div><h3 style="margin-top: 30px;">🟢 Aprobadas (Listas para Entregar)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div></div>
 
-<!-- PANEL UNIFICADO DE AUTORIZACIONES (POSTERS Y MERMAS) -->
 <div id="modalAlertasSupervisor" class="modal">
     <div class="modal-content" style="max-width: 800px;">
         <button class="close-btn" onclick="cerrarModal('modalAlertasSupervisor')">&times;</button>
@@ -177,7 +172,6 @@
     </div>
 </div>
 
-<!-- ================= SCRIPTS ================= -->
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault()); 
     document.addEventListener('keydown', event => { if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); });
@@ -194,7 +188,6 @@
     let datosInventario = []; let listaCategorias = [];
     let rolUsuario = 'General'; let idUsuario = null; let nombreUsuario = '';
 
-    // === 👑 SISTEMA VIP DE SALUDOS PARA JACQUELINE ===
     function validarMensajesVIP() {
         if(rolUsuario !== 'Subgerente') return; 
         const hoy = new Date(); const mes = hoy.getMonth() + 1; const dia = hoy.getDate();
@@ -233,53 +226,108 @@
     function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
-    // --- IMPRESIÓN MASIVA DE QRS (SOLO PÓSTERS) ---
-    function imprimirQRsMasivo() {
-        // FILTRO: Solo extraer productos cuya categoría sea 'Poster'
+   
+    function abrirModalImpresionQR() {
+        fetch(API_GRUPOS).then(r => r.json()).then(grupos => {
+            const selGrupo = document.getElementById('selectGrupoImpresion');
+            selGrupo.innerHTML = '<option value="">-- Elige una Caja/Grupo --</option>';
+            grupos.forEach(g => { selGrupo.innerHTML += `<option value="${g.Nombre_Grupo}">${g.Nombre_Grupo}</option>`; });
+        });
+
+        const divInd = document.getElementById('divImpresionIndividual');
+        divInd.innerHTML = '';
         let posters = datosInventario.filter(p => p.Categoria === 'Poster');
+        posters.sort((a,b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        posters.forEach(p => {
+            divInd.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:14px; cursor:pointer;"><input type="checkbox" class="chk-print-qr" value="${p.ID_Publicidad}"> ${p.Nombre_Material}</label>`;
+        });
+
+        document.getElementById('tipoImpresionQR').value = 'todos';
+        cambiarOpcionImpresion();
+        abrirModal('modalImpresionQR');
+    }
+
+    function cambiarOpcionImpresion() {
+        const val = document.getElementById('tipoImpresionQR').value;
+        document.getElementById('divImpresionGrupo').style.display = val === 'grupo' ? 'block' : 'none';
+        document.getElementById('divImpresionIndividual').style.display = val === 'individual' ? 'block' : 'none';
+    }
+
+    function ejecutarImpresionQR() {
+        const val = document.getElementById('tipoImpresionQR').value;
+        let postersAImprimir = [];
+
+        if (val === 'todos') {
+            postersAImprimir = datosInventario.filter(p => p.Categoria === 'Poster');
+        } else if (val === 'grupo') {
+            const grupoElegido = document.getElementById('selectGrupoImpresion').value;
+            if(!grupoElegido) return alert("Debes seleccionar un Grupo o Caja válida.");
+            postersAImprimir = datosInventario.filter(p => p.Categoria === 'Poster' && p.GruposNombres && p.GruposNombres.includes(grupoElegido));
+        } else if (val === 'individual') {
+            const seleccionados = Array.from(document.querySelectorAll('.chk-print-qr:checked')).map(cb => parseInt(cb.value));
+            postersAImprimir = datosInventario.filter(p => seleccionados.includes(p.ID_Publicidad));
+        }
+
+        if (postersAImprimir.length === 0) return alert("⚠️ No hay pósters en tu selección actual.");
         
-        if(posters.length === 0) return alert("No hay pósters en el inventario para imprimir.");
-        
+        cerrarModal('modalImpresionQR');
+        generarVentanaImpresion(postersAImprimir);
+    }
+
+    function generarVentanaImpresion(listaProductos) {
         const ventana = window.open('', '_blank');
         ventana.document.write(`
         <html>
         <head>
-            <title>QRs de Pósters</title>
+            <title>Impresión de Etiquetas QR</title>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
             <style>
-                body { font-family: 'Arial', sans-serif; text-align: center; background: #fff; color: #000; }
-                h2 { font-size: 24px; text-transform: uppercase; margin-bottom: 20px; border-bottom: 2px solid #ccc; padding-bottom: 10px;}
-                .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; padding: 15px; }
-                .tarjeta-qr { border: 2px dashed #555; padding: 15px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; page-break-inside: avoid; }
-                .tarjeta-qr h3 { font-size: 13px; margin: 0 0 5px 0; color: #111; text-transform: uppercase;}
-                .tarjeta-qr p { font-size: 10px; margin: 0 0 10px 0; color: #666; font-weight: bold; background: #eee; padding: 3px 8px; border-radius: 4px;}
-                .qr-code { margin-bottom: 5px; }
+                @page { size: A4 portrait; margin: 0; }
+                body { font-family: 'Arial', sans-serif; background: #fff; color: #000; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
+                
+                /* Contenedor que agrupa las etiquetas y maximiza la hoja */
+                .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 0.5cm; gap: 0.2cm; }
+                
+                /* Dimensiones exactas 19x4 cm */
+                .etiqueta { 
+                    width: 19cm; height: 4cm; 
+                    border: 1px dashed #777; 
+                    box-sizing: border-box; 
+                    display: flex; align-items: center; 
+                    padding: 0 1cm;
+                    page-break-inside: avoid;
+                }
+                .qr-code { width: 3cm; height: 3cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+                .qr-code img { max-width: 100%; max-height: 100%; }
+                .info { flex-grow: 1; padding-left: 1cm; text-align: left; }
+                .titulo { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000; letter-spacing: 1px;}
             </style>
         </head>
         <body>
-            <h2>🖨️ Etiquetas QR Exclusivas para Pósters</h2>
-            <div class="grid" id="qrGrid"></div>
+            <div class="hoja" id="qrGrid"></div>
             <script>
-                const productos = ${JSON.stringify(posters.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material, cat: p.Categoria})))};
+                const productos = ${JSON.stringify(listaProductos.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material})))};
                 const baseUrl = "${window.location.href.split('?')[0].replace('index.html', '')}detalle.html?id=";
                 const grid = document.getElementById('qrGrid');
                 
                 productos.forEach(p => {
                     let div = document.createElement('div');
-                    div.className = 'tarjeta-qr';
-                    
-                    let title = document.createElement('h3');
-                    title.innerText = p.nombre;
-                    
-                    let cat = document.createElement('p');
-                    cat.innerText = p.cat;
+                    div.className = 'etiqueta';
                     
                     let qrContainer = document.createElement('div');
                     qrContainer.className = 'qr-code';
                     
-                    div.appendChild(title);
-                    div.appendChild(cat);
+                    let info = document.createElement('div');
+                    info.className = 'info';
+                    
+                    let title = document.createElement('p');
+                    title.className = 'titulo';
+                    title.innerText = p.nombre;
+                    
+                    info.appendChild(title);
                     div.appendChild(qrContainer);
+                    div.appendChild(info);
+                    
                     grid.appendChild(div);
                     
                     new QRCode(qrContainer, { text: baseUrl + p.id, width: 120, height: 120, colorDark : "#000", colorLight : "#fff" });
