@@ -10,16 +10,55 @@
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; --btn-primary: #6ea8fe; --btn-success: #75b798; --btn-danger: #ea868f; --btn-info: #6edff6; --btn-reserva: #b288e7; --btn-dark: #f8f9fa; --btn-text: #121212; --admin-bg: #ffca2c; --btn-warning: #ffca2c;}
         
         body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --btn-success: #1e8449; --danger: #6e2c00; --btn-danger: #6e2c00; --info: #aec6cf; --btn-info: #aec6cf; --warning: #fd7e14; --btn-reserva: #fd7e14; --admin-bg: #fd7e14; }
-        body.theme-jacqui.dark-mode { --primary: #148f77; --btn-primary: #148f77; --danger: #873600; --btn-danger: #873600; }
         
+        body.theme-bosque-pinos {
+            background-size: cover !important;
+            background-position: center !important;
+            background-attachment: fixed !important;
+            color: #ffe8d6 !important;
+        }
+
+        body.theme-amanecer {
+            background-image: linear-gradient(to bottom, rgba(168, 230, 207, 0.4), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important;
+        }
+        body.theme-amanecer .box, body.theme-amanecer .action-bar, body.theme-amanecer .modal-content {
+            background: rgba(20, 60, 40, 0.5) !important; border: 1px solid #a8e6cf !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(168, 230, 207, 0.2); color: #fff !important;
+        }
+        body.theme-amanecer table th { background-color: rgba(46, 125, 50, 0.7) !important; color: white !important; }
+        body.theme-amanecer table td { border-color: rgba(168, 230, 207, 0.3) !important; }
+        body.theme-amanecer .btn-dark { background: rgba(27, 94, 32, 0.8) !important; border: 1px solid #a8e6cf; color: white !important;}
+        body.theme-amanecer input, body.theme-amanecer select { background: rgba(0,0,0,0.4) !important; color: white !important; border: 1px solid #a8e6cf !important; }
+
+        body.theme-atardecer {
+            background-image: linear-gradient(to bottom, rgba(255, 110, 64, 0.45), rgba(42, 8, 69, 0.95)), url('https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important;
+        }
+        body.theme-atardecer .box, body.theme-atardecer .action-bar, body.theme-atardecer .modal-content {
+            background: rgba(30, 10, 20, 0.5) !important; border: 1px solid #ff7e5f !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(255, 110, 64, 0.2); color: #ffe8d6 !important;
+        }
+        body.theme-atardecer table th { background-color: rgba(255, 110, 64, 0.7) !important; color: white !important; }
+        body.theme-atardecer table td { border-color: rgba(255, 110, 64, 0.3) !important; }
+        body.theme-atardecer .btn-dark { background: rgba(90, 20, 30, 0.8) !important; border: 1px solid #ff7e5f; color: white !important;}
+        body.theme-atardecer input, body.theme-atardecer select { background: rgba(0,0,0,0.5) !important; color: white !important; border: 1px solid #ff7e5f !important; }
+
+        body.theme-noche {
+            background-image: linear-gradient(to bottom, rgba(10, 25, 47, 0.7), rgba(2, 6, 12, 0.98)), url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important;
+        }
+        body.theme-noche .box, body.theme-noche .action-bar, body.theme-noche .modal-content {
+            background: rgba(10, 15, 30, 0.6) !important; border: 1px solid #64ffda !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(100, 255, 218, 0.1); color: #e6f1ff !important;
+        }
+        body.theme-noche table th { background-color: rgba(2, 12, 27, 0.8) !important; color: #64ffda !important; }
+        body.theme-noche table td { border-color: rgba(100, 255, 218, 0.2) !important; }
+        body.theme-noche .btn-dark { background: rgba(2, 12, 27, 0.8) !important; border: 1px solid #64ffda; color: #64ffda !important;}
+        body.theme-noche input, body.theme-noche select { background: rgba(0,0,0,0.5) !important; color: #e6f1ff !important; border: 1px solid #64ffda !important; }
+
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 20px; margin: 0; transition: background 0.3s, color 0.3s; }
         .header-top { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
         
         @media (max-width: 768px) {
             .header-top { flex-direction: column; text-align: center; gap: 15px; }
             .action-bar { flex-direction: column; align-items: stretch !important; gap: 5px !important; }
-            .action-bar .btn, .action-bar select, .action-bar a { width: 100%; margin: 0; box-sizing: border-box; text-align: center; }
-            #filtroCategoria { margin-top: 15px !important; }
+            .action-bar .btn, .action-bar select, .action-bar a, .action-bar input { width: 100%; margin: 0; box-sizing: border-box; text-align: center; }
+            .filtros-container { flex-direction: column; width: 100%; margin-left: 0 !important; margin-top: 15px;}
             th, td { font-size: 12px; padding: 6px; }
             .modal-content { width: 95%; padding: 15px; }
         }
@@ -47,6 +86,7 @@
         .estado-Aprobado { background: #198754; }
         .estado-Rechazado { background: #dc3545; }
         .estado-Entregado { background: #6f42c1; }
+        .filtros-container { display: flex; gap: 10px; margin-left: auto; }
     </style>
 </head>
 <body>
@@ -69,8 +109,8 @@
     <button class="btn btn-admin req-admin" onclick="abrirModalCategorias()">🏷️ Categorías</button>
     
     <button class="btn btn-dark req-admin" style="background:#20c997; color:white;" onclick="abrirModalQRVisitante()">📲 QR para Cinepolitos</button>
-    
     <button class="btn btn-dark req-admin" style="background:#6f42c1; color:white;" onclick="abrirModalImpresionQR()">🖨️ QRs de Pósters</button>
+    <button class="btn btn-dark req-admin" style="background:#e83e8c; color:white;" onclick="abrirModalHistorial()">📖 Historial General</button>
 
     <button class="btn btn-reserva req-staff req-auth" onclick="abrirModalReservas()">📋 Aprobaciones</button>
     <button class="btn btn-info req-staff" onclick="abrirModalGrupo()">📦 Armar Caja</button>
@@ -81,9 +121,12 @@
     <a href="lobby_stands.html" target="_blank" class="btn btn-info req-staff" style="background: #fd7e14; color: white;">🎪 Stands de Lobby</a>
     <a href="areas_cine.html" target="_blank" class="btn btn-admin req-staff" style="background: #d35400; color: white;">🏢 Áreas del Cine</a>
     
-    <select id="filtroCategoria" onchange="renderizarTabla()" style="width: 200px; margin-bottom: 0; margin-left: auto;">
-        <option value="Todos">Todas las categorías</option>
-    </select>
+    <div class="filtros-container">
+        <input type="text" id="buscadorGeneral" placeholder="🔍 Buscar material..." onkeyup="renderizarTabla()" style="width: 250px; margin-bottom: 0;">
+        <select id="filtroCategoria" onchange="renderizarTabla()" style="width: 200px; margin-bottom: 0;">
+            <option value="Todos">Todas las categorías</option>
+        </select>
+    </div>
 </div>
 
 <div class="box">
@@ -103,74 +146,43 @@
     </table>
 </div>
 
-
-<div id="modalImpresionQR" class="modal">
-    <div class="modal-content" style="max-width: 500px;">
-        <button class="close-btn" onclick="cerrarModal('modalImpresionQR')">&times;</button>
-        <h2 style="margin-top: 0; color: var(--btn-reserva);">🖨️ Opciones de Impresión</h2>
-        <p style="font-size: 13px; color: gray;">Selecciona qué pósters deseas imprimir. Las etiquetas medirán 19x4 cm para aprovechar toda la hoja.</p>
-        
-        <select id="tipoImpresionQR" onchange="cambiarOpcionImpresion()" style="margin-bottom:15px; font-weight:bold;">
-            <option value="todos">Todos los Pósters en Inventario</option>
-            <option value="grupo">Por Grupo / Caja Específica</option>
-            <option value="individual">Selección Individual de Pósters</option>
-        </select>
-        
-        <div id="divImpresionGrupo" style="display:none; margin-bottom: 15px;">
-            <label style="font-size:12px; font-weight:bold;">Selecciona la Caja/Grupo:</label>
-            <select id="selectGrupoImpresion"></select>
-        </div>
-        
-        <div id="divImpresionIndividual" style="display:none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px;">
-        </div>
-        
-        <button class="btn btn-primary" style="width: 100%; background: var(--btn-reserva);" onclick="ejecutarImpresionQR()">Generar Etiquetas QRs</button>
-    </div>
-</div>
-
-<div id="modalQRVisitante" class="modal">
-    <div class="modal-content" style="max-width: 400px; text-align: center;">
-        <button class="close-btn" onclick="cerrarModal('modalQRVisitante')">&times;</button>
-        <h2 style="margin-top: 0; color: #20c997;">📲 Acceso Cinepolitos</h2>
-        <p style="font-size: 14px; color: gray;">Imprime este QR y pégalo en piso.</p>
-        <div style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin: 15px 0;">
-            <div id="qrVisitanteContainer"></div>
-        </div>
-        <button class="btn btn-primary" style="width: 100%; font-size: 16px;" onclick="imprimirQR()">🖨️ Imprimir Ticket QR</button>
-    </div>
-</div>
-
+<div id="modalHistorialGlobal" class="modal"><div class="modal-content" style="max-width: 900px;"><button class="close-btn" onclick="cerrarModal('modalHistorialGlobal')">&times;</button><h2 style="margin-top:0; color:#e83e8c;">📖 Historial de Movimientos y Auditoría</h2><p style="font-size: 13px; color: gray;">Aquí puedes ver quién agregó o retiró mercancía y a qué hora.</p><div style="overflow-x:auto;"><table><thead><tr><th>Fecha y Hora</th><th>Usuario responsable</th><th>Producto</th><th>Tipo de Movimiento</th><th>Detalle / Razón</th></tr></thead><tbody id="cuerpoHistorialGlobal"></tbody></table></div></div></div>
+<div id="modalEditarProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button><h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2><input type="hidden" id="editIdProd"><label style="font-size: 11px; font-weight: bold;">Nombre del Material:</label><input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre..."><label style="font-size: 11px; font-weight: bold;">Categoría:</label><select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select><label style="font-size: 11px; font-weight: bold; color: var(--danger);">Cantidad actual en Bodega:</label><input type="number" id="editCantidadProd" style="width:100%; border: 2px solid var(--danger); font-size:18px; font-weight:bold;"><button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button></div></div>
+<div id="modalImpresionQR" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalImpresionQR')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">🖨️ Opciones de Impresión</h2><p style="font-size: 13px; color: gray;">Selecciona qué pósters deseas imprimir. Las etiquetas medirán 19x4 cm.</p><select id="tipoImpresionQR" onchange="cambiarOpcionImpresion()" style="margin-bottom:15px; font-weight:bold;"><option value="todos">Todos los Pósters en Inventario</option><option value="grupo">Por Grupo / Caja Específica</option><option value="individual">Selección Individual de Pósters</option></select><div id="divImpresionGrupo" style="display:none; margin-bottom: 15px;"><label style="font-size:12px; font-weight:bold;">Selecciona la Caja/Grupo:</label><select id="selectGrupoImpresion"></select></div><div id="divImpresionIndividual" style="display:none; max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px;"></div><button class="btn btn-primary" style="width: 100%; background: var(--btn-reserva);" onclick="ejecutarImpresionQR()">Generar Etiquetas QRs</button></div></div>
+<div id="modalQRVisitante" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalQRVisitante')">&times;</button><h2 style="margin-top: 0; color: #20c997;">📲 Acceso Cinepolitos</h2><p style="font-size: 14px; color: gray;">Imprime este QR y pégalo en piso.</p><div style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin: 15px 0;"><div id="qrVisitanteContainer"></div></div><button class="btn btn-primary" style="width: 100%; font-size: 16px;" onclick="imprimirQR()">🖨️ Imprimir Ticket QR</button></div></div>
 <div id="modalMisPedidos" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMisPedidos')">&times;</button><h2 style="margin-top: 0; color: #e83e8c;">🎫 Historial de mis Pedidos</h2><p style="font-size: 13px; color: gray;">Aquí puedes ver si los gerentes ya aprobaron tus pósters o si el corporativo los solicitó de regreso.</p><table><thead><tr><th>Producto Solicitado</th><th>Piezas</th><th>Estado Actual</th></tr></thead><tbody id="tablaMisPedidosCuerpo"></tbody></table></div></div>
 <div id="modalLogin" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalLogin')">&times;</button><h2 style="margin-top: 0; color: var(--btn-primary);">👤 Acceso Restringido</h2><input type="password" id="claveAcceso" placeholder="Contraseña..." style="width: 90%; text-align:center; font-size:18px;"><button class="btn btn-primary" onclick="iniciarSesion()" style="width: 95%; margin-top: 15px;">Ingresar</button></div></div>
-<div id="modalPerfil" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalPerfil')">&times;</button><h2 style="margin-top: 0;">⚙️ Editar Mi Perfil</h2><input type="text" id="perfilNombre" style="width: 100%; margin-bottom: 15px;"><input type="password" id="perfilClave" placeholder="Nueva contraseña (opcional)..." style="width: 100%;"><input type="password" id="perfilClaveConf" placeholder="Confirma tu nueva contraseña..." style="width: 100%;"><button class="btn btn-success" onclick="guardarPerfil()" style="width: 100%; margin-top: 10px;">Guardar Cambios</button></div></div>
+
+<div id="modalPerfil" class="modal">
+    <div class="modal-content" style="max-width: 400px;">
+        <button class="close-btn" onclick="cerrarModal('modalPerfil')">&times;</button>
+        <h2 style="margin-top: 0;">⚙️ Editar Mi Perfil</h2>
+        <input type="text" id="perfilNombre" style="width: 100%; margin-bottom: 15px;">
+        <input type="password" id="perfilClave" placeholder="Nueva contraseña (opcional)..." style="width: 100%;">
+        <input type="password" id="perfilClaveConf" placeholder="Confirma tu nueva contraseña..." style="width: 100%;">
+        
+        <hr style="border-top: 1px solid var(--border-color); margin: 20px 0;">
+        <h3 style="margin-top: 0; font-size: 14px; color: var(--btn-reserva);">🧪 Funciones Experimentales (Prueba)</h3>
+        <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: bold; cursor: pointer;">
+            <input type="checkbox" id="chkWhatsPiloto" onchange="document.getElementById('cajaWhatsNum').style.display = this.checked ? 'block' : 'none'">
+            Activar enlace automático de WhatsApp
+        </label>
+        <div id="cajaWhatsNum" style="display: none; margin-top: 10px;">
+            <p style="font-size:11px; color:gray; margin:0 0 5px 0;">Ingresa el número con lada de país (Ej. 524430000000):</p>
+            <input type="text" id="inputWhatsNum" placeholder="52..." style="width: 100%; border: 2px solid var(--btn-reserva);">
+        </div>
+
+        <button class="btn btn-success" onclick="guardarPerfil()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button>
+    </div>
+</div>
+
 <div id="modalUsuarios" class="modal"><div class="modal-content" style="max-width: 700px;"><button class="close-btn" onclick="cerrarModal('modalUsuarios')">&times;</button><h2 style="margin-top: 0; color: var(--btn-danger);">👥 Gestión de Usuarios</h2><div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 20px;"><h3 style="margin-top:0; color: var(--btn-primary);" id="tituloFormUsuario">Crear Nuevo Usuario</h3><input type="hidden" id="adminUsuarioId"><div style="display: flex; gap: 10px; flex-wrap: wrap;"><input type="text" id="adminUsuarioNombre" placeholder="Nombre completo" style="flex:1;"><select id="adminUsuarioRol" style="flex:1;"><option value="Publicista">Publicista</option><option value="Supervisor">Supervisor</option><option value="Subgerente">Subgerente (VIP)</option><option value="Admin">Administrador</option></select></div><div style="display: flex; gap: 10px; margin-top:10px; flex-wrap: wrap;"><input type="password" id="adminUsuarioClave" placeholder="Contraseña..." style="flex:1;"><input type="password" id="adminUsuarioClaveConf" placeholder="Confirmar Contraseña..." style="flex:1;"></div><button class="btn btn-success" onclick="guardarUsuarioAdmin()" style="width: 100%; margin-top: 10px;">Guardar Usuario</button><button class="btn btn-dark oculto" id="btnCancelarEdicionUsuario" onclick="cancelarEdicionUsuario()" style="width: 100%; margin-top: 10px;">Cancelar Edición</button></div><div style="overflow-x:auto;"><table><thead><tr><th>ID</th><th>Nombre</th><th>Rol</th><th>Acciones</th></tr></thead><tbody id="tablaUsuariosAdmin"></tbody></table></div></div></div>
 <div id="modalCategorias" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalCategorias')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">🏷️ Gestión de Categorías</h2><div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap: wrap;"><input type="hidden" id="catIdEdit"><input type="text" id="catNombre" placeholder="Nueva Categoría" style="flex:1;"><button class="btn btn-success" onclick="guardarCategoria()">Guardar</button></div><table><thead><tr><th>Categoría</th><th>Acciones</th></tr></thead><tbody id="tablaCategorias"></tbody></table></div></div>
 <div id="modalProducto" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button><h2 style="margin-top: 0;">Registro Individual</h2><input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" required><select id="categoria" class="select-dinamico-cat" style="width:100%;"></select><input type="number" id="cantidadTotal" placeholder="Cantidad Total Recibida" style="width:100%;" min="1" required><button class="btn btn-primary" onclick="guardarProducto()" style="width: 100%;">Guardar Registro</button></div></div>
 <div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">⚡ Ingreso Masivo</h2><div style="overflow-x:auto;"><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table></div><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn btn-admin" style="float:right;" onclick="guardarIngresoMasivo()">Guardar Todo</button></div></div>
-<div id="modalEditarProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button><h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2><input type="hidden" id="editIdProd"><input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre..."><select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select><button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button></div></div>
 <div id="modalGrupo" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button><h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2><input type="text" id="nombreGrupo" placeholder="Nombre de la Caja" style="width:100%;" required><div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px;"></div><button id="btnGuardarCaja" class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo</button></div></div>
 <div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados y Entregas</h2><h3>🟡 Esperando Autorización</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th></tr></thead><tbody id="tablaPendientes"></tbody></table></div><h3 style="margin-top: 30px;">🟢 Aprobadas (Listas para Entregar)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div></div>
-
-<div id="modalAlertasSupervisor" class="modal">
-    <div class="modal-content" style="max-width: 800px;">
-        <button class="close-btn" onclick="cerrarModal('modalAlertasSupervisor')">&times;</button>
-        <h2 style="margin-top: 0; color: var(--btn-reserva);">⚠️ Bandeja de Autorizaciones</h2>
-        <h3 style="color: var(--primary);">1. Solicitudes de Productos</h3>
-        <div style="overflow-x:auto; margin-bottom: 20px;">
-            <table>
-                <thead><tr><th>Material</th><th>Solicitado por</th><th>Piezas</th><th>Acción</th></tr></thead>
-                <tbody id="tablaAlertasAutorizacion"><tr><td colspan="4">Sin solicitudes pendientes.</td></tr></tbody>
-            </table>
-        </div>
-        <h3 style="color: var(--danger);">2. Autorización de Mermas (Fotos Requeridas)</h3>
-        <div style="overflow-x:auto;">
-            <table>
-                <thead><tr><th>Producto</th><th>Cant.</th><th>Motivo y Evidencia</th><th>Decisión</th></tr></thead>
-                <tbody id="tablaAlertasMermas"><tr><td colspan="4">Sin mermas por revisar.</td></tr></tbody>
-            </table>
-        </div>
-    </div>
-</div>
+<div id="modalAlertasSupervisor" class="modal"><div class="modal-content" style="max-width: 800px;"><button class="close-btn" onclick="cerrarModal('modalAlertasSupervisor')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">⚠️ Bandeja de Autorizaciones</h2><h3 style="color: var(--primary);">1. Solicitudes de Productos</h3><div style="overflow-x:auto; margin-bottom: 20px;"><table><thead><tr><th>Material</th><th>Solicitado por</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAlertasAutorizacion"><tr><td colspan="4">Sin solicitudes pendientes.</td></tr></tbody></table></div><h3 style="color: var(--danger);">2. Autorización de Mermas (Fotos Requeridas)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Producto</th><th>Cant.</th><th>Motivo y Evidencia</th><th>Decisión</th></tr></thead><tbody id="tablaAlertasMermas"><tr><td colspan="4">Sin mermas por revisar.</td></tr></tbody></table></div></div></div>
 
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault()); 
@@ -188,8 +200,54 @@
     let datosInventario = []; let listaCategorias = [];
     let rolUsuario = 'General'; let idUsuario = null; let nombreUsuario = '';
 
-    function validarMensajesVIP() {
+
+    function aplicarTemasMagicos() {
         if(rolUsuario !== 'Subgerente') return; 
+
+        if(nombreUsuario.toLowerCase().includes('jacqui') || nombreUsuario.toLowerCase().includes('jacqueline')) {
+            document.body.classList.add('theme-bosque-pinos');
+            
+            let hora = new Date().getHours();
+            let colorSombra = "";
+            
+            if (hora >= 6 && hora < 12) {
+                document.body.classList.add('theme-amanecer'); 
+                colorSombra = "rgba(168, 230, 207, 0.8)";
+            } else if (hora >= 12 && hora < 19) {
+                document.body.classList.add('theme-atardecer'); 
+                colorSombra = "rgba(255,165,0,0.8)";
+            } else {
+                document.body.classList.add('theme-noche'); 
+                colorSombra = "rgba(100, 255, 218, 0.8)";
+            }
+            
+            let audio = new Audio('https://actions.google.com/sounds/v1/nature/wind_in_trees.ogg');
+            audio.volume = 0.6;
+            audio.play().catch(e => console.log("Autoplay bloqueado"));
+
+            for(let i=0; i<25; i++) {
+                let pino = document.createElement('div');
+                pino.innerText = '🌲';
+                pino.style.cssText = `position:fixed; bottom:-100px; left:${Math.random()*100}vw; font-size:${Math.random()*60 + 40}px; filter: drop-shadow(0px 0px 8px ${colorSombra}); z-index:99999; transition: transform 3s ease-out, opacity 4s; opacity:0; pointer-events:none;`;
+                document.body.appendChild(pino);
+                
+                setTimeout(() => { 
+                    pino.style.transform = `translateY(-${Math.random()*300 + 100}px)`; 
+                    pino.style.opacity = 1;
+                }, 100 + (i*50)); 
+                
+                setTimeout(() => { pino.style.opacity = 0; }, 4000);
+                setTimeout(() => { pino.remove(); }, 6000);
+            }
+
+            setTimeout(() => {
+                let fadeOut = setInterval(() => {
+                    if(audio.volume > 0.1) audio.volume -= 0.1;
+                    else { audio.pause(); clearInterval(fadeOut); }
+                }, 200);
+            }, 5000);
+        }
+
         const hoy = new Date(); const mes = hoy.getMonth() + 1; const dia = hoy.getDate();
         let mensaje = null; let icono = '';
 
@@ -219,165 +277,42 @@
             localStorage.setItem('rolCine', 'Visitante'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine');
             window.history.replaceState(null, null, window.location.pathname);
         }
-        verificarSesion(); cargarCategoriasGlobales(); setTimeout(validarMensajesVIP, 1000); 
+        verificarSesion(); cargarCategoriasGlobales(); 
+        setTimeout(aplicarTemasMagicos, 800); 
     };
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
     function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
-   
-    function abrirModalImpresionQR() {
-        fetch(API_GRUPOS).then(r => r.json()).then(grupos => {
-            const selGrupo = document.getElementById('selectGrupoImpresion');
-            selGrupo.innerHTML = '<option value="">-- Elige una Caja/Grupo --</option>';
-            grupos.forEach(g => { selGrupo.innerHTML += `<option value="${g.Nombre_Grupo}">${g.Nombre_Grupo}</option>`; });
-        });
-
-        const divInd = document.getElementById('divImpresionIndividual');
-        divInd.innerHTML = '';
-        let posters = datosInventario.filter(p => p.Categoria === 'Poster');
-        posters.sort((a,b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
-        posters.forEach(p => {
-            divInd.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:14px; cursor:pointer;"><input type="checkbox" class="chk-print-qr" value="${p.ID_Publicidad}"> ${p.Nombre_Material}</label>`;
-        });
-
-        document.getElementById('tipoImpresionQR').value = 'todos';
-        cambiarOpcionImpresion();
-        abrirModal('modalImpresionQR');
+    function abrirModalPerfil() { 
+        document.getElementById('perfilNombre').value = nombreUsuario; 
+        let whatsActivado = localStorage.getItem('whatsAppPiloto') === 'true';
+        document.getElementById('chkWhatsPiloto').checked = whatsActivado;
+        document.getElementById('cajaWhatsNum').style.display = whatsActivado ? 'block' : 'none';
+        document.getElementById('inputWhatsNum').value = localStorage.getItem('whatsAppNumero') || '';
+        abrirModal('modalPerfil'); 
+    }
+    function guardarPerfil() { 
+        const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; 
+        localStorage.setItem('whatsAppPiloto', document.getElementById('chkWhatsPiloto').checked);
+        localStorage.setItem('whatsAppNumero', document.getElementById('inputWhatsNum').value.trim());
+        if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden."); 
+        fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { 
+            alert("Perfil actualizado correctamente."); 
+            if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); location.reload(); } 
+        }); 
     }
 
-    function cambiarOpcionImpresion() {
-        const val = document.getElementById('tipoImpresionQR').value;
-        document.getElementById('divImpresionGrupo').style.display = val === 'grupo' ? 'block' : 'none';
-        document.getElementById('divImpresionIndividual').style.display = val === 'individual' ? 'block' : 'none';
-    }
+    function abrirModalHistorial() { fetch('https://jonassk13.pythonanywhere.com/api/historial_global').then(r => r.json()).then(data => { const tb = document.getElementById('cuerpoHistorialGlobal'); tb.innerHTML = ''; if(data.length === 0) tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay movimientos registrados.</td></tr>'; data.forEach(h => { let badgeClass = h.Accion.includes('Ingreso') ? 'background:var(--success);' : (h.Accion.includes('Salida') || h.Accion.includes('Merma') || h.Accion.includes('Daño') || h.Accion.includes('Regalo') ? 'background:var(--danger);' : 'background:#6c757d;'); tb.innerHTML += `<tr><td>${h.Fecha}</td><td style="color:var(--primary); font-weight:bold;">${h.Usuario}</td><td>${h.Nombre_Material}</td><td><span class="estado-badge" style="${badgeClass}">${h.Accion}</span></td><td><i>${h.Detalle}</i></td></tr>`; }); abrirModal('modalHistorialGlobal'); }); }
+    function abrirModalImpresionQR() { fetch(API_GRUPOS).then(r => r.json()).then(grupos => { const selGrupo = document.getElementById('selectGrupoImpresion'); selGrupo.innerHTML = '<option value="">-- Elige una Caja/Grupo --</option>'; grupos.forEach(g => { selGrupo.innerHTML += `<option value="${g.Nombre_Grupo}">${g.Nombre_Grupo}</option>`; }); }); const divInd = document.getElementById('divImpresionIndividual'); divInd.innerHTML = ''; let posters = datosInventario.filter(p => p.Categoria === 'Poster'); posters.sort((a,b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); posters.forEach(p => { divInd.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:14px; cursor:pointer;"><input type="checkbox" class="chk-print-qr" value="${p.ID_Publicidad}"> ${p.Nombre_Material}</label>`; }); document.getElementById('tipoImpresionQR').value = 'todos'; cambiarOpcionImpresion(); abrirModal('modalImpresionQR'); }
+    function cambiarOpcionImpresion() { const val = document.getElementById('tipoImpresionQR').value; document.getElementById('divImpresionGrupo').style.display = val === 'grupo' ? 'block' : 'none'; document.getElementById('divImpresionIndividual').style.display = val === 'individual' ? 'block' : 'none'; }
+    function ejecutarImpresionQR() { const val = document.getElementById('tipoImpresionQR').value; let postersAImprimir = []; if (val === 'todos') { postersAImprimir = datosInventario.filter(p => p.Categoria === 'Poster'); } else if (val === 'grupo') { const g = document.getElementById('selectGrupoImpresion').value; if(!g) return alert("Selecciona un Grupo."); postersAImprimir = datosInventario.filter(p => p.Categoria === 'Poster' && p.GruposNombres && p.GruposNombres.includes(g)); } else if (val === 'individual') { const s = Array.from(document.querySelectorAll('.chk-print-qr:checked')).map(cb => parseInt(cb.value)); postersAImprimir = datosInventario.filter(p => s.includes(p.ID_Publicidad)); } if (postersAImprimir.length === 0) return alert("⚠️ No hay pósters en tu selección."); cerrarModal('modalImpresionQR'); generarVentanaImpresion(postersAImprimir); }
+    function generarVentanaImpresion(listaProductos) { const ventana = window.open('', '_blank'); ventana.document.write(`<html><head><title>Impresión QR</title><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script><style>@page { size: A4 portrait; margin: 0; } body { font-family: 'Arial', sans-serif; background: #fff; color: #000; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; } .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 0.5cm; gap: 0.2cm; } .etiqueta { width: 19cm; height: 4cm; border: 1px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; } .qr-code { width: 3cm; height: 3cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; } .qr-code img { max-width: 100%; max-height: 100%; } .info { flex-grow: 1; padding-left: 1cm; text-align: left; } .titulo { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000; letter-spacing: 1px;}</style></head><body><div class="hoja" id="qrGrid"></div><script>const productos = ${JSON.stringify(listaProductos.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material})))}; const baseUrl = "${window.location.href.split('?')[0].replace('index.html', '')}detalle.html?id="; const grid = document.getElementById('qrGrid'); productos.forEach(p => { let div = document.createElement('div'); div.className = 'etiqueta'; let qrContainer = document.createElement('div'); qrContainer.className = 'qr-code'; let info = document.createElement('div'); info.className = 'info'; let title = document.createElement('p'); title.className = 'titulo'; title.innerText = p.nombre; info.appendChild(title); div.appendChild(qrContainer); div.appendChild(info); grid.appendChild(div); new QRCode(qrContainer, { text: baseUrl + p.id, width: 120, height: 120, colorDark : "#000", colorLight : "#fff" }); }); setTimeout(() => window.print(), 1500); <\/script></body></html>`); ventana.document.close(); }
+    function abrirModalQRVisitante() { const urlMagica = window.location.href.split('?')[0] + "?modo=visitante"; document.getElementById('qrVisitanteContainer').innerHTML = ""; new QRCode(document.getElementById('qrVisitanteContainer'), { text: urlMagica, width: 200, height: 200, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); abrirModal('modalQRVisitante'); }
+    function imprimirQR() { const contenidoQR = document.getElementById('qrVisitanteContainer').innerHTML; const ventana = window.open('', '_blank'); ventana.document.write(`<html><head><title>Ticket Visitante</title><style>body { background: #111; color: white; font-family: 'Arial', sans-serif; text-align: center; padding: 50px; } .ticket { border: 4px dashed gold; padding: 40px; border-radius: 15px; background: #222; max-width: 400px; margin: 0 auto; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); } h1 { color: gold; text-transform: uppercase; font-size: 28px; margin-bottom: 5px; } p { font-size: 16px; color: #ccc; margin-bottom: 30px; } .qr-box { background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 20px;} .footer { font-size: 12px; color: #777; margin-top: 20px; font-style: italic;}</style></head><body><div class="ticket"><h1>🎬 Cinepolitos 🍿</h1><h2 style="margin: 0; color: white;">Catálogo de Publicidad</h2><p>Escanea este código mágico con tu celular para apartar los productos a tu nombre.</p><div class="qr-box">${contenidoQR}</div><div class="footer">⚠️ La entrega está sujeta a que Corporativo no solicite el retorno de los materiales.</div></div></body></html>`); ventana.document.close(); setTimeout(() => ventana.print(), 800); }
 
-    function ejecutarImpresionQR() {
-        const val = document.getElementById('tipoImpresionQR').value;
-        let postersAImprimir = [];
-
-        if (val === 'todos') {
-            postersAImprimir = datosInventario.filter(p => p.Categoria === 'Poster');
-        } else if (val === 'grupo') {
-            const grupoElegido = document.getElementById('selectGrupoImpresion').value;
-            if(!grupoElegido) return alert("Debes seleccionar un Grupo o Caja válida.");
-            postersAImprimir = datosInventario.filter(p => p.Categoria === 'Poster' && p.GruposNombres && p.GruposNombres.includes(grupoElegido));
-        } else if (val === 'individual') {
-            const seleccionados = Array.from(document.querySelectorAll('.chk-print-qr:checked')).map(cb => parseInt(cb.value));
-            postersAImprimir = datosInventario.filter(p => seleccionados.includes(p.ID_Publicidad));
-        }
-
-        if (postersAImprimir.length === 0) return alert("⚠️ No hay pósters en tu selección actual.");
-        
-        cerrarModal('modalImpresionQR');
-        generarVentanaImpresion(postersAImprimir);
-    }
-
-    function generarVentanaImpresion(listaProductos) {
-        const ventana = window.open('', '_blank');
-        ventana.document.write(`
-        <html>
-        <head>
-            <title>Impresión de Etiquetas QR</title>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
-            <style>
-                @page { size: A4 portrait; margin: 0; }
-                body { font-family: 'Arial', sans-serif; background: #fff; color: #000; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
-                
-                /* Contenedor que agrupa las etiquetas y maximiza la hoja */
-                .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 0.5cm; gap: 0.2cm; }
-                
-                /* Dimensiones exactas 19x4 cm */
-                .etiqueta { 
-                    width: 19cm; height: 4cm; 
-                    border: 1px dashed #777; 
-                    box-sizing: border-box; 
-                    display: flex; align-items: center; 
-                    padding: 0 1cm;
-                    page-break-inside: avoid;
-                }
-                .qr-code { width: 3cm; height: 3cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
-                .qr-code img { max-width: 100%; max-height: 100%; }
-                .info { flex-grow: 1; padding-left: 1cm; text-align: left; }
-                .titulo { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000; letter-spacing: 1px;}
-            </style>
-        </head>
-        <body>
-            <div class="hoja" id="qrGrid"></div>
-            <script>
-                const productos = ${JSON.stringify(listaProductos.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material})))};
-                const baseUrl = "${window.location.href.split('?')[0].replace('index.html', '')}detalle.html?id=";
-                const grid = document.getElementById('qrGrid');
-                
-                productos.forEach(p => {
-                    let div = document.createElement('div');
-                    div.className = 'etiqueta';
-                    
-                    let qrContainer = document.createElement('div');
-                    qrContainer.className = 'qr-code';
-                    
-                    let info = document.createElement('div');
-                    info.className = 'info';
-                    
-                    let title = document.createElement('p');
-                    title.className = 'titulo';
-                    title.innerText = p.nombre;
-                    
-                    info.appendChild(title);
-                    div.appendChild(qrContainer);
-                    div.appendChild(info);
-                    
-                    grid.appendChild(div);
-                    
-                    new QRCode(qrContainer, { text: baseUrl + p.id, width: 120, height: 120, colorDark : "#000", colorLight : "#fff" });
-                });
-                
-                setTimeout(() => window.print(), 1500); 
-            <\/script>
-        </body>
-        </html>
-        `);
-        ventana.document.close();
-    }
-
-    function abrirModalQRVisitante() {
-        const urlMagica = window.location.href.split('?')[0] + "?modo=visitante";
-        document.getElementById('qrVisitanteContainer').innerHTML = "";
-        new QRCode(document.getElementById('qrVisitanteContainer'), { text: urlMagica, width: 200, height: 200, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H });
-        abrirModal('modalQRVisitante');
-    }
-    function imprimirQR() { 
-        const contenidoQR = document.getElementById('qrVisitanteContainer').innerHTML; 
-        const ventana = window.open('', '_blank'); 
-        ventana.document.write(`<html><head><title>Ticket Visitante</title><style>body { background: #111; color: white; font-family: 'Arial', sans-serif; text-align: center; padding: 50px; } .ticket { border: 4px dashed gold; padding: 40px; border-radius: 15px; background: #222; max-width: 400px; margin: 0 auto; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); } h1 { color: gold; text-transform: uppercase; font-size: 28px; margin-bottom: 5px; } p { font-size: 16px; color: #ccc; margin-bottom: 30px; } .qr-box { background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 20px;} .footer { font-size: 12px; color: #777; margin-top: 20px; font-style: italic;}</style></head><body><div class="ticket"><h1>🎬 Cinepolitos 🍿</h1><h2 style="margin: 0; color: white;">Catálogo de Publicidad</h2><p>Escanea este código mágico con tu celular para apartar los productos a tu nombre.</p><div class="qr-box">${contenidoQR}</div><div class="footer">⚠️ La entrega está sujeta a que Corporativo no solicite el retorno de los materiales.</div></div></body></html>`); 
-        ventana.document.close(); setTimeout(() => ventana.print(), 800); 
-    }
-
-    function abrirModalMisPedidos() {
-        const nombreCinepolito = localStorage.getItem('nombreCinepolito');
-        if(!nombreCinepolito) { alert("Todavía no has pedido nada. Abre un producto y dale clic a 'Quiero pedir esto' primero."); return; }
-        fetch(API_RESERVAS).then(res => res.json()).then(data => {
-            const tbody = document.getElementById('tablaMisPedidosCuerpo'); tbody.innerHTML = '';
-            let todosMisPedidos = [];
-            data.pendientes.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
-            data.aprobados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
-            data.entregadas.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
-            data.rechazados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) });
-            if(todosMisPedidos.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No encontramos historial a tu nombre.</td></tr>'; } 
-            else {
-                todosMisPedidos.forEach(pedido => {
-                    let badgeClass = `estado-${pedido.Estado}`; let textoEstado = pedido.Estado;
-                    if(pedido.Estado === 'Rechazado') textoEstado = 'Corporativo lo pidió 🔙';
-                    if(pedido.Estado === 'Aprobado') textoEstado = 'Aprobado (Listo) ✅';
-                    if(pedido.Estado === 'Pendiente') textoEstado = 'En Espera ⏳';
-                    if(pedido.Estado === 'Entregado') textoEstado = 'Entregado 🎉';
-                    tbody.innerHTML += `<tr><td><strong>${pedido.Nombre_Material}</strong></td><td>${pedido.Cantidad} pz</td><td><span class="estado-badge ${badgeClass}">${textoEstado}</span></td></tr>`;
-                });
-            }
-            abrirModal('modalMisPedidos');
-        });
-    }
+    function abrirModalMisPedidos() { const nombreCinepolito = localStorage.getItem('nombreCinepolito'); if(!nombreCinepolito) { alert("Todavía no has pedido nada. Abre un producto y dale clic a 'Quiero pedir esto' primero."); return; } fetch(API_RESERVAS).then(res => res.json()).then(data => { const tbody = document.getElementById('tablaMisPedidosCuerpo'); tbody.innerHTML = ''; let todosMisPedidos = []; data.pendientes.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.aprobados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.entregadas.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.rechazados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); if(todosMisPedidos.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No encontramos historial a tu nombre.</td></tr>'; } else { todosMisPedidos.forEach(pedido => { let badgeClass = `estado-${pedido.Estado}`; let textoEstado = pedido.Estado; if(pedido.Estado === 'Rechazado') textoEstado = 'Corporativo lo pidió 🔙'; if(pedido.Estado === 'Aprobado') textoEstado = 'Aprobado (Listo) ✅'; if(pedido.Estado === 'Pendiente') textoEstado = 'En Espera ⏳'; if(pedido.Estado === 'Entregado') textoEstado = 'Entregado 🎉'; tbody.innerHTML += `<tr><td><strong>${pedido.Nombre_Material}</strong></td><td>${pedido.Cantidad} pz</td><td><span class="estado-badge ${badgeClass}">${textoEstado}</span></td></tr>`; }); } abrirModal('modalMisPedidos'); }); }
 
     function cargarCategoriasGlobales() { fetch(API_CATEGORIAS).then(res => res.json()).then(data => { listaCategorias = data; const filtro = document.getElementById('filtroCategoria'); filtro.innerHTML = '<option value="Todos">Todas las categorías</option>'; data.forEach(c => filtro.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); document.querySelectorAll('.select-dinamico-cat, .masivo-cat').forEach(sel => { let actual = sel.value; sel.innerHTML = ''; data.forEach(c => sel.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); if(actual) sel.value = actual; }); }).catch(err => console.log("Omitiendo categorías...")); }
     function abrirModalCategorias() { fetch(API_CATEGORIAS).then(res => res.json()).then(data => { const tb = document.getElementById('tablaCategorias'); tb.innerHTML = ''; data.forEach(c => { tb.innerHTML += `<tr><td><strong>${c.Nombre}</strong></td><td><button class="btn btn-info" style="padding:5px;" onclick="editarCategoria(${c.ID_Categoria}, '${c.Nombre}')">✏️</button> <button class="btn btn-danger" style="padding:5px;" onclick="eliminarCategoria(${c.ID_Categoria})">🗑️</button></td></tr>`; }); abrirModal('modalCategorias'); }); }
@@ -391,7 +326,7 @@
         configurarInterfaz(); cargarTabla();
         if (rolUsuario === 'Supervisor' || rolUsuario === 'Admin' || rolUsuario === 'Subgerente') revisarSolicitudesPendientes();
     }
-    function iniciarSesion() { const claveTexto = document.getElementById('claveAcceso').value; fetch(API_LOGIN, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({clave: claveTexto}) }).then(res => { if(!res.ok) throw new Error('Contraseña incorrecta'); return res.json(); }).then(user => { localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); }).catch(err => alert(err.message)); }
+    function iniciarSesion() { const claveTexto = document.getElementById('claveAcceso').value; fetch(API_LOGIN, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({clave: claveTexto}) }).then(res => { if(!res.ok) throw new Error('Contraseña incorrecta'); return res.json(); }).then(user => { localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); location.reload(); }).catch(err => alert(err.message)); }
     function cerrarSesion() { localStorage.setItem('rolCine', 'General'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine'); location.reload(); }
 
     function configurarInterfaz() {
@@ -422,9 +357,6 @@
     function editarUsuarioAdmin(id, nombre, rol) { document.getElementById('adminUsuarioId').value = id; document.getElementById('adminUsuarioNombre').value = nombre; document.getElementById('adminUsuarioRol').value = rol; document.getElementById('btnCancelarEdicionUsuario').classList.remove('oculto'); }
     function cancelarEdicionUsuario() { document.getElementById('adminUsuarioId').value = ''; document.getElementById('adminUsuarioNombre').value = ''; document.getElementById('adminUsuarioClave').value = ''; document.getElementById('adminUsuarioClaveConf').value = ''; document.getElementById('btnCancelarEdicionUsuario').classList.add('oculto'); }
     function eliminarUsuarioAdmin(id) { if(id == idUsuario) return alert("❌ No puedes borrarte a ti mismo."); if(confirm("¿Eliminar usuario?")) { fetch(`${API_USUARIOS}/${id}`, { method: 'DELETE' }).then(() => abrirModalUsuarios()); } }
-    
-    function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; abrirModal('modalPerfil'); }
-    function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); } }); }
 
     function limpiarTextoDuro(texto) { if (!texto) return ""; let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, ''); return limpio.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(); }
 
@@ -434,6 +366,7 @@
         const tbodyNormal = document.getElementById('tablaCuerpo'); 
         const tbodyExclusivo = document.getElementById('tablaCuerpoExclusivo'); 
         const filtro = document.getElementById('filtroCategoria').value; 
+        const textoBusqueda = document.getElementById('buscadorGeneral').value.toLowerCase().trim();
         
         tbodyNormal.innerHTML = ''; tbodyExclusivo.innerHTML = ''; 
         if(datosInventario.length === 0) { 
@@ -442,60 +375,48 @@
             return; 
         } 
         
-        let datosNormales = datosInventario.filter(item => item.Categoria !== 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro));
-        let datosExclusivos = datosInventario.filter(item => item.Categoria === 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro));
-        datosNormales.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); datosExclusivos.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        let datosNormales = datosInventario.filter(item => item.Categoria !== 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro) && (item.Nombre_Material.toLowerCase().includes(textoBusqueda)));
+        let datosExclusivos = datosInventario.filter(item => item.Categoria === 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro) && (item.Nombre_Material.toLowerCase().includes(textoBusqueda)));
+        
+        datosNormales.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); 
+        datosExclusivos.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
 
-        if(datosNormales.length === 0) tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin resultados</td></tr>`;
+        if(datosNormales.length === 0) tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin resultados de búsqueda</td></tr>`;
         datosNormales.forEach(item => { 
             const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'");
-            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}')">✏️</button>` : '';
+            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}', ${item.Cantidad_Guardados})">✏️</button>` : '';
             const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
             tbodyNormal.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
         }); 
 
-        if(datosExclusivos.length === 0) tbodyExclusivo.innerHTML = `<tr><td colspan="5" style="text-align:center;">No hay materiales registrados en áreas internas.</td></tr>`;
+        if(datosExclusivos.length === 0) tbodyExclusivo.innerHTML = `<tr><td colspan="5" style="text-align:center;">No hay resultados en áreas internas.</td></tr>`;
         datosExclusivos.forEach(item => { 
             const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'");
-            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}')">✏️</button>` : '';
+            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}', ${item.Cantidad_Guardados})">✏️</button>` : '';
             const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
             tbodyExclusivo.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td><span class="badge-subgerente" style="padding:3px 6px; border-radius:5px; font-size:11px;">${item.Categoria}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
         });
     }
 
-    function abrirModalEditar(id, nombre, categoria) { document.getElementById('editIdProd').value = id; document.getElementById('editNombreProd').value = nombre; document.getElementById('editCategoriaProd').value = categoria; abrirModal('modalEditarProducto'); }
-    function guardarEdicionProducto() { const id = document.getElementById('editIdProd').value; const nombre = document.getElementById('editNombreProd').value.trim(); const cat = document.getElementById('editCategoriaProd').value; if(!nombre) return alert("El nombre no puede estar vacío"); fetch(`${API_URL}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, categoria: cat }) }).then(() => { cerrarModal('modalEditarProducto'); cargarTabla(); }); }
-
-    function guardarProducto() { const nombreIn = document.getElementById('nombre').value.trim(); const catIn = document.getElementById('categoria').value; const cantIn = parseInt(document.getElementById('cantidadTotal').value); if(!nombreIn) return; const nombreNuevoLimpio = limpiarTextoDuro(nombreIn); let posibleDuplicado = datosInventario.find(p => { let nombreInvLimpio = limpiarTextoDuro(p.Nombre_Material); return nombreNuevoLimpio === nombreInvLimpio || nombreNuevoLimpio.includes(nombreInvLimpio) || nombreInvLimpio.includes(nombreNuevoLimpio); }); if(posibleDuplicado) { let confirmacion = confirm(`⚠️ POSIBLE MATERIAL DUPLICADO:\n\nEstás registrando "${nombreIn}", pero ya tienes un material llamado "${posibleDuplicado.Nombre_Material}".\n\n¿Estás completamente seguro de registrarlo como un material nuevo y separado?`); if(!confirmacion) return; } fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombreIn, categoria: catIn, cantidad_total: cantIn }) }).then(() => { cerrarModal('modalProducto'); document.getElementById('nombre').value = ''; cargarTabla(); }); }
+    function abrirModalEditar(id, nombre, categoria, cantidad) { document.getElementById('editIdProd').value = id; document.getElementById('editNombreProd').value = nombre; document.getElementById('editCategoriaProd').value = categoria; document.getElementById('editCantidadProd').value = cantidad; abrirModal('modalEditarProducto'); }
+    function guardarEdicionProducto() { const id = document.getElementById('editIdProd').value; const nombre = document.getElementById('editNombreProd').value.trim(); const cat = document.getElementById('editCategoriaProd').value; const cant = document.getElementById('editCantidadProd').value; const usuarioAct = nombreUsuario || rolUsuario; if(!nombre) return alert("El nombre no puede estar vacío"); fetch(`${API_URL}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, categoria: cat, cantidad: cant, usuario: usuarioAct }) }).then(() => { cerrarModal('modalEditarProducto'); cargarTabla(); }); }
+    function guardarProducto() { const nombreIn = document.getElementById('nombre').value.trim(); const catIn = document.getElementById('categoria').value; const cantIn = parseInt(document.getElementById('cantidadTotal').value); const usuarioAct = nombreUsuario || rolUsuario; if(!nombreIn) return; const nombreNuevoLimpio = limpiarTextoDuro(nombreIn); let posibleDuplicado = datosInventario.find(p => { let nombreInvLimpio = limpiarTextoDuro(p.Nombre_Material); return nombreNuevoLimpio === nombreInvLimpio || nombreNuevoLimpio.includes(nombreInvLimpio) || nombreInvLimpio.includes(nombreNuevoLimpio); }); if(posibleDuplicado) { let confirmacion = confirm(`⚠️ POSIBLE MATERIAL DUPLICADO:\n\nEstás registrando "${nombreIn}", pero ya tienes un material llamado "${posibleDuplicado.Nombre_Material}".\n\n¿Estás completamente seguro de registrarlo como un material nuevo y separado?`); if(!confirmacion) return; } fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombreIn, categoria: catIn, cantidad_total: cantIn, usuario: usuarioAct }) }).then(() => { cerrarModal('modalProducto'); document.getElementById('nombre').value = ''; cargarTabla(); }); }
     function eliminarProducto(id) { if(confirm("¿Eliminar registro?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
     function agregarFilaMasivo() { let opciones = listaCategorias.map(c => `<option value="${c.Nombre}">${c.Nombre}</option>`).join(''); const tr = document.createElement('tr'); tr.className = 'fila-masiva'; tr.innerHTML = `<td><input type="text" class="masivo-nombre" required style="width:90%;"></td><td><select class="masivo-cat" style="width:90%;">${opciones}</select></td><td><input type="number" class="masivo-cant" min="1" required style="width:70%;"></td><td><button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">X</button></td>`; document.getElementById('cuerpoMasivo').appendChild(tr); }
     function abrirModalMasivo() { document.getElementById('cuerpoMasivo').innerHTML = ''; agregarFilaMasivo(); abrirModal('modalMasivo'); }
-    function guardarIngresoMasivo() { let productos = []; document.querySelectorAll('.fila-masiva').forEach(fila => { productos.push({ nombre: fila.querySelector('.masivo-nombre').value, categoria: fila.querySelector('.masivo-cat').value, cantidad_total: parseInt(fila.querySelector('.masivo-cant').value) }); }); fetch(API_URL + '/masivo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productos) }).then(() => { cerrarModal('modalMasivo'); cargarTabla(); }); }
+    function guardarIngresoMasivo() { let productos = []; const usuarioAct = nombreUsuario || rolUsuario; document.querySelectorAll('.fila-masiva').forEach(fila => { productos.push({ nombre: fila.querySelector('.masivo-nombre').value, categoria: fila.querySelector('.masivo-cat').value, cantidad_total: parseInt(fila.querySelector('.masivo-cant').value), usuario: usuarioAct }); }); fetch(API_URL + '/masivo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productos) }).then(() => { cerrarModal('modalMasivo'); cargarTabla(); }); }
     function abrirModalGrupo() { fetch(API_URL).then(res => res.json()).then(data => { const lista = document.getElementById('listaProductosGrupo'); lista.innerHTML = ''; data.forEach(p => { lista.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer;"><input type="checkbox" class="check-grupo" value="${p.ID_Publicidad}"> <span><strong>${p.Nombre_Material}</strong> <small style="color:var(--btn-success);">Bodega: ${p.Cantidad_Guardados}</small></span></label>`; }); abrirModal('modalGrupo'); }); }
     function guardarGrupo() { const nombre = document.getElementById('nombreGrupo').value.trim(); const checks = Array.from(document.querySelectorAll('.check-grupo:checked')).map(cb => parseInt(cb.value)); if(!nombre || checks.length === 0) return alert("Faltan datos."); document.getElementById('btnGuardarCaja').disabled = true; fetch(API_GRUPOS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, productos: checks }) }).then(() => { alert("Grupo creado."); cerrarModal('modalGrupo'); document.getElementById('nombreGrupo').value = ''; cargarTabla(); }).finally(() => { document.getElementById('btnGuardarCaja').disabled = false; }); }
-
-    function abrirFotoEvidencia(btn) {
-        const base64Data = btn.getAttribute('data-foto'); const nuevaPestana = window.open();
-        nuevaPestana.document.write(`<html><head><title>Evidencia de Merma</title></head><body style="margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh;"><img src="${base64Data}" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow: 0 0 20px rgba(0,0,0,0.8);"></body></html>`);
-        nuevaPestana.document.close();
-    }
+    function abrirFotoEvidencia(btn) { const base64Data = btn.getAttribute('data-foto'); const nuevaPestana = window.open(); nuevaPestana.document.write(`<html><head><title>Evidencia de Merma</title></head><body style="margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh;"><img src="${base64Data}" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow: 0 0 20px rgba(0,0,0,0.8);"></body></html>`); nuevaPestana.document.close(); }
 
     function revisarSolicitudesPendientes() { 
-        fetch(API_RESERVAS).then(res => res.json()).then(data => { 
+        Promise.all([fetch(API_RESERVAS).then(r => r.json()), fetch('https://jonassk13.pythonanywhere.com/api/mermas').then(r => r.json())]).then(([reservasData, mermasData]) => {
             const tbPosters = document.getElementById('tablaAlertasAutorizacion'); tbPosters.innerHTML = '';
-            if(data.pendientes.length > 0) { 
-                data.pendientes.forEach(r => { tbPosters.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td style="display:flex; flex-wrap:wrap; gap:5px;"><button class="btn btn-success" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️</button> <button class="btn btn-danger" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌</button></td></tr>`; }); 
-            } else { tbPosters.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin solicitudes de empleados.</td></tr>'; }
-        });
-        fetch('https://jonassk13.pythonanywhere.com/api/mermas').then(r => r.json()).then(mermas => {
             const tbMermas = document.getElementById('tablaAlertasMermas'); tbMermas.innerHTML = '';
-            if(mermas.length > 0) {
-                mermas.forEach(m => {
-                    let imgHtml = m.Foto_Base64 ? `<div style="margin-top: 10px;"><img src="${m.Foto_Base64}" onclick="abrirFotoEvidencia(this)" data-foto="${m.Foto_Base64}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;" title="Clic para ver en grande" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><br><small style="color:var(--primary); font-size:10px; cursor:pointer;" onclick="this.previousElementSibling.click()">🔍 Ampliar</small></div>` : '<div style="margin-top:10px;"><span style="color:gray;">Sin foto</span></div>';
-                    tbMermas.innerHTML += `<tr><td><strong>${m.Nombre_Material}</strong><br><small>Por: ${m.Usuario_Solicita}</small></td><td>${m.Cantidad} pz</td><td><i>"${m.Motivo}"</i>${imgHtml}</td><td style="display:flex; flex-direction:column; gap:5px;"><button class="btn btn-success" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Autorizar (Tirar)</button> <button class="btn btn-danger" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Negar (Guardar)</button></td></tr>`;
-                });
-                abrirModal('modalAlertasSupervisor'); 
-            } else { tbMermas.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin mermas por revisar.</td></tr>'; }
+            let hayAlertas = false;
+            if(reservasData.pendientes.length > 0) { hayAlertas = true; reservasData.pendientes.forEach(r => { tbPosters.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td style="display:flex; flex-wrap:wrap; gap:5px;"><button class="btn btn-success" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️</button> <button class="btn btn-danger" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌</button></td></tr>`; }); } else { tbPosters.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin solicitudes de empleados.</td></tr>'; }
+            if(mermasData.length > 0) { hayAlertas = true; mermasData.forEach(m => { let imgHtml = m.Foto_Base64 ? `<div style="margin-top: 10px;"><img src="${m.Foto_Base64}" onclick="abrirFotoEvidencia(this)" data-foto="${m.Foto_Base64}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;" title="Clic para ver en grande" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><br><small style="color:var(--primary); font-size:10px; cursor:pointer;" onclick="this.previousElementSibling.click()">🔍 Ampliar</small></div>` : '<div style="margin-top:10px;"><span style="color:gray;">Sin foto</span></div>'; tbMermas.innerHTML += `<tr><td><strong>${m.Nombre_Material}</strong><br><small>Por: ${m.Usuario_Solicita}</small></td><td>${m.Cantidad} pz</td><td><i>"${m.Motivo}"</i>${imgHtml}</td><td style="display:flex; flex-direction:column; gap:5px;"><button class="btn btn-success" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Autorizar (Tirar)</button> <button class="btn btn-danger" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Negar (Guardar)</button></td></tr>`; }); } else { tbMermas.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin mermas por revisar.</td></tr>'; }
+            if(hayAlertas) { abrirModal('modalAlertasSupervisor'); }
         });
     }
 
