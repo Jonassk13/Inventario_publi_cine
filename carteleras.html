@@ -8,10 +8,27 @@
     <style>
         :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545; --warning: #ffc107;}
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
-        
         body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --danger: #6e2c00; --warning: #d35400;}
-        body.theme-jacqui.dark-mode { --primary: #148f77; --danger: #873600; --warning: #e67e22;}
         
+        body.theme-bosque-pinos { background-size: cover !important; background-position: center !important; background-attachment: fixed !important; color: #ffe8d6 !important; }
+        body.theme-amanecer { background-image: linear-gradient(to bottom, rgba(168, 230, 207, 0.4), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
+        body.theme-amanecer .box, body.theme-amanecer .tarjeta-semana, body.theme-amanecer .muro-taquilla, body.theme-amanecer .zona, body.theme-amanecer .modal-content { background: rgba(20, 60, 40, 0.6) !important; border-color: #a8e6cf !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(168, 230, 207, 0.2); color: #fff !important; }
+        body.theme-amanecer .btn-dark { background: rgba(27, 94, 32, 0.8) !important; border: 1px solid #a8e6cf; color: white !important;}
+        body.theme-amanecer input, body.theme-amanecer select { background: rgba(0,0,0,0.4) !important; color: white !important; border: 1px solid #a8e6cf !important; }
+        body.theme-amanecer .zona-titulo { background: #1b5e20 !important; color: white !important; border-color: #a8e6cf !important; }
+
+        body.theme-atardecer { background-image: linear-gradient(to bottom, rgba(255, 110, 64, 0.45), rgba(42, 8, 69, 0.95)), url('https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
+        body.theme-atardecer .box, body.theme-atardecer .tarjeta-semana, body.theme-atardecer .muro-taquilla, body.theme-atardecer .zona, body.theme-atardecer .modal-content { background: rgba(30, 10, 20, 0.6) !important; border-color: #ff7e5f !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(255, 110, 64, 0.2); color: #ffe8d6 !important; }
+        body.theme-atardecer .btn-dark { background: rgba(90, 20, 30, 0.8) !important; border: 1px solid #ff7e5f; color: white !important;}
+        body.theme-atardecer input, body.theme-atardecer select { background: rgba(0,0,0,0.5) !important; color: white !important; border: 1px solid #ff7e5f !important; }
+        body.theme-atardecer .zona-titulo { background: #2a0845 !important; color: white !important; border-color: #ff7e5f !important; }
+
+        body.theme-noche { background-image: linear-gradient(to bottom, rgba(10, 25, 47, 0.7), rgba(2, 6, 12, 0.98)), url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
+        body.theme-noche .box, body.theme-noche .tarjeta-semana, body.theme-noche .muro-taquilla, body.theme-noche .zona, body.theme-noche .modal-content { background: rgba(10, 15, 30, 0.7) !important; border-color: #64ffda !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(100, 255, 218, 0.1); color: #e6f1ff !important; }
+        body.theme-noche .btn-dark { background: rgba(2, 12, 27, 0.8) !important; border: 1px solid #64ffda; color: #64ffda !important;}
+        body.theme-noche input, body.theme-noche select { background: rgba(0,0,0,0.5) !important; color: #e6f1ff !important; border: 1px solid #64ffda !important; }
+        body.theme-noche .zona-titulo { background: #020c1b !important; color: #64ffda !important; border-color: #64ffda !important; }
+
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; gap: 10px;}
@@ -25,8 +42,9 @@
         .semana-anterior { border-color: #6c757d; color: #6c757d; }
         .semana-actual { border-color: var(--primary); color: var(--primary); }
         .semana-nueva { border-color: var(--warning); color: var(--warning); background: rgba(255, 193, 7, 0.05); }
-        body.dark-mode .semana-nueva { background: rgba(255, 193, 7, 0.1); }
 
+        .box-reglas { background: var(--box-bg); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid var(--warning); box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
+        
         .muro-taquilla { background-color: #111; border: 8px solid #2a2a2a; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 10px; max-width: 700px; margin: 0 auto 30px auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);}
         .muro-row { display: flex; align-items: center; justify-content: space-between;}
         
@@ -62,9 +80,6 @@
 
         .sugerencia-box { margin-top: 8px; padding: 8px; border-radius: 5px; font-size: 12px; width: 90%; animation: parpadeo 1.5s infinite alternate; background: var(--box-bg);}
         @keyframes parpadeo { from { opacity: 0.8; } to { opacity: 1; } }
-        
-        .badge-mover-sala { background: var(--danger); color: white; border-radius: 15px; padding: 4px 8px; font-weight: bold; font-size: 11px; margin-bottom: 5px; display: inline-block; animation: pulseMover 1s infinite alternate; }
-        @keyframes pulseMover { from { transform: scale(1); } to { transform: scale(1.05); } }
 
         @media (max-width: 800px) {
             .mapa-container { grid-template-columns: 1fr; }
@@ -77,22 +92,40 @@
             .panel-semanas { flex-direction: column; }
         }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
-        .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; }
-        select, input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid var(--border-color); box-sizing: border-box;}
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; position: relative;}
+        select, input[type="text"] { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid var(--border-color); box-sizing: border-box;}
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-color); background: none; border: none; padding: 0;}
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 style="margin:0;">🗺️ Plano de Exhibición</h1>
+    <div>
+        <h1 style="margin:0;">🗺️ Plano de Exhibición</h1>
+        <p style="margin:0; font-size:12px; color:gray;">Control Operativo de 16 Salas</p>
+    </div>
     <div>
         <button class="btn btn-warning" onclick="guardarCarteleraEnHistorial()">💾 Guardar Semana Actual</button>
         <button class="btn btn-info" onclick="document.getElementById('archivoExcel').click()">🪄 Sugerir por Excel</button>
         <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
+        
+        <button id="btnLimpiarObsoletos" class="btn btn-danger" style="display:none; animation: parpadeo 1.5s infinite alternate;" onclick="desmontarListaObsoletos()">🧹 Desmontar Obsoletos</button>
+        
         <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Nueva Semana</button>
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
     </div>
+</div>
+
+<div class="box-reglas">
+    <h3 style="margin-top:0; color:var(--warning);">📜 Reglamento Operativo de Carteleras</h3>
+    <p style="font-size:13px; margin-bottom: 5px;">Todo material asignado a una sala o al muro de taquilla debe cumplir <strong>estrictamente</strong> la siguiente jerarquía:</p>
+    <ol style="font-size:13px; font-weight:bold; margin-top: 0;">
+        <li>🥇 Prioridad 1: Estrenos de la semana correspondientes a la película.</li>
+        <li>🎵 Prioridad 2: Conciertos o transmisiones especiales exclusivas.</li>
+        <li>🔄 Prioridad 3: Película con mayor volumen de funciones (Más Repetida).</li>
+        <li>✨ Prioridad 4: Funciones Especiales o ciclos de cine alternativo.</li>
+    </ol>
 </div>
 
 <div class="panel-semanas">
@@ -115,24 +148,28 @@
 
 <div id="modalAsignar" class="modal">
     <div class="modal-content">
-        <h2 style="margin-top:0;">Colocar Póster en Cartelera</h2>
-        <p id="textoUbicacion">Selecciona un material de la bodega para exhibirlo aquí:</p>
+        <button class="close-btn" onclick="cerrarModal()">&times;</button>
+        <h2 style="margin-top:0; color: var(--success);">📥 Colocar Póster en Cartelera</h2>
+        <p id="textoUbicacion" style="font-size: 14px;">1. Selecciona un material de la bodega:</p>
+        
         <select id="selectorPosters"><option value="">Cargando pósters en bodega...</option></select>
         
-        <div id="panelMetadatos" style="display:none; background: rgba(0,0,0,0.05); padding:10px; border-radius:5px; margin-bottom:15px;">
-            <p style="font-size:12px; margin-top:0;"><b>Opcional:</b> Etiquetas para el Muro de Taquilla</p>
-            <input type="text" id="manualClasif" placeholder="Clasificación (Ej. B15)">
-            <select id="manualIdioma">
-                <option value="">Selecciona Idioma...</option>
-                <option value="Doblada al español">Doblada al español</option>
-                <option value="Subtitulada">Subtitulada</option>
+        <div id="panelMetadatos" style="background: rgba(0,0,0,0.05); padding:10px; border-radius:5px; margin-bottom:15px; border: 1px dashed gray;">
+            <label style="font-weight:bold; font-size:12px; display:block;">Opcional: Formato o Idioma</label>
+            <input type="text" id="manualIdioma" placeholder="Ej. ESP, SUB, DOB, IMAX..." style="margin-bottom: 10px;">
+            
+            <label style="font-weight:bold; font-size:12px; display:block; color:var(--danger);">🚨 Regla de Prioridad (Obligatorio):</label>
+            <select id="selectPrioridad" style="border: 2px solid var(--danger); margin-bottom: 0;" required>
+                <option value="">-- SELECCIONA LA REGLA APLICADA --</option>
+                <option value="1️⃣ Prioridad 1: Estreno">1️⃣ Prioridad 1: Estreno de la Película</option>
+                <option value="2️⃣ Prioridad 2: Concierto">2️⃣ Prioridad 2: Concierto</option>
+                <option value="3️⃣ Prioridad 3: Más Repetida">3️⃣ Prioridad 3: Película con más funciones</option>
+                <option value="🌟 Prioridad 4: Especial">🌟 Prioridad 4: Función Especial</option>
             </select>
         </div>
 
-        <div style="display:flex; justify-content: space-between; margin-top: 10px;">
-            <button class="btn btn-dark" onclick="cerrarModal()">Cancelar</button>
-            <button class="btn btn-primary" onclick="guardarAsignacion()">Instalar Póster</button>
-        </div>
+        <input type="hidden" id="hiddenSlotId">
+        <button class="btn btn-success" style="width:100%; font-size: 16px; padding: 12px;" onclick="guardarAsignacion()">✔️ Instalar en Sala</button>
     </div>
 </div>
 
@@ -144,14 +181,42 @@
     
     let slotSeleccionado = null;
     let sugerenciasGlobales = [];
+    let obsoletosGlobales = [];
     let numeroSemanaSugerida = null;
     let carteleraVirtual = [];
+    
+    let rolUsuario = localStorage.getItem('rolCine') || 'General';
+    let nombreUsuario = localStorage.getItem('nombreCine') || '';
+
+    function aplicarTemasMagicos() {
+        if(rolUsuario !== 'Subgerente') return; 
+        if(nombreUsuario.toLowerCase().includes('jacqui') || nombreUsuario.toLowerCase().includes('jacqueline')) {
+            document.body.classList.add('theme-bosque-pinos');
+            let hora = new Date().getHours(); let colorSombra = "";
+            if (hora >= 6 && hora < 12) { document.body.classList.add('theme-amanecer'); colorSombra = "rgba(168, 230, 207, 0.8)"; } 
+            else if (hora >= 12 && hora < 19) { document.body.classList.add('theme-atardecer'); colorSombra = "rgba(255,165,0,0.8)"; } 
+            else { document.body.classList.add('theme-noche'); colorSombra = "rgba(100, 255, 218, 0.8)"; }
+            
+            let audio = new Audio('https://actions.google.com/sounds/v1/nature/wind_in_trees.ogg');
+            audio.volume = 0.6; audio.play().catch(e => console.log("Autoplay bloqueado"));
+
+            for(let i=0; i<25; i++) {
+                let pino = document.createElement('div');
+                pino.innerText = '🌲';
+                pino.style.cssText = `position:fixed; bottom:-100px; left:${Math.random()*100}vw; font-size:${Math.random()*60 + 40}px; filter: drop-shadow(0px 0px 8px ${colorSombra}); z-index:99999; transition: transform 3s ease-out, opacity 4s; opacity:0; pointer-events:none;`;
+                document.body.appendChild(pino);
+                setTimeout(() => { pino.style.transform = `translateY(-${Math.random()*300 + 100}px)`; pino.style.opacity = 1; }, 100 + (i*50)); 
+                setTimeout(() => { pino.style.opacity = 0; }, 4000); setTimeout(() => { pino.remove(); }, 6000);
+            }
+            setTimeout(() => { let fadeOut = setInterval(() => { if(audio.volume > 0.1) audio.volume -= 0.1; else { audio.pause(); clearInterval(fadeOut); } }, 200); }, 5000);
+        } else {
+            document.body.classList.add('theme-jacqui');
+        }
+    }
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        if(localStorage.getItem('rolCine') === 'Subgerente') document.body.classList.add('theme-jacqui');
-        cargarMapa();
-        cargarHistorialSemanas();
+        cargarMapa(); cargarHistorialSemanas(); setTimeout(aplicarTemasMagicos, 800); 
     };
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
@@ -160,21 +225,15 @@
         fetch(API_HISTORIAL_SEMANAS).then(r => r.json()).then(data => {
             if(data.length > 0) {
                 document.getElementById('ui-semana-act').innerHTML = `SEMANA ${data[0].Semana} <small>Guardada el ${data[0].Fecha.split(' ')[0]}</small>`;
-                if(data.length > 1) {
-                    document.getElementById('ui-semana-ant').innerHTML = `SEMANA ${data[1].Semana} <small>Guardada el ${data[1].Fecha.split(' ')[0]}</small>`;
-                }
-            } else {
-                document.getElementById('ui-semana-act').innerHTML = `Semana Desconocida <small>Nunca se ha guardado</small>`;
-            }
+                if(data.length > 1) { document.getElementById('ui-semana-ant').innerHTML = `SEMANA ${data[1].Semana} <small>Guardada el ${data[1].Fecha.split(' ')[0]}</small>`; }
+            } else { document.getElementById('ui-semana-act').innerHTML = `Semana Desconocida <small>Nunca se ha guardado</small>`; }
         });
     }
 
     function guardarCarteleraEnHistorial() {
         let nSemana = prompt("¿Qué número de semana vas a guardar? (Ejemplo: 34)");
         if(!nSemana || isNaN(parseInt(nSemana))) return;
-        
         let datosA_Guardar = carteleraVirtual.map(c => { return { slot: c.ID_Slot, peli: c.Nombre_Material } });
-        
         fetch(API_HISTORIAL_SEMANAS, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ semana: parseInt(nSemana), datos: datosA_Guardar })
@@ -182,6 +241,9 @@
     }
 
     function cargarMapa(mostrarAlerta = false) {
+        document.getElementById('btnInstalarTodas').style.display = 'none';
+        document.getElementById('btnLimpiarObsoletos').style.display = 'none';
+
         fetch(API_CARTELERAS).then(res => res.json()).then(data => {
             carteleraVirtual = data;
             
@@ -206,24 +268,32 @@
         const clase = estaLleno ? 'muro-slot lleno' : 'muro-slot';
         
         let extras = '';
-        if(estaLleno && (c.Clasificacion || c.Idioma)) {
-            let badgeClasif = c.Clasificacion ? `<span class="badge-clasif">${c.Clasificacion}</span>` : '';
-            let badgeIdioma = c.Idioma ? `<span class="badge-idioma">${c.Idioma}</span>` : '';
-            extras = `<div style="margin-top:8px;">${badgeClasif}${badgeIdioma}</div>`;
+        if(estaLleno) {
+            let badgeRegla = c.Clasificacion ? `<div style="margin-top:5px; font-size:10px; color:var(--warning); border:1px dashed var(--warning); padding:2px; border-radius:3px;">${c.Clasificacion}</div>` : '';
+            let badgeIdioma = c.Idioma ? `<span class="badge-idioma" style="margin-top:5px; display:inline-block;">${c.Idioma}</span>` : '';
+            extras = `<div>${badgeIdioma}${badgeRegla}</div>`;
         }
 
         const contenido = estaLleno 
             ? `<span class="poster-nombre">${c.Nombre_Material}</span>${extras}<button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">Desmontar</button>`
             : `<span style="color:gray; font-size:12px;">Slot #${c.ID_Slot}<br>Clic para Instalar</span>`;
-        return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})">${contenido}</div>`;
+        return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, 'Muro de Taquilla', ${estaLleno})">${contenido}</div>`;
     }
 
     function crearSlotEstandar(c) {
         if(!c) return '';
         const estaLleno = c.ID_Publicidad !== null;
         const clase = estaLleno ? 'slot lleno' : 'slot';
+        
+        let extras = '';
+        if(estaLleno) {
+            let badgeRegla = c.Clasificacion ? `<div style="margin-top:5px; font-size:11px; font-weight:bold; color:var(--success); border:1px dashed var(--success); padding:3px; border-radius:5px;">${c.Clasificacion}</div>` : '';
+            let badgeIdioma = c.Idioma ? `<span class="badge-idioma" style="margin-top:5px; display:inline-block;">${c.Idioma}</span>` : '';
+            extras = `<div>${badgeIdioma}${badgeRegla}</div>`;
+        }
+
         const contenido = estaLleno 
-            ? `<span class="poster-nombre">${c.Nombre_Material}</span><button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">Desmontar</button>`
+            ? `<span class="poster-nombre">${c.Nombre_Material}</span>${extras}<button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">Desmontar</button>`
             : `<span style="color:gray;">Espacio Vacío</span>`;
         return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})"><div class="slot-numero">Espacio #${c.ID_Slot}</div><div class="slot-titulo">${c.Ubicacion}</div>${contenido}</div>`;
     }
@@ -235,6 +305,14 @@
         limpio = limpio.replace(/[^a-zA-Z0-9\s]/g, '');
         return limpio.replace(/\s+/g, ' ').trim().toLowerCase();
     }
+
+    function coinciden(titulo1, titulo2) {
+        if(!titulo1 || !titulo2) return false;
+        let t1 = limpiarTitulo(titulo1).replace(/poster/gi, '').trim();
+        let t2 = limpiarTitulo(titulo2).replace(/poster/gi, '').trim();
+        return t1 === t2 || t1.includes(t2) || t2.includes(t1);
+    }
+
 
     function procesarExcel(event) {
         const file = event.target.files[0];
@@ -258,14 +336,6 @@
             if(numeroSemanaSugerida) {
                 document.getElementById('ui-semana-nueva').style.display = 'block';
                 document.getElementById('ui-semana-nueva').innerHTML = `SEMANA ${numeroSemanaSugerida} <small>Sugerencia de Excel</small>`;
-                
-                let semanaAnteriorDedudica = parseInt(numeroSemanaSugerida) - 1;
-                let datosA_Guardar = carteleraVirtual.map(c => { return { slot: c.ID_Slot, peli: c.Nombre_Material } });
-                
-                fetch(API_HISTORIAL_SEMANAS, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ semana: semanaAnteriorDedudica, datos: datosA_Guardar })
-                }).then(() => { cargarHistorialSemanas(); });
             }
 
             let headerRowIndex = 0;
@@ -276,7 +346,7 @@
                 let cine = (row['Cine'] || '').toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
                 return cine.includes('cinepolis plaza morelia') || cine.includes('plaza morelia');
             });
-            if (datosMorelia.length === 0) { alert("⚠️ Error: No se encontró 'Cinepolis Plaza Morelia' en la columna 'Cine'."); return; }
+            if (datosMorelia.length === 0) { alert("⚠️ Error: No se encontró 'Cinepolis Plaza Morelia' en el Excel."); return; }
             generarSugerencias(datosMorelia);
         };
         reader.readAsArrayBuffer(file);
@@ -290,81 +360,134 @@
         datosMorelia.forEach(row => {
             let sala = parseInt(row['Sala']);
             let peliRaw = row['Película'];
-            let clasifRaw = row['Clasificación'];
             
             if (peliRaw && !isNaN(sala)) {
-                let peliLimpia = limpiarTitulo(peliRaw);
+                let peliLimpia = peliRaw.trim();
                 if (!conteoSala[sala]) conteoSala[sala] = {};
                 conteoSala[sala][peliLimpia] = (conteoSala[sala][peliLimpia] || 0) + 1;
 
-                if (!metaPeliculas[peliLimpia]) metaPeliculas[peliLimpia] = { esp: false, sub: false, clasif: '' };
+                if (!metaPeliculas[peliLimpia]) metaPeliculas[peliLimpia] = { esp: false, sub: false };
                 let upper = peliRaw.toUpperCase();
                 if (upper.includes('ESP') || upper.includes('DOB')) metaPeliculas[peliLimpia].esp = true;
                 if (upper.includes('SUB')) metaPeliculas[peliLimpia].sub = true;
-                if (clasifRaw && clasifRaw !== 'TBC') {
-                    let cParts = clasifRaw.toString().split('-');
-                    let c = cParts[cParts.length - 1].trim();
-                    if(c) metaPeliculas[peliLimpia].clasif = c;
-                }
             }
         });
 
         let topPorSala = {};
-        for (let s = 1; s <= 20; s++) { topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; }
-        
-        let topSP = [...new Set([...(topPorSala[1]||[]), ...(topPorSala[4]||[])])]; 
-        let topScreenX = topPorSala[7] || []; let top4DX = topPorSala[8] || []; let topSJ = topPorSala[17] || []; 
+        for (let s = 1; s <= 16; s++) { topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; }
 
-        Promise.all([fetch(API_INVENTARIO).then(r => r.json()), fetch(API_ESTRENOS).then(r => r.json()), fetch(API_CARTELERAS).then(r => r.json())]).then(([inventarioData, estrenosData, carteleraData]) => {
+        obsoletosGlobales = [];
+        let seQuedanData = [];
+        let aMudarData = [];
+
+        carteleraVirtual.forEach(c => {
+            const estaLleno = (c.ID_Publicidad !== null);
+            if(estaLleno) {
+                let nombreActual = c.Nombre_Material;
+                
+                let isSalaNormal = c.ID_Slot >= 8 && c.ID_Slot <= 23;
+                let numSala = c.ID_Slot - 7;
+                
+                let matchPropiaSala = false;
+                if(isSalaNormal && topPorSala[numSala] && topPorSala[numSala].length > 0) {
+                    for(let topPeli of topPorSala[numSala]) { if(coinciden(nombreActual, topPeli)) { matchPropiaSala = true; break; } }
+                }
+                
+                if(matchPropiaSala) {
+                    seQuedanData.push(c.ID_Slot);
+                } else {
+                    let sirveParaOtra = false; let salaDestino = null;
+                    for(let s=1; s<=16; s++) {
+                        if(topPorSala[s] && topPorSala[s].length > 0) {
+                            for(let topPeli of topPorSala[s]) { if(coinciden(nombreActual, topPeli)) { sirveParaOtra = true; salaDestino = s + 7; break; } }
+                        }
+                        if(sirveParaOtra) break;
+                    }
+                    
+                    if(sirveParaOtra) aMudarData.push({ slotOrigen: c.ID_Slot, slotDestino: salaDestino });
+                    else obsoletosGlobales.push(c.ID_Slot);
+                }
+            }
+        });
+
+        obsoletosGlobales.forEach(slot => {
+            let div = document.getElementById('slot-div-' + slot);
+            if(div) {
+                div.style.borderColor = 'var(--danger)';
+                div.innerHTML += `<div style="background:var(--danger); color:white; font-size:11px; padding:5px; margin-top:10px; border-radius:5px; font-weight:bold;">🚨 OBSOLETO (Ya no está en Excel)</div>`;
+            }
+        });
+        
+        seQuedanData.forEach(slot => {
+            let div = document.getElementById('slot-div-' + slot);
+            if(div) {
+                div.style.borderColor = 'var(--success)';
+                div.innerHTML += `<div style="background:var(--success); color:white; font-size:11px; padding:5px; margin-top:10px; border-radius:5px; font-weight:bold;">✅ SIGUE ESTA SEMANA</div>`;
+            }
+        });
+
+        aMudarData.forEach(item => {
+            let div = document.getElementById('slot-div-' + item.slotOrigen);
+            let nombreDestino = carteleraVirtual.find(x=>x.ID_Slot===item.slotDestino).Ubicacion;
+            if(div) {
+                div.style.borderColor = 'var(--warning)';
+                div.innerHTML += `<div style="background:var(--warning); color:black; font-size:11px; padding:5px; margin-top:10px; border-radius:5px; font-weight:bold;">➡️ MOVER A ${nombreDestino.toUpperCase()}</div>`;
+            }
+        });
+
+        if(obsoletosGlobales.length > 0) {
+            const btnLimpiar = document.getElementById('btnLimpiarObsoletos');
+            btnLimpiar.style.display = 'inline-block';
+            btnLimpiar.innerText = `🧹 Desmontar ${obsoletosGlobales.length} Obsoletos`;
+        }
+
+        let topSP = [...new Set([...(topPorSala[1]||[]), ...(topPorSala[4]||[])])]; 
+        let topScreenX = topPorSala[7] || []; let top4DX = topPorSala[8] || []; let topSJ = topPorSala[16] || []; 
+
+        Promise.all([fetch(API_INVENTARIO).then(r => r.json()), fetch(API_ESTRENOS).then(r => r.json())]).then(([inventarioData, estrenosData]) => {
             sugerenciasGlobales = []; let usadosIds = new Set(); let peliculasEnMuro = new Set();
 
             function buscarPosterInteligente(peliLimpia) {
                 if (peliculasEnMuro.has(peliLimpia)) return null; 
                 for (let p of inventarioData) {
                     if (p.Categoria === 'Poster' && p.Cantidad_Guardados > 0 && !usadosIds.has(p.ID_Publicidad)) {
-                        let nombreInv = limpiarTitulo(p.Nombre_Material).replace(/poster/gi, '').trim();
-                        if (nombreInv === peliLimpia || peliLimpia.includes(nombreInv) || nombreInv.includes(peliLimpia)) return { origen: 'bodega', posterId: p.ID_Publicidad, posterNombre: p.Nombre_Material };
+                        if (coinciden(p.Nombre_Material, peliLimpia)) return { origen: 'bodega', posterId: p.ID_Publicidad, posterNombre: p.Nombre_Material };
                     }
                 }
                 for (let e of estrenosData.slots) {
                     if (e.ID_Publicidad && !usadosIds.has(e.ID_Publicidad)) {
-                        let nombreInv = limpiarTitulo(e.Nombre_Material).replace(/poster/gi, '').trim();
-                        if (nombreInv === peliLimpia || peliLimpia.includes(nombreInv) || nombreInv.includes(peliLimpia)) return { origen: 'estrenos', origenId: e.ID_Slot, posterId: e.ID_Publicidad, posterNombre: e.Nombre_Material };
-                    }
-                }
-                for (let c of carteleraData) {
-                    if (c.ID_Publicidad && !usadosIds.has(c.ID_Publicidad)) {
-                        let nombreInv = limpiarTitulo(c.Nombre_Material).replace(/poster/gi, '').trim();
-                        if (nombreInv === peliLimpia || peliLimpia.includes(nombreInv) || nombreInv.includes(peliLimpia)) return { origen: 'cartelera', origenId: c.ID_Slot, ubicacion: c.Ubicacion, posterId: c.ID_Publicidad, posterNombre: c.Nombre_Material };
+                        if (coinciden(e.Nombre_Material, peliLimpia)) return { origen: 'estrenos', origenId: e.ID_Slot, posterId: e.ID_Publicidad, posterNombre: e.Nombre_Material };
                     }
                 }
                 return null;
             }
 
-            function asignarMuro(listaPeliculas, slotsPermitidos) {
+            function asignarMuro(listaPeliculas, slotsPermitidos, reglaPredeterminada) {
                 let asignados = 0;
                 for(let peli of listaPeliculas) {
                     if (asignados >= slotsPermitidos.length) break;
                     let match = buscarPosterInteligente(peli);
                     if (match) {
                         usadosIds.add(match.posterId); peliculasEnMuro.add(peli);
-                        let meta = metaPeliculas[peli] || { esp: false, sub: false, clasif: '' };
+                        let meta = metaPeliculas[peli] || { esp: false, sub: false };
                         let idiomaText = ""; if (meta.esp) idiomaText = "Doblada al español"; else if (meta.sub) idiomaText = "Subtitulada";
-                        sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], match: match, idioma: idiomaText, clasificacion: meta.clasif });
+                        sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], match: match, idioma: idiomaText, clasificacion: reglaPredeterminada });
                         asignados++;
                     }
                 }
             }
 
-            asignarMuro(topSJ, [7]); asignarMuro(topScreenX, [5, 6]); asignarMuro(top4DX, [3, 4]); asignarMuro(topSP, [1, 2]);
+            let reglaMuro = "🌟 Prioridad 4: Especial";
+            asignarMuro(topSJ, [7], reglaMuro); asignarMuro(topScreenX, [5, 6], reglaMuro); asignarMuro(top4DX, [3, 4], reglaMuro); asignarMuro(topSP, [1, 2], reglaMuro);
 
+            let reglaSalas = "3️⃣ Prioridad 3: Más Repetida";
             let ordenIzquierda = [1, 2, 3, 4, 5, 6, 7].sort((a, b) => (topPorSala[a]?.length || 0) - (topPorSala[b]?.length || 0));
             peliculasEnMuro.clear(); 
-            for(let sala of ordenIzquierda) { for(let peli of (topPorSala[sala] || [])) { let match = buscarPosterInteligente(peli); if (match) { usadosIds.add(match.posterId); peliculasEnMuro.add(peli); sugerenciasGlobales.push({ slot: 7 + sala, match: match }); break; } } }
+            for(let sala of ordenIzquierda) { for(let peli of (topPorSala[sala] || [])) { let match = buscarPosterInteligente(peli); if (match) { usadosIds.add(match.posterId); peliculasEnMuro.add(peli); sugerenciasGlobales.push({ slot: 7 + sala, match: match, clasificacion: reglaSalas }); break; } } }
 
             let ordenDerecha = [8, 9, 10, 11, 12, 13, 14, 15, 16].sort((a, b) => (topPorSala[a]?.length || 0) - (topPorSala[b]?.length || 0));
             peliculasEnMuro.clear();
-            for(let sala of ordenDerecha) { for(let peli of (topPorSala[sala] || [])) { let match = buscarPosterInteligente(peli); if (match) { usadosIds.add(match.posterId); peliculasEnMuro.add(peli); sugerenciasGlobales.push({ slot: 7 + sala, match: match }); break; } } }
+            for(let sala of ordenDerecha) { for(let peli of (topPorSala[sala] || [])) { let match = buscarPosterInteligente(peli); if (match) { usadosIds.add(match.posterId); peliculasEnMuro.add(peli); sugerenciasGlobales.push({ slot: 7 + sala, match: match, clasificacion: reglaSalas }); break; } } }
             
             dibujarSugerenciasEnPantalla(true);
         });
@@ -377,15 +500,10 @@
         sugerenciasGlobales.forEach(sug => {
             let slotDiv = document.getElementById('slot-div-' + sug.slot);
             if (slotDiv && !slotDiv.classList.contains('lleno')) {
-                
                 let m = sug.match; let bgStyle, badge, btnText;
                 
-                if (m.origen === 'cartelera') {
-                    bgStyle = "background: rgba(220, 53, 69, 0.15); border: 2px solid var(--danger); color: var(--text-color);";
-                    badge = `<span class="badge-mover-sala">🚨 Mudar desde ${m.ubicacion}</span><br>`;
-                    btnText = "🔄 Trasladar Muro";
-                } else if (m.origen === 'estrenos') { 
-                    bgStyle = "background: rgba(111, 66, 193, 0.15); border: 2px solid #6f42c1; color: var(--text-color);"; badge = `<span style="color:#6f42c1; font-size:11px; font-weight:bold;">🟪 Bajar de Estrenos #${m.origenId}</span><br>`; btnText = "🔄 Bajar a Cartelera"; 
+                if (m.origen === 'estrenos') { 
+                    bgStyle = "background: rgba(111, 66, 193, 0.15); border: 2px solid #6f42c1; color: var(--text-color);"; badge = `<span style="color:#6f42c1; font-size:11px; font-weight:bold;">🟪 Bajar de Estrenos</span><br>`; btnText = "🔄 Bajar a Cartelera"; 
                 } else { 
                     bgStyle = "background: rgba(13, 202, 240, 0.15); border: 2px solid #0dcaf0; color: var(--text-color);"; badge = `<span style="color:#0dcaf0; font-size:11px; font-weight:bold;">🟦 Sacar de Bodega</span><br>`; btnText = "✔️ Colgar Póster"; 
                 }
@@ -393,9 +511,9 @@
                 if(slotDiv.classList.contains('muro-slot')) bgStyle += " color: white;";
 
                 let metaBadge = '';
-                if(sug.slot <= 7 && (sug.clasificacion || sug.idioma)) {
+                if(sug.clasificacion || sug.idioma) {
                     metaBadge = `<div style="margin:5px 0;">`;
-                    if(sug.clasificacion) metaBadge += `<span class="badge-clasif">${sug.clasificacion}</span>`;
+                    if(sug.clasificacion) metaBadge += `<span style="font-size:10px; background:var(--warning); color:black; padding:2px 4px; border-radius:3px; margin-right:3px;">${sug.clasificacion}</span>`;
                     if(sug.idioma) metaBadge += `<span class="badge-idioma">${sug.idioma}</span>`;
                     metaBadge += `</div>`;
                 }
@@ -409,15 +527,26 @@
         });
         
         const btnAll = document.getElementById('btnInstalarTodas');
-        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Instalar/Mover ${aplicadas} pósters de la Semana ${numeroSemanaSugerida||'Nueva'}`; if(mostrarAlerta) alert(`Radar Terminado: ¡Se encontraron ${aplicadas} coincidencias!`); } 
-        else { btnAll.style.display = 'none'; if(mostrarAlerta) alert("Todos los espacios están llenos o no tienes stock en bodega."); }
+        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Auto-Asignar ${aplicadas} pósters de la Semana ${numeroSemanaSugerida||'Nueva'}`; } 
+    }
+
+    async function desmontarListaObsoletos() {
+        if(!confirm(`⚠️ ATENCIÓN: Vas a retirar ${obsoletosGlobales.length} pósters que ya NO SALEN en el Excel de esta semana. \n\nSerán devueltos automáticamente a bodega.\n¿Continuar?`)) return;
+        const btn = document.getElementById('btnLimpiarObsoletos');
+        btn.disabled = true; btn.innerText = "Desmontando...";
+        
+        for(let slot of obsoletosGlobales) {
+            await fetch(`${API_CARTELERAS}/${slot}/liberar`, { method: 'POST' });
+        }
+        
+        alert("🧹 ¡Listo! Las salas quedaron vacías y listas para que instales las nuevas sugerencias.");
+        obsoletosGlobales = [];
+        cargarMapa(false);
     }
 
     async function confirmarSugerencia(event, idSlot, idPub, origen, origenId, idioma, clasif) {
         event.stopPropagation();
         if (origen === 'estrenos') await fetch(`${API_ESTRENOS}/${origenId}/liberar`, { method: 'POST' });
-        else if (origen === 'cartelera') await fetch(`${API_CARTELERAS}/${origenId}/liberar`, { method: 'POST' });
-        
         await fetch(`${API_CARTELERAS}/${idSlot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idPub, idioma: idioma, clasificacion: clasif }) });
         
         sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== idSlot);
@@ -435,44 +564,62 @@
         for (let sug of slotsParaInstalar) {
             let m = sug.match;
             if (m.origen === 'estrenos') await fetch(`${API_ESTRENOS}/${m.origenId}/liberar`, { method: 'POST' });
-            else if (m.origen === 'cartelera') await fetch(`${API_CARTELERAS}/${m.origenId}/liberar`, { method: 'POST' });
             await fetch(`${API_CARTELERAS}/${sug.slot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: m.posterId, idioma: sug.idioma || '', clasificacion: sug.clasificacion || '' }) });
-        }
-        
-        if(numeroSemanaSugerida) {
-            let nD = carteleraVirtual.map(c => { return { slot: c.ID_Slot, peli: c.Nombre_Material } });
-            await fetch(API_HISTORIAL_SEMANAS, { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({semana: parseInt(numeroSemanaSugerida), datos: nD}) });
         }
         
         sugerenciasGlobales = []; btn.style.display = 'none'; btn.disabled = false;
         alert("¡Todos los movimientos y asignaciones logísticas se completaron con éxito!"); 
-        cargarHistorialSemanas(); cargarMapa(false);
+        cargarMapa(false);
     }
 
     function abrirAsignacion(idSlot, ubicacion, estaLleno) {
         if(estaLleno) return; 
         slotSeleccionado = idSlot;
-        document.getElementById('textoUbicacion').innerHTML = `Selecciona un material para: <strong>${ubicacion}</strong>`;
-        document.getElementById('panelMetadatos').style.display = (idSlot <= 7) ? 'block' : 'none';
+        document.getElementById('textoUbicacion').innerHTML = `1. Selecciona un material para: <strong>${ubicacion}</strong>`;
+        
+        document.getElementById('manualIdioma').value = '';
+        document.getElementById('selectPrioridad').value = '';
+        
+        const select = document.getElementById('selectorPosters');
+        select.innerHTML = '<option value="">-- Elige un póster en bodega --</option>';
+        
         document.getElementById('modalAsignar').style.display = 'flex';
         fetch(API_INVENTARIO).then(res => res.json()).then(data => {
-            const select = document.getElementById('selectorPosters');
-            select.innerHTML = '<option value="">-- Elige un póster disponible --</option>';
-            data.forEach(p => { if (p.Cantidad_Guardados > 0 && p.Categoria === 'Poster') { select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (Bodega: ${p.Cantidad_Guardados})</option>`; } });
+            let postersDisponibles = data.filter(p => p.Categoria === 'Poster' && p.Cantidad_Guardados > 0);
+            postersDisponibles.sort((a,b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+            postersDisponibles.forEach(p => {
+                select.innerHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material} (Disp: ${p.Cantidad_Guardados})</option>`;
+            });
         });
     }
 
     function cerrarModal() { document.getElementById('modalAsignar').style.display = 'none'; slotSeleccionado = null; }
+    
     function guardarAsignacion() {
         const idPub = document.getElementById('selectorPosters').value;
-        const idioma = document.getElementById('manualIdioma').value;
-        const clasif = document.getElementById('manualClasif').value.trim();
-        if(!idPub) return alert("Selecciona un póster.");
-        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: parseInt(idPub), idioma: idioma, clasificacion: clasif }) }).then(() => { sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== slotSeleccionado); cerrarModal(); cargarMapa(false); });
+        const idiomaYClasificacion = document.getElementById('manualIdioma').value.trim();
+        const regla = document.getElementById('selectPrioridad').value;
+        
+        if(!idPub) return alert("❌ Debes seleccionar un póster físico de la bodega.");
+        if(!regla) return alert("❌ ALERTA LOGÍSTICA: Es obligatorio seleccionar bajo qué regla de prioridad estás colgando este póster.");
+
+        let clasificacionFinal = regla;
+        if(idiomaYClasificacion !== "") { clasificacionFinal = regla + " (" + idiomaYClasificacion + ")"; }
+
+        fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { 
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ id_publicidad: parseInt(idPub), idioma: "", clasificacion: clasificacionFinal }) 
+        }).then(res => res.json()).then(data => {
+            if(data.error) alert("❌ " + data.error);
+            else { sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== slotSeleccionado); cerrarModal(); cargarMapa(false); }
+        });
     }
+
     function liberarCartelera(event, idSlot) {
         event.stopPropagation();
-        if(confirm("¿Regresar póster a bodega?")) { fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa(false)); }
+        if(confirm("¿Seguro que deseas retirar este póster de la sala? Volverá automáticamente a la bodega.")) { 
+            fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa(false)); 
+        }
     }
 </script>
 </body>
