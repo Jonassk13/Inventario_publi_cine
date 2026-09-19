@@ -30,16 +30,19 @@
 
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s; }
         .container { max-width: 900px; margin: 0 auto; background: var(--box-bg); border-radius: 10px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
         .detalle-layout { display: flex; gap: 30px; align-items: stretch; flex-wrap: wrap; }
         .poster-img-container { flex: 1; min-width: 280px; text-align: center; }
         .poster-img-container img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); margin-bottom: 15px;}
         .info-container { flex: 2; min-width: 280px; }
+        
         .badge { padding: 5px 10px; border-radius: 15px; font-size: 14px; background: var(--primary); color: white; margin-left: 10px; }
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .stat-box { background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid var(--border-color); }
         body.dark-mode .stat-box { background: rgba(255,255,255,0.05); }
         .stat-box span { display: block; font-size: 24px; font-weight: bold; margin-top: 5px; }
         .highlight-green { color: var(--success); } .highlight-red { color: var(--danger); }
+        
         button { border: none; cursor: pointer; border-radius: 5px; color: white; font-weight: bold; transition: 0.2s; width: 100%; box-sizing: border-box; }
         button:hover { opacity: 0.8; }
         .action-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 20px;}
@@ -48,22 +51,26 @@
         .btn-regresar { background: #6c757d; padding: 12px; }
         .btn-daño { background: var(--danger); padding: 12px; }
         .btn-dark { background: #212529; padding: 12px; } .btn-info { background: #0dcaf0; color: #000; padding: 8px; }
+        
         .advertencia-corp { background: rgba(253, 126, 20, 0.1); border-left: 5px solid #fd7e14; padding: 15px; margin-bottom: 20px; font-size: 14px; border-radius: 4px;}
+        
         .editor-imagen { background: rgba(0,0,0,0.02); padding: 15px; border-radius: 8px; border: 1px dashed #999; margin-top: 15px;}
         body.dark-mode .editor-imagen { background: rgba(255,255,255,0.02); }
-        input[type="text"] { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--border-color); box-sizing: border-box; background: var(--bg-color); color: var(--text-color);}
+        input[type="text"], input[type="number"] { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid var(--border-color); box-sizing: border-box; background: var(--bg-color); color: var(--text-color);}
     </style>
 </head>
 <body>
 
-<div class="container" id="tarjetaContenido"><h3 style="text-align:center;">Cargando información del producto...</h3></div>
+<div class="container" id="tarjetaContenido">
+    <h3 style="text-align:center;">Cargando información del producto...</h3>
+</div>
 
 <div id="modalMerma" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:9999;">
     <div style="background:var(--box-bg); padding:25px; border-radius:10px; width:90%; max-width:400px; text-align:center;">
         <h2 style="margin-top:0; color:var(--danger);">📸 Evidencia de Merma</h2>
         <p style="font-size:13px; color:gray;">Para desechar material, la Subgerencia debe validar la foto del daño.</p>
-        <input type="number" id="cantMerma" placeholder="¿Cuántas piezas se dañaron?" min="1" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box;">
-        <input type="text" id="motivoMerma" placeholder="Motivo (Ej. Roto por cliente, mojado...)" style="width:100%; padding:10px; margin-bottom:15px; border-radius:5px; border:1px solid #ccc; box-sizing:border-box;">
+        <input type="number" id="cantMerma" placeholder="¿Cuántas piezas se dañaron?" min="1" onkeydown="if(event.key==='Enter') enviarMerma()">
+        <input type="text" id="motivoMerma" placeholder="Motivo (Ej. Roto por cliente, mojado...)" onkeydown="if(event.key==='Enter') enviarMerma()">
         <label style="display:block; text-align:left; font-size:12px; font-weight:bold; margin-bottom:5px;">Toma una foto de la zona dañada:</label>
         <input type="file" id="fotoMerma" accept="image/*" capture="environment" style="width:100%; margin-bottom:20px;">
         <div style="display:flex; justify-content:space-between;">
@@ -74,6 +81,11 @@
 </div>
 
 <script>
+    document.addEventListener('keydown', event => { 
+        if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); 
+        if (event.key === 'Escape') { document.getElementById('modalMerma').style.display = 'none'; }
+    });
+
     const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
     const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
     const urlParams = new URLSearchParams(window.location.search);
@@ -111,7 +123,9 @@
     window.onload = () => {
         if(!idProducto) { document.getElementById('tarjetaContenido').innerHTML = "<h1>No se especificó un producto.</h1>"; return; }
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        cargarDetalle(); setTimeout(aplicarTemasMagicos, 800); 
+        
+        cargarDetalle();
+        setTimeout(aplicarTemasMagicos, 800); 
     };
 
     function cargarDetalle() {
@@ -128,6 +142,7 @@
 
     function renderizarTarjeta() {
         let botonesHTML = ''; let panelEditor = ''; let advertenciaCinepolitos = '';
+        
         let articulo = "este"; let catLower = prodGlobal.Categoria.toLowerCase();
         if(catLower.includes('palomera') || catLower.includes('lona') || catLower.includes('área') || catLower.includes('area')) articulo = "esta";
         
@@ -137,7 +152,7 @@
             
             if (rolUsuario === 'Admin' || rolUsuario === 'Supervisor' || rolUsuario === 'Subgerente' || rolUsuario === 'Publicista') {
                 botonesHTML += `<button class="btn-success" style="background:#20c997; margin-top: 10px; padding: 15px; font-size:15px;" onclick="registrarMovimiento('cliente')">🎁 Entregar a Cliente (Directo)</button>`;
-                panelEditor = `<div class="editor-imagen"><label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta o no aparece?</label><button class="btn-info" style="margin-bottom: 5px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button><input type="text" id="urlManual" placeholder="Pega el link de la imagen (.jpg, .png) aquí..."><button class="btn-dark" style="padding: 6px;" onclick="guardarImagenManual()">💾 Guardar Imagen</button></div>`;
+                panelEditor = `<div class="editor-imagen"><label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta o no aparece?</label><button class="btn-info" style="margin-bottom: 5px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button><input type="text" id="urlManual" placeholder="Pega el link de la imagen (.jpg, .png) aquí..." onkeydown="if(event.key==='Enter') guardarImagenManual()"><button class="btn-dark" style="padding: 6px;" onclick="guardarImagenManual()">💾 Guardar Imagen</button></div>`;
                 botonesHTML += `
                     <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
                     <button class="btn-dark" onclick="imprimirQRPoster()">🖨️ Imprimir Etiqueta (19x8 cm)</button>
@@ -147,12 +162,21 @@
                 `;
             }
         }
-        document.getElementById('tarjetaContenido').innerHTML = `<div class="detalle-layout"><div class="poster-img-container"><img id="imagenMagicaPoster" src="" style="display:none;" alt="Imagen Oficial">${panelEditor}</div><div class="info-container"><h1 style="font-size: 22px; margin-top:0;">${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>${advertenciaCinepolitos}<div class="stats-grid"><div class="stat-box">En Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div><div class="stat-box">En Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div></div><div class="action-grid">${botonesHTML}</div></div></div>`;
+
+        document.getElementById('tarjetaContenido').innerHTML = `
+            <div class="detalle-layout">
+                <div class="poster-img-container"><img id="imagenMagicaPoster" src="" style="display:none;" alt="Imagen Oficial">${panelEditor}</div>
+                <div class="info-container">
+                    <h1 style="font-size: 22px; margin-top:0;">${prodGlobal.Nombre_Material} <span class="badge">${prodGlobal.Categoria}</span></h1>
+                    ${advertenciaCinepolitos}
+                    <div class="stats-grid"><div class="stat-box">En Bodega <span class="highlight-green">${prodGlobal.Cantidad_Guardados}</span></div><div class="stat-box">En Exhibición <span class="highlight-red">${prodGlobal.Cantidad_Cartelera}</span></div></div>
+                    <div class="action-grid">${botonesHTML}</div>
+                </div>
+            </div>
+        `;
     }
 
-    // IMPRESIÓN INDIVIDUAL Y REGISTRO EN BD (19x8 cm)
     function imprimirQRPoster() {
-        // Enviar la orden a BD de que fue impreso
         fetch(`${API_URL}/impreso`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ids: [parseInt(idProducto)] }) });
 
         const urlMaterial = window.location.href; 
@@ -176,25 +200,81 @@
     }
 
     function hacerReserva() {
-        let nombreGuardado = localStorage.getItem('nombreCinepolito') || ''; let nombre = prompt("Ingresa tu nombre completo (y tu área, Ej. 'Jonas - Dulcería'):", nombreGuardado); if(!nombre) return; localStorage.setItem('nombreCinepolito', nombre.trim()); let cant = prompt(`¿Cuántas piezas quieres pedir?`); cant = parseInt(cant); if(!cant || cant <= 0) return;
-        fetch(API_RESERVAS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idProducto, nombre: nombre.trim(), cantidad: cant }) }).then(res => res.json()).then(data => {
-            if(data.error) { alert("❌ " + data.error); } else { alert(`¡Listo! Pedido registrado a nombre de: ${nombre.trim()}.`); if (localStorage.getItem('whatsAppPiloto') === 'true') { let numeroDestino = localStorage.getItem('whatsAppNumero') || ""; let msj = `🚨 *Nueva Solicitud de Material*\n\n*${nombre.trim()}* ha pedido apartar *${cant}x ${prodGlobal.Nombre_Material}*.\nEsperando autorización en el sistema.`; if(numeroDestino.trim() === "") window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msj), '_blank'); else window.open(`https://api.whatsapp.com/send?phone=${numeroDestino}&text=` + encodeURIComponent(msj), '_blank'); } }
+        let nombreGuardado = localStorage.getItem('nombreCinepolito') || '';
+        let nombre = prompt("Ingresa tu nombre completo (y tu área, Ej. 'Jonas - Dulcería'):", nombreGuardado);
+        if(!nombre) return;
+        localStorage.setItem('nombreCinepolito', nombre.trim());
+        
+        let cant = prompt(`¿Cuántas piezas quieres pedir?`);
+        cant = parseInt(cant);
+        if(!cant || cant <= 0) return;
+        
+        fetch(API_RESERVAS, { 
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ id_publicidad: idProducto, nombre: nombre.trim(), cantidad: cant }) 
+        }).then(res => res.json()).then(data => {
+            if(data.error) {
+                alert("❌ " + data.error);
+            } else {
+                alert(`¡Listo! Pedido registrado a nombre de: ${nombre.trim()}.`);
+                
+                if (localStorage.getItem('whatsAppPiloto') === 'true') {
+                    let numeroDestino = localStorage.getItem('whatsAppNumero') || ""; 
+                    let msj = `🚨 *Nueva Solicitud de Material*\n\n*${nombre.trim()}* ha pedido apartar *${cant}x ${prodGlobal.Nombre_Material}*.\nEsperando autorización en el sistema.`;
+                    
+                    if(numeroDestino.trim() === "") window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msj), '_blank');
+                    else window.open(`https://api.whatsapp.com/send?phone=${numeroDestino}&text=` + encodeURIComponent(msj), '_blank');
+                }
+            }
         });
     }
 
     function registrarMovimiento(tipo) {
-        let textoPregunta = tipo === 'cliente' ? 'Entregar como Regalo al Cliente' : tipo; let cant = prompt(`¿Cuántas piezas vas a mover para: ${textoPregunta}?`); cant = parseInt(cant); if(!cant || cant <= 0) return; let usuarioAct = nombreUsuario || rolUsuario;
-        fetch(`${API_URL}/${idProducto}/movimiento`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo: tipo, cantidad: cant, usuario: usuarioAct }) }).then(res => res.json()).then(data => {
-            if(data.error) { alert("❌ " + data.error); } else { cargarDetalle(); if(tipo === 'cliente') { if (localStorage.getItem('whatsAppPiloto') === 'true') { let numeroDestino = localStorage.getItem('whatsAppNumero') || ""; let msj = `🎁 *Entrega a Cliente*\n\nUsuario: ${usuarioAct}\nEntregó: *${cant}x ${prodGlobal.Nombre_Material}*`; if(numeroDestino.trim() === "") window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msj), '_blank'); else window.open(`https://api.whatsapp.com/send?phone=${numeroDestino}&text=` + encodeURIComponent(msj), '_blank'); } } }
+        let textoPregunta = tipo === 'cliente' ? 'Entregar como Regalo al Cliente' : tipo;
+        let cant = prompt(`¿Cuántas piezas vas a mover para: ${textoPregunta}?`);
+        cant = parseInt(cant); if(!cant || cant <= 0) return;
+        
+        let usuarioAct = nombreUsuario || rolUsuario;
+        fetch(`${API_URL}/${idProducto}/movimiento`, { 
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ tipo: tipo, cantidad: cant, usuario: usuarioAct }) 
+        }).then(res => res.json()).then(data => {
+            if(data.error) {
+                alert("❌ " + data.error);
+            } else {
+                cargarDetalle();
+                if(tipo === 'cliente') {
+                    if (localStorage.getItem('whatsAppPiloto') === 'true') {
+                        let numeroDestino = localStorage.getItem('whatsAppNumero') || ""; 
+                        let msj = `🎁 *Entrega a Cliente*\n\nUsuario: ${usuarioAct}\nEntregó: *${cant}x ${prodGlobal.Nombre_Material}*`;
+                        
+                        if(numeroDestino.trim() === "") window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(msj), '_blank');
+                        else window.open(`https://api.whatsapp.com/send?phone=${numeroDestino}&text=` + encodeURIComponent(msj), '_blank');
+                    }
+                }
+            }
         });
     }
 
     function buscarEnGoogle() { window.open(`https://www.google.com/search?tbm=isch&q=poster+película+${encodeURIComponent(prodGlobal.Nombre_Material)}`, '_blank'); }
     function guardarImagenManual() { const url = document.getElementById('urlManual').value.trim(); if(!url) return alert("Pega una URL válida."); fetch(`${API_URL}/${idProducto}/imagen`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url: url }) }).then(() => cargarDetalle()); }
+
     function abrirModalMerma() { document.getElementById('modalMerma').style.display = 'flex'; }
     function enviarMerma() {
-        const cant = document.getElementById('cantMerma').value; const motivo = document.getElementById('motivoMerma').value.trim(); const fotoInput = document.getElementById('fotoMerma'); if(!cant || cant <= 0 || !motivo || fotoInput.files.length === 0) { alert("⚠️ Faltan datos o la foto."); return; } const btn = event.target; btn.innerText = "Subiendo Evidencia..."; btn.disabled = true; const reader = new FileReader();
-        reader.onload = function(e) { fetch('https://jonassk13.pythonanywhere.com/api/mermas', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_pub: idProducto, usuario: nombreUsuario || rolUsuario, cantidad: parseInt(cant), motivo: motivo, foto: e.target.result }) }).then(res => res.json()).then(data => { if(data.error) { alert("❌ " + data.error); btn.innerText = "Enviar Foto"; btn.disabled = false; return; } alert("✅ Fotografía enviada al sistema."); document.getElementById('modalMerma').style.display = 'none'; btn.innerText = "Enviar Foto"; btn.disabled = false; document.getElementById('cantMerma').value = ''; document.getElementById('motivoMerma').value = ''; fotoInput.value = ''; }); }; reader.readAsDataURL(fotoInput.files[0]);
+        const cant = document.getElementById('cantMerma').value; const motivo = document.getElementById('motivoMerma').value.trim(); const fotoInput = document.getElementById('fotoMerma');
+        if(!cant || cant <= 0 || !motivo || fotoInput.files.length === 0) { alert("⚠️ Faltan datos o la foto."); return; }
+        const btn = event.target; btn.innerText = "Subiendo Evidencia..."; btn.disabled = true;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            fetch('https://jonassk13.pythonanywhere.com/api/mermas', { 
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ id_pub: idProducto, usuario: nombreUsuario || rolUsuario, cantidad: parseInt(cant), motivo: motivo, foto: e.target.result }) 
+            }).then(res => res.json()).then(data => {
+                if(data.error) { alert("❌ " + data.error); btn.innerText = "Enviar Foto"; btn.disabled = false; return; }
+                alert("✅ Fotografía enviada al sistema."); document.getElementById('modalMerma').style.display = 'none'; btn.innerText = "Enviar Foto"; btn.disabled = false; document.getElementById('cantMerma').value = ''; document.getElementById('motivoMerma').value = ''; fotoInput.value = ''; 
+            });
+        };
+        reader.readAsDataURL(fotoInput.files[0]);
     }
 </script>
 </body>
