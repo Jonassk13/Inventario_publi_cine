@@ -95,7 +95,9 @@
     <button class="btn btn-dark req-admin" style="background:#e83e8c; color:white;" onclick="abrirModalHistorial()">📖 Historial General</button>
 
     <button class="btn btn-reserva req-staff req-auth" onclick="abrirModalReservas()">📋 Aprobaciones</button>
-    <button class="btn btn-info req-staff" onclick="abrirModalGrupo()">📦 Armar Caja</button>
+    
+    <!-- NUEVO BOTÓN DE SLOTS -->
+    <button class="btn btn-info req-staff" onclick="abrirModalSlots()">📂 Gestionar Slots</button>
     
     <a href="carteleras.html" target="_blank" class="btn btn-reserva req-staff">🗺️ Mapa Carteleras</a>
     <a href="proximos_estrenos.html" target="_blank" class="btn btn-success req-staff" style="background: #0b5345;">🚀 Próximos Estrenos</a>
@@ -120,19 +122,38 @@
 </div>
 
 <div class="box req-staff" id="cajaExclusiva" style="margin-top:20px; border: 2px solid var(--warning); display:none;">
-    <h2 style="margin-top:0; color: var(--warning);">🔒 Inventario Exclusivo (Áreas del Cine)</h2>
+    <h2 style="margin-top:0; color: var(--warning);">🔒 Inventario Exclusivo (Áreas del Cine / Slots)</h2>
     <p style="font-size: 13px; color: gray;">Este panel está oculto para los cinepolitos y visitantes.</p>
     <table>
-        <thead><tr><th>Material</th><th>Categoría</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
+        <thead><tr><th>Material</th><th>Ubicación / Slot</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
         <tbody id="tablaCuerpoExclusivo"></tbody>
     </table>
 </div>
 
+<!-- ================= MODALES CON ACCESIBILIDAD (ENTER Y ESC) ================= -->
 <div id="modalHistorialGlobal" class="modal"><div class="modal-content" style="max-width: 900px;"><button class="close-btn" onclick="cerrarModal('modalHistorialGlobal')">&times;</button><h2 style="margin-top:0; color:#e83e8c;">📖 Historial de Movimientos y Auditoría</h2><div style="overflow-x:auto;"><table><thead><tr><th>Fecha y Hora</th><th>Usuario responsable</th><th>Producto</th><th>Tipo de Movimiento</th><th>Detalle / Razón</th></tr></thead><tbody id="cuerpoHistorialGlobal"></tbody></table></div></div></div>
 
 <div id="modalEditarProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button><h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2><input type="hidden" id="editIdProd"><label style="font-size: 11px; font-weight: bold;">Nombre del Material:</label>
 <input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre..." onkeydown="if(event.key==='Enter') guardarEdicionProducto()"><label style="font-size: 11px; font-weight: bold;">Categoría:</label><select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select><label style="font-size: 11px; font-weight: bold; color: var(--danger);">Cantidad actual en Bodega:</label>
 <input type="number" id="editCantidadProd" style="width:100%; border: 2px solid var(--danger); font-size:18px; font-weight:bold;" onkeydown="if(event.key==='Enter') guardarEdicionProducto()"><button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button></div></div>
+
+<!-- 📂 NUEVO MODAL DE GESTIÓN DE SLOTS -->
+<div id="modalSlots" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <button class="close-btn" onclick="cerrarModal('modalSlots')">&times;</button>
+        <h2 style="margin-top: 0; color: var(--btn-info);">📂 Gestión de Slots Personalizados</h2>
+        <p style="font-size: 13px; color: gray;">Asigna pósters a un slot. <b>Una vez asignados, ya no aparecerán en la búsqueda para otros slots.</b></p>
+        
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <input type="text" id="nuevoNombreSlot" placeholder="Escribe el nombre del nuevo Slot..." style="flex:1; margin:0;" onkeydown="if(event.key==='Enter') crearSlot()">
+            <button class="btn btn-success" onclick="crearSlot()">Crear Slot</button>
+        </div>
+        
+        <div id="contenedorSlots" style="max-height: 400px; overflow-y: auto; padding-right:10px;">
+            <!-- Aquí se renderizan los slots con JS -->
+        </div>
+    </div>
+</div>
 
 <div id="modalImpresionQR" class="modal"><div class="modal-content" style="max-width: 600px;"><button class="close-btn" onclick="cerrarModal('modalImpresionQR')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">🖨️ Centro de Impresión QR</h2><div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;"><select id="filtroImpresoQR" onchange="renderizarListaImpresion()" style="flex:1;"><option value="pendientes">Pendientes por imprimir</option><option value="impresos">Ya impresos</option><option value="todos">Mostrar todos</option></select><select id="filtroGrupoQR" onchange="renderizarListaImpresion()" style="flex:1;"><option value="todos">Todos los grupos</option></select></div><input type="text" id="buscadorImpresionQR" placeholder="🔍 Buscar póster específico..." onkeyup="renderizarListaImpresion()" style="width:100%; margin-bottom:10px;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span style="font-size:12px; font-weight:bold; color:gray;" id="contadorQRLista">0 pósters encontrados</span><div><button class="btn btn-info" style="padding:4px 8px; font-size:11px;" onclick="seleccionarTodoQR(true)">Marcar Todos</button><button class="btn btn-dark" style="padding:4px 8px; font-size:11px;" onclick="seleccionarTodoQR(false)">Desmarcar</button></div></div><div id="divListaImpresion" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px; background: rgba(0,0,0,0.02);"></div><button class="btn btn-primary" style="width: 100%; background: var(--btn-reserva);" onclick="ejecutarImpresionQR()">🖨️ Generar Etiquetas Seleccionadas</button></div></div>
 
@@ -179,16 +200,15 @@
 
 <div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">⚡ Ingreso Masivo</h2><div style="overflow-x:auto;"><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table></div><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn btn-admin" style="float:right;" onclick="guardarIngresoMasivo()">Guardar Todo</button></div></div>
 
-<div id="modalGrupo" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalGrupo')">&times;</button><h2 style="margin-top: 0; color: var(--btn-info);">📦 Empacar Nuevo Grupo</h2>
-<input type="text" id="nombreGrupo" placeholder="Nombre de la Caja" style="width:100%;" required onkeydown="if(event.key==='Enter') guardarGrupo()"><div id="listaProductosGrupo" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px;"></div><button id="btnGuardarCaja" class="btn btn-info" onclick="guardarGrupo()" style="width: 100%;">Guardar Grupo</button></div></div>
-
 <div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados y Entregas</h2><h3>🟡 Esperando Autorización</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th></tr></thead><tbody id="tablaPendientes"></tbody></table></div><h3 style="margin-top: 30px;">🟢 Aprobadas (Listas para Entregar)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div></div>
 
 <div id="modalAlertasSupervisor" class="modal"><div class="modal-content" style="max-width: 800px;"><button class="close-btn" onclick="cerrarModal('modalAlertasSupervisor')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">⚠️ Bandeja de Autorizaciones</h2><h3 style="color: var(--primary);">1. Solicitudes de Productos</h3><div style="overflow-x:auto; margin-bottom: 20px;"><table><thead><tr><th>Material</th><th>Solicitado por</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAlertasAutorizacion"><tr><td colspan="4">Sin solicitudes pendientes.</td></tr></tbody></table></div><h3 style="color: var(--danger);">2. Autorización de Mermas (Fotos Requeridas)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Producto</th><th>Cant.</th><th>Motivo y Evidencia</th><th>Decisión</th></tr></thead><tbody id="tablaAlertasMermas"><tr><td colspan="4">Sin mermas por revisar.</td></tr></tbody></table></div></div></div>
 
+<!-- ================= SCRIPTS ================= -->
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault()); 
     
+    // ⌨️ ESCAPE GLOBAL PARA CERRAR CUALQUIER VENTANA
     document.addEventListener('keydown', event => { 
         if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); 
         if (event.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
@@ -204,7 +224,7 @@
     const API_CATEGORIAS = 'https://jonassk13.pythonanywhere.com/api/categorias';
     const API_GRUPOS = 'https://jonassk13.pythonanywhere.com/api/grupos';
     
-    let datosInventario = []; let listaCategorias = [];
+    let datosInventario = []; let listaCategorias = []; let slotsData = [];
     let rolUsuario = 'General'; let idUsuario = null; let nombreUsuario = '';
 
     function aplicarTemasMagicos() {
@@ -244,10 +264,93 @@
     function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
+    // =======================================================
+    // 📂 LÓGICA DE GESTOR DE SLOTS
+    // =======================================================
+    function abrirModalSlots() {
+        Promise.all([
+            fetch(API_URL).then(r => r.json()),
+            fetch(API_GRUPOS).then(r => r.json())
+        ]).then(([inventario, grupos]) => {
+            datosInventario = inventario;
+            slotsData = grupos;
+            renderizarSlots();
+            abrirModal('modalSlots');
+        });
+    }
+
+    function renderizarSlots() {
+        const contenedor = document.getElementById('contenedorSlots');
+        contenedor.innerHTML = '';
+        
+        let disponibles = datosInventario.filter(p => p.Categoria === 'Poster' && (!p.GruposNombres || p.GruposNombres.trim() === ""));
+        disponibles.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        
+        let dropdownHTML = `<option value="">-- Elige un póster libre --</option>`;
+        disponibles.forEach(p => { dropdownHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material}</option>`; });
+
+        if (slotsData.length === 0) {
+            contenedor.innerHTML = '<p style="text-align:center; color:gray;">Aún no hay Slots creados.</p>';
+            return;
+        }
+
+        slotsData.forEach(slot => {
+            let itemsHTML = '';
+            if (slot.items && slot.items.length > 0) {
+                slot.items.forEach(item => {
+                    itemsHTML += `
+                        <div style="display:flex; justify-content:space-between; background:var(--bg-color); padding:8px; margin-bottom:5px; border-radius:5px; border:1px solid var(--border-color);">
+                            <span style="font-size:14px; font-weight:bold;">${item.Nombre_Material}</span>
+                            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="quitarDeSlot(${slot.ID_Grupo}, ${item.ID_Publicidad})">❌ Quitar</button>
+                        </div>
+                    `;
+                });
+            } else { itemsHTML = '<p style="font-size:12px; color:gray;">El Slot está vacío.</p>'; }
+
+            contenedor.innerHTML += `
+                <div style="background: rgba(0,0,0,0.03); border: 2px dashed var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                        <h3 style="margin:0; color:var(--primary);">${slot.Nombre_Grupo}</h3>
+                        <button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="eliminarSlot(${slot.ID_Grupo})">Borrar Slot</button>
+                    </div>
+                    <div style="margin-bottom:15px;">${itemsHTML}</div>
+                    <div style="display:flex; gap:10px;">
+                        <select id="select-slot-${slot.ID_Grupo}" style="flex:1; margin:0;" onkeydown="if(event.key==='Enter') agregarASlot(${slot.ID_Grupo})">${dropdownHTML}</select>
+                        <button class="btn btn-info" onclick="agregarASlot(${slot.ID_Grupo})">➕ Añadir</button>
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    function crearSlot() {
+        const nombre = document.getElementById('nuevoNombreSlot').value.trim();
+        if(!nombre) return alert("Ingresa un nombre para el Slot");
+        fetch(API_GRUPOS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ nombre: nombre }) }).then(() => {
+            document.getElementById('nuevoNombreSlot').value = '';
+            abrirModalSlots(); cargarTabla();
+        });
+    }
+    function agregarASlot(idGrupo) {
+        const sel = document.getElementById(`select-slot-${idGrupo}`);
+        const idPub = sel.value;
+        if(!idPub) return alert("Selecciona un póster para añadir.");
+        fetch(`${API_GRUPOS}/${idGrupo}/add`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => {
+            abrirModalSlots(); cargarTabla();
+        });
+    }
+    function quitarDeSlot(idGrupo, idPub) {
+        fetch(`${API_GRUPOS}/${idGrupo}/remove/${idPub}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); });
+    }
+    function eliminarSlot(idGrupo) {
+        if(!confirm("¿Seguro que deseas eliminar este Slot completo? Los pósters no se borrarán del inventario, solo quedarán libres.")) return;
+        fetch(`${API_GRUPOS}/${idGrupo}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); });
+    }
+
     let postersFiltradosQR = [];
     function abrirModalImpresionQR() {
         fetch(API_GRUPOS).then(r => r.json()).then(grupos => {
-            const sel = document.getElementById('filtroGrupoQR'); sel.innerHTML = '<option value="todos">Todos los grupos/cajas</option>';
+            const sel = document.getElementById('filtroGrupoQR'); sel.innerHTML = '<option value="todos">Todos los Slots</option>';
             grupos.forEach(g => { sel.innerHTML += `<option value="${g.Nombre_Grupo}">${g.Nombre_Grupo}</option>`; });
             document.getElementById('filtroImpresoQR').value = 'pendientes'; document.getElementById('buscadorImpresionQR').value = '';
             renderizarListaImpresion(); abrirModal('modalImpresionQR');
@@ -348,7 +451,13 @@
         if(datosNormales.length === 0) tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin resultados de búsqueda</td></tr>`;
         datosNormales.forEach(item => { const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'"); const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}', ${item.Cantidad_Guardados})">✏️</button>` : ''; const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; tbodyNormal.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; }); 
         if(datosExclusivos.length === 0) tbodyExclusivo.innerHTML = `<tr><td colspan="5" style="text-align:center;">No hay resultados en áreas internas.</td></tr>`;
-        datosExclusivos.forEach(item => { const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'"); const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}', ${item.Cantidad_Guardados})">✏️</button>` : ''; const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; tbodyExclusivo.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td><span class="badge-subgerente" style="padding:3px 6px; border-radius:5px; font-size:11px;">${item.Categoria}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; });
+        datosExclusivos.forEach(item => { 
+            const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'"); 
+            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}', ${item.Cantidad_Guardados})">✏️</button>` : ''; 
+            const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
+            let infoGrupo = item.GruposNombres ? `<span style="font-size:11px; font-weight:bold; color:var(--success); border:1px solid var(--success); border-radius:4px; padding:2px 4px; display:inline-block; margin-top:4px;">${item.GruposNombres}</span>` : `<span style="font-size:11px; color:gray; font-style:italic; display:inline-block; margin-top:4px;">Sin Slot</span>`;
+            tbodyExclusivo.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${infoGrupo}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
+        });
     }
 
     function abrirModalEditar(id, nombre, categoria, cantidad) { document.getElementById('editIdProd').value = id; document.getElementById('editNombreProd').value = nombre; document.getElementById('editCategoriaProd').value = categoria; document.getElementById('editCantidadProd').value = cantidad; abrirModal('modalEditarProducto'); }
@@ -358,8 +467,7 @@
     function agregarFilaMasivo() { let opciones = listaCategorias.map(c => `<option value="${c.Nombre}">${c.Nombre}</option>`).join(''); const tr = document.createElement('tr'); tr.className = 'fila-masiva'; tr.innerHTML = `<td><input type="text" class="masivo-nombre" required style="width:90%;"></td><td><select class="masivo-cat" style="width:90%;">${opciones}</select></td><td><input type="number" class="masivo-cant" min="1" required style="width:70%;"></td><td><button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">X</button></td>`; document.getElementById('cuerpoMasivo').appendChild(tr); }
     function abrirModalMasivo() { document.getElementById('cuerpoMasivo').innerHTML = ''; agregarFilaMasivo(); abrirModal('modalMasivo'); }
     function guardarIngresoMasivo() { let productos = []; const usuarioAct = nombreUsuario || rolUsuario; document.querySelectorAll('.fila-masiva').forEach(fila => { productos.push({ nombre: fila.querySelector('.masivo-nombre').value, categoria: fila.querySelector('.masivo-cat').value, cantidad_total: parseInt(fila.querySelector('.masivo-cant').value), usuario: usuarioAct }); }); fetch(API_URL + '/masivo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productos) }).then(() => { cerrarModal('modalMasivo'); cargarTabla(); }); }
-    function abrirModalGrupo() { fetch(API_URL).then(res => res.json()).then(data => { const lista = document.getElementById('listaProductosGrupo'); lista.innerHTML = ''; data.forEach(p => { lista.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:10px; cursor:pointer;"><input type="checkbox" class="check-grupo" value="${p.ID_Publicidad}"> <span><strong>${p.Nombre_Material}</strong> <small style="color:var(--btn-success);">Bodega: ${p.Cantidad_Guardados}</small></span></label>`; }); abrirModal('modalGrupo'); }); }
-    function guardarGrupo() { const nombre = document.getElementById('nombreGrupo').value.trim(); const checks = Array.from(document.querySelectorAll('.check-grupo:checked')).map(cb => parseInt(cb.value)); if(!nombre || checks.length === 0) return alert("Faltan datos."); document.getElementById('btnGuardarCaja').disabled = true; fetch(API_GRUPOS, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, productos: checks }) }).then(() => { alert("Grupo creado."); cerrarModal('modalGrupo'); document.getElementById('nombreGrupo').value = ''; cargarTabla(); }).finally(() => { document.getElementById('btnGuardarCaja').disabled = false; }); }
+    
     function abrirFotoEvidencia(btn) { const base64Data = btn.getAttribute('data-foto'); const nuevaPestana = window.open(); nuevaPestana.document.write(`<html><head><title>Evidencia de Merma</title></head><body style="margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh;"><img src="${base64Data}" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow: 0 0 20px rgba(0,0,0,0.8);"></body></html>`); nuevaPestana.document.close(); }
     function revisarSolicitudesPendientes() { Promise.all([fetch(API_RESERVAS).then(r => r.json()), fetch('https://jonassk13.pythonanywhere.com/api/mermas').then(r => r.json())]).then(([reservasData, mermasData]) => { const tbPosters = document.getElementById('tablaAlertasAutorizacion'); tbPosters.innerHTML = ''; const tbMermas = document.getElementById('tablaAlertasMermas'); tbMermas.innerHTML = ''; let hayAlertas = false; if(reservasData.pendientes.length > 0) { hayAlertas = true; reservasData.pendientes.forEach(r => { tbPosters.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td style="display:flex; flex-wrap:wrap; gap:5px;"><button class="btn btn-success" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️</button> <button class="btn btn-danger" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌</button></td></tr>`; }); } else { tbPosters.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin solicitudes de empleados.</td></tr>'; } if(mermasData.length > 0) { hayAlertas = true; mermasData.forEach(m => { let imgHtml = m.Foto_Base64 ? `<div style="margin-top: 10px;"><img src="${m.Foto_Base64}" onclick="abrirFotoEvidencia(this)" data-foto="${m.Foto_Base64}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;" title="Clic para ver en grande" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><br><small style="color:var(--primary); font-size:10px; cursor:pointer;" onclick="this.previousElementSibling.click()">🔍 Ampliar</small></div>` : '<div style="margin-top:10px;"><span style="color:gray;">Sin foto</span></div>'; tbMermas.innerHTML += `<tr><td><strong>${m.Nombre_Material}</strong><br><small>Por: ${m.Usuario_Solicita}</small></td><td>${m.Cantidad} pz</td><td><i>"${m.Motivo}"</i>${imgHtml}</td><td style="display:flex; flex-direction:column; gap:5px;"><button class="btn btn-success" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Autorizar (Tirar)</button> <button class="btn btn-danger" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Negar (Guardar)</button></td></tr>`; }); } else { tbMermas.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin mermas por revisar.</td></tr>'; } if(hayAlertas) { abrirModal('modalAlertasSupervisor'); } }); }
     function autorizarSolicitud(id, accion) { fetch(`${API_RESERVAS}/${id}/autorizar`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({accion}) }).then(() => { cerrarModal('modalAlertasSupervisor'); cargarTabla(); revisarSolicitudesPendientes(); }); }
