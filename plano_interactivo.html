@@ -2,36 +2,69 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plano Interactivo del Cine</title>
     <style>
-        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545;}
-        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
+        :root { 
+            --bg-color: #1a1a1a; 
+            --text-color: #e0e0e0; 
+            --box-bg: #222222; 
+            --border-color: #333; 
+            --primary: #e83e8c; 
+            --success: #198754; 
+            --danger: #dc3545;
+            --warning: #fd7e14; 
+            --teal: #20c997; 
+        }
         
-        body.theme-jacqui { --primary: #0b5345; --danger: #6e2c00; --success: #1e8449; }
-        body.theme-jacqui.dark-mode { --primary: #148f77; --danger: #873600; --success: #27ae60;}
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            margin: 0; 
+            padding: 20px; 
+            transition: background 0.3s, color 0.3s;
+        }
         
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px; background: var(--box-bg); padding: 15px 20px; 
+            border-radius: 8px; border-top: 5px solid var(--primary); 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .header h1 { margin: 0; color: var(--primary); font-size: 24px; display: flex; align-items: center; gap: 10px;}
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; border-top: 5px solid #e83e8c; box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
-        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; display: flex; align-items: center; gap: 5px; justify-content: center;}
         .btn:hover { opacity: 0.8; }
-        .btn-dark { background: #212529; } .btn-warning { background: #fd7e14; } .btn-danger { background: var(--danger); } .btn-primary { background: var(--primary); }
+        .btn-dark { background: #111; border: 1px solid #444; } 
+        .btn-warning { background: var(--warning); color: #fff;} 
+        .btn-danger { background: var(--danger); } 
+        .btn-primary { background: var(--primary); }
+        .btn-teal { background: var(--teal); color: #fff; }
+        .btn-icon { width: 35px; height: 35px; padding: 0; border-radius: 50%; font-size: 16px;}
 
         .layout { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;}
         
-        .mapa-wrapper { flex: 3; min-width: 600px; background: var(--box-bg); padding: 15px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid var(--border-color);}
+        .mapa-wrapper { 
+            flex: 3; min-width: 600px; background: var(--box-bg); padding: 15px; 
+            border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+        }
         
-        .controles-mapa { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: rgba(0,0,0,0.05); padding: 10px; border-radius: 8px; border: 1px dashed var(--border-color);}
-        body.dark-mode .controles-mapa { background: rgba(255,255,255,0.05); }
+        .controles-mapa { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 15px; background: #1a1a1a; padding: 10px 15px; 
+            border-radius: 8px; border: 1px solid #333;
+        }
 
         .zoom-wrapper {
-            width: 100%; aspect-ratio: 1.4; border: 2px solid #555; border-radius: 5px;
-            overflow: hidden; position: relative; background: #e0e0e0; cursor: grab;
+            width: 100%; aspect-ratio: 16/9; border: 2px solid #444; border-radius: 5px;
+            overflow: hidden; position: relative; background: #f8f9fa; cursor: grab;
         }
         .zoom-wrapper:active { cursor: grabbing; }
 
         .plano-container {
-            width: 100%; height: 100%; background-image: url('plano_cine.jpg'); 
+            width: 100%; height: 100%; 
+            background-image: url('plano_cine.jpg'); 
             background-size: contain; background-repeat: no-repeat; background-position: center; 
             transform-origin: top left; transition: transform 0.05s ease-out; position: relative;
         }
@@ -39,47 +72,80 @@
         .marcador-mini {
             position: absolute; background: var(--success); color: white;
             border-radius: 4px; font-weight: bold; display: flex; align-items: center; justify-content: center;
-            border: 2px solid white; box-shadow: 0 3px 6px rgba(0,0,0,0.5); user-select: none; z-index: 10;
+            border: 1px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.5); user-select: none; z-index: 10;
         }
         .marcador-mini.modo-edicion { cursor: grab; }
         .marcador-mini.modo-edicion:active { cursor: grabbing; transform: scale(1.3); z-index: 100;}
-        
         .marcador-mini.vacio { background: #808080; border-color: #ccc; opacity: 0.8;}
-        .marcador-mini.error { background: var(--danger); animation: parpadeoError 1s infinite alternate; z-index: 20;}
-        
-        @keyframes parpadeoError { from { box-shadow: 0 0 5px red;} to { box-shadow: 0 0 15px red;} }
+        .marcador-mini.error { background: var(--danger); box-shadow: 0 0 10px var(--danger), 0 0 20px var(--danger); z-index: 20;}
 
-        .panel-conflictos { flex: 1; min-width: 300px; background: var(--box-bg); padding: 20px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid var(--border-color);}
+        .panel-conflictos { 
+            flex: 1; min-width: 320px; background: var(--box-bg); padding: 20px; 
+            border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+        }
+        .panel-conflictos h3 { margin-top:0; color: var(--teal); font-size: 18px; margin-bottom: 10px;}
+        
         .lista-peliculas { list-style: none; padding: 0; margin: 0; max-height: 70vh; overflow-y: auto;}
-        .lista-peliculas li { padding: 10px; border-bottom: 1px dashed var(--border-color); font-size: 14px; display: flex; align-items: center; gap: 10px;}
-        .num-badge { background: #555; color: white; padding: 3px 7px; border-radius: 4px; font-weight: bold; font-size: 12px; min-width: 15px; text-align: center;}
+        .lista-peliculas li { 
+            padding: 12px; background: #1a1a1a; margin-bottom: 8px; border-radius: 6px;
+            font-size: 14px; display: flex; align-items: flex-start; gap: 12px; border: 1px solid #333;
+        }
+        .num-badge { 
+            background: #555; color: white; padding: 3px 6px; border-radius: 4px; 
+            font-weight: bold; font-size: 12px; min-width: 18px; text-align: center; border: 1px solid white;
+        }
         .num-badge.lleno { background: var(--success); }
-        .num-badge.error { background: var(--danger); animation: parpadeoError 1s infinite alternate;}
-        .conflicto-rojo { color: var(--danger); font-weight: bold; background: rgba(220, 53, 69, 0.05); border-radius: 5px; }
+        .num-badge.error { background: var(--danger); box-shadow: 0 0 8px var(--danger);}
+        
+        .conflicto-rojo { border-color: var(--danger) !important; background: rgba(220, 53, 69, 0.05) !important;}
+        .texto-conflicto { color: var(--warning); font-weight: bold;}
+        .subtexto-conflicto { color: var(--warning); font-size: 11px;}
+
+        body.theme-amanecer { background-image: linear-gradient(to bottom, rgba(168, 230, 207, 0.4), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; background-attachment: fixed !important; background-size: cover !important;}
+        body.theme-atardecer { background-image: linear-gradient(to bottom, rgba(255, 110, 64, 0.45), rgba(42, 8, 69, 0.95)), url('https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; background-attachment: fixed !important; background-size: cover !important;}
+        body.theme-noche { background-image: linear-gradient(to bottom, rgba(10, 25, 47, 0.7), rgba(2, 6, 12, 0.98)), url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; background-attachment: fixed !important; background-size: cover !important;}
+        
+        body[class*="theme-"] .header, 
+        body[class*="theme-"] .mapa-wrapper, 
+        body[class*="theme-"] .panel-conflictos, 
+        body[class*="theme-"] .modal-content { 
+            background: rgba(20, 20, 20, 0.75) !important; 
+            backdrop-filter: blur(10px); 
+            border-color: rgba(255,255,255,0.2) !important; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
+        }
+        body[class*="theme-"] .controles-mapa, body[class*="theme-"] .lista-peliculas li {
+            background: rgba(0,0,0,0.5) !important; border-color: rgba(255,255,255,0.1) !important;
+        }
+
+        /* MODALES */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 450px; position: relative;}
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-color); background: none; border: none; padding: 0;}
+        input { width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 5px; border: 1px solid var(--border-color); box-sizing: border-box; background: #333; color: white;}
     </style>
 </head>
 <body>
 
 <div class="header">
-    <h1 style="margin:0; color: #e83e8c;">📍 Plano Interactivo: Próximos Estrenos</h1>
+    <h1>📍 Plano Interactivo: Próximos Estrenos</h1>
     <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
 </div>
 
 <div class="layout">
     <div class="mapa-wrapper">
-        
         <div class="controles-mapa" id="panelControles">
-            <div>
-                <button id="btnModoEdicion" class="btn btn-warning" onclick="toggleModoEdicion()" style="display: none;">🔓 Editar Posiciones</button>
-                <span id="controlTamaño" style="display:none; margin-left: 15px; font-weight: bold; font-size: 14px;">
-                    Tamaño: <input type="range" id="sizeSlider" min="15" max="50" onchange="guardarTamaño(this.value)" oninput="actualizarTamañoEnVivo(this.value)">
+            <div style="display:flex; align-items:center;">
+                <button id="btnModoEdicion" class="btn btn-warning" onclick="toggleModoEdicion()" style="display: none;">⚙️ Editar Posiciones</button>
+                <span id="controlTamaño" style="display:none; margin-left: 15px; font-weight: bold; font-size: 13px; color: gray;">
+                    Tamaño Marcador: <input type="range" id="sizeSlider" min="15" max="50" style="width:100px; vertical-align:middle; margin:0;" onchange="guardarTamaño(this.value)" oninput="actualizarTamañoEnVivo(this.value)">
                 </span>
             </div>
-            <div>
-                <span style="font-size: 13px; color: gray; margin-right: 10px;" id="textoInstruccion">Usa la rueda del ratón para Zoom. Arrastra el fondo para moverte.</span>
-                <button class="btn btn-dark" onclick="aplicarZoom(0.2)">🔍 +</button>
-                <button class="btn btn-dark" onclick="aplicarZoom(-0.2)">🔎 -</button>
-                <button class="btn btn-primary" onclick="resetearVista()">🔄 Centrar</button>
+            <div style="display:flex; align-items:center; gap: 8px;">
+                <span style="font-size: 12px; color: gray; margin-right: 15px;" id="textoInstruccion">Usa la rueda del ratón para Zoom. Arrastra el fondo para moverte.</span>
+                <button class="btn btn-dark btn-icon" onclick="aplicarZoom(0.2)">➕</button>
+                <button class="btn btn-dark btn-icon" onclick="aplicarZoom(-0.2)">➖</button>
+                <button class="btn btn-teal" onclick="resetearVista()">🎯 Centrar</button>
             </div>
         </div>
         
@@ -89,24 +155,39 @@
     </div>
 
     <div class="panel-conflictos">
-        <h3 style="margin-top:0; color:var(--primary);">Control de Posiciones</h3>
-        <p style="font-size:12px; color:gray;">Los marcadores en rojo ⚠️ indican que ese póster también está activo en la Cartelera Principal y deberías retirarlo de aquí.</p>
+        <h3>Control de Posiciones</h3>
+        <p style="font-size:12px; color:gray; margin-top:0; margin-bottom:15px; line-height:1.4;">Los marcadores en rojo ⚠️ indican que ese póster también está activo en la Cartelera Principal y deberías retirarlo de aquí.</p>
         <ul class="lista-peliculas" id="listaAnalisis">
             <li>Analizando ubicaciones...</li>
         </ul>
     </div>
 </div>
 
+<div id="modalConfig" class="modal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="cerrarModal('modalConfig')">&times;</button>
+        <h2 style="margin-top: 0; color:var(--teal);">⚙️ Configurar Mapa</h2>
+        <p>¿Cuántos pines / estantes necesitas monitorear?</p>
+        <input type="number" id="inputTotalPines" min="1" max="100" onkeydown="if(event.key==='Enter') guardarConfig()">
+        <button class="btn btn-teal" style="width:100%;" onclick="guardarConfig()">Guardar y Regenerar Mapa</button>
+    </div>
+</div>
+
 <script>
+    document.addEventListener('keydown', event => { 
+        if (event.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+    });
+
     const API_CARTELERAS = 'https://jonassk13.pythonanywhere.com/api/carteleras';
     const API_ESTRENOS = 'https://jonassk13.pythonanywhere.com/api/estrenos';
     const API_CONFIG_MAPA = 'https://jonassk13.pythonanywhere.com/api/config/mapa';
     const API_CONFIG_SIZE = 'https://jonassk13.pythonanywhere.com/api/config/size';
     
     let rolUsuario = localStorage.getItem('rolCine') || 'General';
+    let nombreUsuario = localStorage.getItem('nombreCine') || '';
     let posicionesGuardadas = {};
     let isEditing = false;
-    let marcadorSize = 26;
+    let marcadorSize = 20; 
 
     let currentScale = 1;
     let translateX = 0;
@@ -114,18 +195,28 @@
     let isDraggingMap = false;
     let startX, startY;
 
+    function aplicarTemasMagicos() {
+        if(rolUsuario !== 'Subgerente') return; 
+        if(nombreUsuario.toLowerCase().includes('jacqui') || nombreUsuario.toLowerCase().includes('jacqueline')) {
+            let hora = new Date().getHours();
+            if (hora >= 6 && hora < 12) { document.body.classList.add('theme-amanecer'); } 
+            else if (hora >= 12 && hora < 19) { document.body.classList.add('theme-atardecer'); } 
+            else { document.body.classList.add('theme-noche'); }
+        } else { document.body.classList.add('theme-jacqui'); }
+    }
+
     window.onload = () => {
-        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        if(rolUsuario === 'Subgerente') document.body.classList.add('theme-jacqui');
-        
+        document.body.classList.add('dark-mode'); 
         if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente') {
-            document.getElementById('btnModoEdicion').style.display = 'inline-block';
+            document.getElementById('btnModoEdicion').style.display = 'flex';
         }
-        
+        aplicarTemasMagicos();
         inicializarPlano();
     };
 
-    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
+    function toggleDarkMode() { document.body.classList.toggle('dark-mode'); }
+    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; setTimeout(()=> { let inputs = document.getElementById(id).getElementsByTagName('input'); if(inputs.length>0) inputs[0].focus(); }, 100); }
+    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
     async function inicializarPlano() {
         const resCartelera = await fetch(API_CARTELERAS); const dataCartelera = await resCartelera.json();
@@ -133,7 +224,7 @@
         const resPos = await fetch(API_CONFIG_MAPA); const dataPos = await resPos.json();
         const resSize = await fetch(API_CONFIG_SIZE); const dataSize = await resSize.json();
 
-        marcadorSize = parseInt(dataSize.size) || 26;
+        marcadorSize = parseInt(dataSize.size) || 20;
         document.getElementById('sizeSlider').value = marcadorSize;
 
         try { posicionesGuardadas = JSON.parse(dataPos.posicion); if (posicionesGuardadas.top) posicionesGuardadas = {}; } catch(e) { posicionesGuardadas = {}; }
@@ -150,8 +241,22 @@
             let tituloPeli = estaVacio ? `<span style="color:gray;"><em>Espacio Vacío</em></span>` : est.Nombre_Material;
             let claseBadge = estaVacio ? '' : (tieneConflicto ? 'error' : 'lleno');
             
-            if (tieneConflicto) { listaUI.innerHTML += `<li class="conflicto-rojo"><span class="num-badge ${claseBadge}">${est.ID_Slot}</span> <div>⚠️ <b>${tituloPeli}</b> <br><small>Quitar: Ya está en cartelera</small></div></li>`; } 
-            else { listaUI.innerHTML += `<li><span class="num-badge ${claseBadge}">${est.ID_Slot}</span> ${tituloPeli}</li>`; }
+            if (tieneConflicto) { 
+                listaUI.innerHTML += `
+                <li class="conflicto-rojo">
+                    <span class="num-badge ${claseBadge}">${est.ID_Slot}</span> 
+                    <div>
+                        <span class="texto-conflicto">⚠️ ${tituloPeli}</span><br>
+                        <span class="subtexto-conflicto">Quitar: Ya está en cartelera</span>
+                    </div>
+                </li>`; 
+            } else { 
+                listaUI.innerHTML += `
+                <li>
+                    <span class="num-badge ${claseBadge}">${est.ID_Slot}</span> 
+                    <span style="color: #ddd;">${tituloPeli}</span>
+                </li>`; 
+            }
 
             let marker = document.createElement('div');
             marker.className = 'marcador-mini';
@@ -182,15 +287,15 @@
         const txt = document.getElementById('textoInstruccion');
 
         if (isEditing) {
-            btn.innerText = "🔒 Confirmar y Bloquear Posiciones";
+            btn.innerHTML = "🔒 Guardar Posiciones";
             btn.className = "btn btn-danger";
             slider.style.display = 'inline';
-            txt.innerText = "Arrastra los números para moverlos. Zoom desactivado.";
+            txt.innerText = "Arrastra los marcadores. (Zoom desactivado)";
             resetearVista(); 
             document.querySelectorAll('.marcador-mini').forEach(m => m.classList.add('modo-edicion'));
             document.getElementById('zoomWrapper').style.cursor = 'default';
         } else {
-            btn.innerText = "🔓 Editar Posiciones";
+            btn.innerHTML = "⚙️ Editar Posiciones";
             btn.className = "btn btn-warning";
             slider.style.display = 'none';
             txt.innerText = "Usa la rueda del ratón para Zoom. Arrastra el fondo para moverte.";
