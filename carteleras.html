@@ -109,9 +109,7 @@
         <button class="btn btn-warning" onclick="guardarCarteleraEnHistorial()">💾 Guardar Semana Actual</button>
         <button class="btn btn-info" onclick="document.getElementById('archivoExcel').click()">🪄 Sugerir por Excel</button>
         <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
-        
         <button id="btnLimpiarObsoletos" class="btn btn-danger" style="display:none; animation: parpadeo 1.5s infinite alternate;" onclick="desmontarListaObsoletos()">🧹 Desmontar Obsoletos</button>
-        
         <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Nueva Semana</button>
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
     </div>
@@ -154,13 +152,11 @@
         
         <div style="margin-bottom: 10px; background: rgba(13, 110, 253, 0.1); padding: 8px; border-radius: 5px; border: 1px solid var(--primary);">
             <label style="font-size:13px; font-weight:bold; cursor:pointer; color:var(--primary); display:flex; align-items:center; gap:8px;">
-                <input type="checkbox" id="chkManual" onchange="toggleManualMode()" style="width: auto; margin:0;"> 
-                ✍️ No tengo póster físico (Escribir título a mano)
+                <input type="checkbox" id="chkManual" onchange="toggleManualMode()" style="width: auto; margin:0;"> ✍️ No tengo póster físico (Escribir a mano)
             </label>
         </div>
         
         <select id="selectorPosters"><option value="">Cargando pósters en bodega...</option></select>
-        
         <input type="text" id="inputTituloManual" placeholder="Escribe el nombre de la película aquí..." style="display:none; border:2px solid var(--primary);" onkeydown="if(event.key==='Enter') guardarAsignacion()">
         
         <div id="panelMetadatos" style="background: rgba(0,0,0,0.05); padding:10px; border-radius:5px; margin-bottom:15px; border: 1px dashed gray;">
@@ -193,36 +189,17 @@
     const API_ESTRENOS = 'https://jonassk13.pythonanywhere.com/api/estrenos'; 
     const API_HISTORIAL_SEMANAS = 'https://jonassk13.pythonanywhere.com/api/carteleras/historial';
     
-    let slotSeleccionado = null;
-    let sugerenciasGlobales = [];
-    let obsoletosGlobales = [];
-    let numeroSemanaSugerida = null;
-    let carteleraVirtual = [];
-    
-    let rolUsuario = localStorage.getItem('rolCine') || 'General';
-    let nombreUsuario = localStorage.getItem('nombreCine') || '';
+    let slotSeleccionado = null; let sugerenciasGlobales = []; let obsoletosGlobales = []; let numeroSemanaSugerida = null; let carteleraVirtual = [];
+    let rolUsuario = localStorage.getItem('rolCine') || 'General'; let nombreUsuario = localStorage.getItem('nombreCine') || '';
 
     function aplicarTemasMagicos() {
         if(rolUsuario !== 'Subgerente') return; 
         if(nombreUsuario.toLowerCase().includes('jacqui') || nombreUsuario.toLowerCase().includes('jacqueline')) {
             document.body.classList.add('theme-bosque-pinos');
-            let hora = new Date().getHours(); let colorSombra = "";
-            if (hora >= 6 && hora < 12) { document.body.classList.add('theme-amanecer'); colorSombra = "rgba(168, 230, 207, 0.8)"; } 
-            else if (hora >= 12 && hora < 19) { document.body.classList.add('theme-atardecer'); colorSombra = "rgba(255,165,0,0.8)"; } 
-            else { document.body.classList.add('theme-noche'); colorSombra = "rgba(100, 255, 218, 0.8)"; }
-            
-            let audio = new Audio('https://actions.google.com/sounds/v1/nature/wind_in_trees.ogg');
-            audio.volume = 0.6; audio.play().catch(e => console.log("Autoplay bloqueado"));
-
-            for(let i=0; i<25; i++) {
-                let pino = document.createElement('div');
-                pino.innerText = '🌲';
-                pino.style.cssText = `position:fixed; bottom:-100px; left:${Math.random()*100}vw; font-size:${Math.random()*60 + 40}px; filter: drop-shadow(0px 0px 8px ${colorSombra}); z-index:99999; transition: transform 3s ease-out, opacity 4s; opacity:0; pointer-events:none;`;
-                document.body.appendChild(pino);
-                setTimeout(() => { pino.style.transform = `translateY(-${Math.random()*300 + 100}px)`; pino.style.opacity = 1; }, 100 + (i*50)); 
-                setTimeout(() => { pino.style.opacity = 0; }, 4000); setTimeout(() => { pino.remove(); }, 6000);
-            }
-            setTimeout(() => { let fadeOut = setInterval(() => { if(audio.volume > 0.1) audio.volume -= 0.1; else { audio.pause(); clearInterval(fadeOut); } }, 200); }, 5000);
+            let hora = new Date().getHours();
+            if (hora >= 6 && hora < 12) { document.body.classList.add('theme-amanecer'); } 
+            else if (hora >= 12 && hora < 19) { document.body.classList.add('theme-atardecer'); } 
+            else { document.body.classList.add('theme-noche'); }
         } else {
             document.body.classList.add('theme-jacqui');
         }
@@ -260,7 +237,6 @@
 
         fetch(API_CARTELERAS).then(res => res.json()).then(data => {
             carteleraVirtual = data;
-            
             document.getElementById('taquilla-pluus').innerHTML = [1, 2].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
             document.getElementById('taquilla-4dx').innerHTML = [3, 4].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
             document.getElementById('taquilla-screenx').innerHTML = [5, 6].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
@@ -277,63 +253,47 @@
     }
 
     function generarBotonLiberar(c) {
-        let esManual = (c.Titulo_Manual && c.Titulo_Manual !== "");
-        let texto = esManual ? "Borrar Letrero" : "Desmontar";
+        let esManual = (c.Titulo_Manual && c.Titulo_Manual !== ""); let texto = esManual ? "Borrar Letrero" : "Desmontar";
         return `<button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">${texto}</button>`;
     }
 
     function crearMuroSlot(c) {
-        if(!c) return '';
-        const esManual = c.Titulo_Manual && c.Titulo_Manual !== "";
-        const estaLleno = c.ID_Publicidad !== null || esManual;
+        if(!c) return ''; const esManual = c.Titulo_Manual && c.Titulo_Manual !== ""; const estaLleno = c.ID_Publicidad !== null || esManual;
         const clase = estaLleno ? 'muro-slot lleno' : 'muro-slot';
-        
         let extras = '';
         if(estaLleno) {
             let badgeRegla = c.Clasificacion ? `<div style="margin-top:5px; font-size:10px; color:var(--warning); border:1px dashed var(--warning); padding:2px; border-radius:3px;">${c.Clasificacion}</div>` : '';
             let badgeIdioma = c.Idioma ? `<span class="badge-idioma" style="margin-top:5px; display:inline-block;">${c.Idioma}</span>` : '';
             extras = `<div>${badgeIdioma}${badgeRegla}</div>`;
         }
-
         let nombreVisual = esManual ? c.Titulo_Manual + ' ✍️' : c.Nombre_Material;
-        const contenido = estaLleno 
-            ? `<span class="poster-nombre">${nombreVisual}</span>${extras}${generarBotonLiberar(c)}`
-            : `<span style="color:gray; font-size:12px;">Slot #${c.ID_Slot}<br>Clic para Instalar</span>`;
+        const contenido = estaLleno ? `<span class="poster-nombre">${nombreVisual}</span>${extras}${generarBotonLiberar(c)}` : `<span style="color:gray; font-size:12px;">Slot #${c.ID_Slot}<br>Clic para Instalar</span>`;
         return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, 'Muro de Taquilla', ${estaLleno})">${contenido}</div>`;
     }
 
     function crearSlotEstandar(c) {
-        if(!c) return '';
-        const esManual = c.Titulo_Manual && c.Titulo_Manual !== "";
-        const estaLleno = c.ID_Publicidad !== null || esManual;
+        if(!c) return ''; const esManual = c.Titulo_Manual && c.Titulo_Manual !== ""; const estaLleno = c.ID_Publicidad !== null || esManual;
         const clase = estaLleno ? 'slot lleno' : 'slot';
-        
         let extras = '';
         if(estaLleno) {
             let badgeRegla = c.Clasificacion ? `<div style="margin-top:5px; font-size:11px; font-weight:bold; color:var(--success); border:1px dashed var(--success); padding:3px; border-radius:5px;">${c.Clasificacion}</div>` : '';
             let badgeIdioma = c.Idioma ? `<span class="badge-idioma" style="margin-top:5px; display:inline-block;">${c.Idioma}</span>` : '';
             extras = `<div>${badgeIdioma}${badgeRegla}</div>`;
         }
-
         let nombreVisual = esManual ? c.Titulo_Manual + ' ✍️' : c.Nombre_Material;
-        const contenido = estaLleno 
-            ? `<span class="poster-nombre">${nombreVisual}</span>${extras}${generarBotonLiberar(c)}`
-            : `<span style="color:gray;">Espacio Vacío</span>`;
+        const contenido = estaLleno ? `<span class="poster-nombre">${nombreVisual}</span>${extras}${generarBotonLiberar(c)}` : `<span style="color:gray;">Espacio Vacío</span>`;
         return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})"><div class="slot-numero">Espacio #${c.ID_Slot}</div><div class="slot-titulo">${c.Ubicacion}</div>${contenido}</div>`;
     }
 
     function limpiarTituloDCP(titulo) {
-        if (!titulo) return "";
-        let limpio = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        if (!titulo) return ""; let limpio = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         limpio = limpio.replace(/\b(ESP|SUB|3D|IMAX|4DX|SJ|XE|ATMOS|SP|LED|SCREENX|2D|FINB|Live Action|Versión Extendida)\b/gi, '');
-        limpio = limpio.replace(/[^a-zA-Z0-9\s]/g, '');
-        return limpio.replace(/\s+/g, ' ').trim().toLowerCase();
+        return limpio.replace(/[^a-zA-Z0-9\s]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
     }
 
     function coinciden(tituloPoster, tituloExcel) {
         if(!tituloPoster || !tituloExcel) return false;
-        let t1 = limpiarTituloDCP(tituloPoster); 
-        let t2 = limpiarTituloDCP(tituloExcel);  
+        let t1 = limpiarTituloDCP(tituloPoster); let t2 = limpiarTituloDCP(tituloExcel);  
         let t1SinEspacios = t1.replace(/\s+/g, ''); let t2SinEspacios = t2.replace(/\s+/g, '');
         if(t1SinEspacios === t2SinEspacios || t1SinEspacios.includes(t2SinEspacios) || t2SinEspacios.includes(t1SinEspacios)) return true;
         let words = t1.split(' '); let acronym = words.map(w => w[0]).join('');
@@ -341,35 +301,26 @@
         return false;
     }
 
-
     function procesarExcel(event) {
-        const file = event.target.files[0];
-        if (!file) return;
+        const file = event.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, {type: 'array'});
-            
-            let isTMS = false; let isRegional = false;
-            let headerRowIndex = -1; let colSala = -1, colPeli = -1, colClasif = -1;
+            const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'});
+            let isTMS = false; let isRegional = false; let headerRowIndex = -1; let colSala = -1, colPeli = -1, colClasif = -1;
             let sheetToUse = null; let datosParsed = null;
 
             for(let sheetName of workbook.SheetNames) {
-                const worksheet = workbook.Sheets[sheetName];
-                const jsonRaw = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-                
+                const worksheet = workbook.Sheets[sheetName]; const jsonRaw = XLSX.utils.sheet_to_json(worksheet, {header: 1});
                 for(let i=0; i<Math.min(15, jsonRaw.length); i++) {
                     let row = jsonRaw[i];
                     if(row) {
                         let rowStr = row.map(c => String(c).toUpperCase().trim());
                         if(rowStr.includes('AUDITORIUM') && rowStr.includes('FEATURE')) {
-                            isTMS = true; headerRowIndex = i;
-                            colSala = rowStr.indexOf('AUDITORIUM'); colPeli = rowStr.indexOf('FEATURE'); colClasif = rowStr.indexOf('FEATURE_RATING');
+                            isTMS = true; headerRowIndex = i; colSala = rowStr.indexOf('AUDITORIUM'); colPeli = rowStr.indexOf('FEATURE'); colClasif = rowStr.indexOf('FEATURE_RATING');
                             sheetToUse = worksheet; datosParsed = jsonRaw; break;
                         }
                         if(rowStr.includes('PELÍCULA') && rowStr.includes('SALA')) {
-                            isRegional = true; headerRowIndex = i;
-                            colSala = rowStr.indexOf('SALA'); colPeli = rowStr.indexOf('PELÍCULA');
+                            isRegional = true; headerRowIndex = i; colSala = rowStr.indexOf('SALA'); colPeli = rowStr.indexOf('PELÍCULA');
                             sheetToUse = worksheet; datosParsed = jsonRaw; break;
                         }
                     }
@@ -381,8 +332,7 @@
             else if(isRegional) generarSugerenciasRegional(XLSX.utils.sheet_to_json(sheetToUse, {range: headerRowIndex}));
             else alert("⚠️ Formato no reconocido. Usa el Excel Regional (SALA, PELÍCULA) o el reporte TMS (AUDITORIUM, FEATURE).");
         };
-        reader.readAsArrayBuffer(file);
-        event.target.value = '';
+        reader.readAsArrayBuffer(file); event.target.value = '';
     }
 
     function generarSugerenciasTMS(jsonRaw, headerRowIndex, colSala, colPeli, colClasif) {
@@ -390,22 +340,11 @@
         let hoy = new Date(); let hoyNum = parseInt(hoy.getFullYear() + String(hoy.getMonth()+1).padStart(2,'0') + String(hoy.getDate()).padStart(2,'0'));
 
         for(let i = headerRowIndex + 1; i < jsonRaw.length; i++) {
-            let row = jsonRaw[i];
-            if(!row || !row[colSala] || !row[colPeli]) continue;
-            
-            let salaStr = String(row[colSala]);
-            let feature = String(row[colPeli]);
-            let clasifRaw = colClasif !== -1 ? String(row[colClasif] || '') : '';
-            
-            let numMatch = salaStr.match(/\d+/);
-            if(!numMatch) continue;
-            let salaNum = parseInt(numMatch[0]);
-            
-            let dateMatch = feature.match(/_(\d{8})_/);
-            let dateNum = dateMatch ? parseInt(dateMatch[1]) : 0;
-            
-            let titleMatch = feature.match(/^([A-Z0-9\-]+)_/);
-            let peliLimpia = titleMatch ? titleMatch[1] : feature;
+            let row = jsonRaw[i]; if(!row || !row[colSala] || !row[colPeli]) continue;
+            let salaStr = String(row[colSala]); let feature = String(row[colPeli]); let clasifRaw = colClasif !== -1 ? String(row[colClasif] || '') : '';
+            let numMatch = salaStr.match(/\d+/); if(!numMatch) continue; let salaNum = parseInt(numMatch[0]);
+            let dateMatch = feature.match(/_(\d{8})_/); let dateNum = dateMatch ? parseInt(dateMatch[1]) : 0;
+            let titleMatch = feature.match(/^([A-Z0-9\-]+)_/); let peliLimpia = titleMatch ? titleMatch[1] : feature;
             
             if (!peliculasPorSala[salaNum]) peliculasPorSala[salaNum] = [];
             peliculasPorSala[salaNum].push({ titulo: peliLimpia, fecha: dateNum, clasif: clasifRaw });
@@ -423,20 +362,15 @@
         for (let s = 1; s <= 20; s++) {
             if(peliculasPorSala[s] && peliculasPorSala[s].length > 0) {
                 peliculasPorSala[s].sort((a, b) => b.fecha - a.fecha);
-                let unicos = [];
-                for(let item of peliculasPorSala[s]) { if(!unicos.includes(item.titulo)) unicos.push(item.titulo); }
+                let unicos = []; for(let item of peliculasPorSala[s]) { if(!unicos.includes(item.titulo)) unicos.push(item.titulo); }
                 topPorSala[s] = unicos;
             } else topPorSala[s] = [];
         }
-        
         ejecutarFaseSugerencias(topPorSala, metaPeliculas, hoyNum);
     }
 
     function generarSugerenciasRegional(datosRegional) {
-        let datosMorelia = datosRegional.filter(row => {
-            let cine = (row['Cine'] || '').toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            return cine.includes('cinepolis plaza morelia') || cine.includes('plaza morelia');
-        });
+        let datosMorelia = datosRegional.filter(row => { let cine = (row['Cine'] || '').toString().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); return cine.includes('cinepolis plaza morelia') || cine.includes('plaza morelia'); });
         if (datosMorelia.length === 0) { alert("⚠️ Error: No se encontró 'Cinepolis Plaza Morelia' en el Excel."); return; }
 
         let conteoSala = {}; let metaPeliculas = {};
@@ -446,36 +380,28 @@
                 let peliLimpia = peliRaw.trim();
                 if (!conteoSala[sala]) conteoSala[sala] = {};
                 conteoSala[sala][peliLimpia] = (conteoSala[sala][peliLimpia] || 0) + 1;
-
                 if (!metaPeliculas[peliLimpia]) metaPeliculas[peliLimpia] = { esp: false, sub: false, maxFecha: 0, clasif: '' };
                 let upper = peliRaw.toUpperCase();
                 if (upper.includes('ESP') || upper.includes('DOB')) metaPeliculas[peliLimpia].esp = true;
                 if (upper.includes('SUB')) metaPeliculas[peliLimpia].sub = true;
             }
         });
-
         let topPorSala = {};
         for (let s = 1; s <= 20; s++) { topPorSala[s] = conteoSala[s] ? Object.keys(conteoSala[s]).sort((a, b) => conteoSala[s][b] - conteoSala[s][a]) : []; }
-        
         ejecutarFaseSugerencias(topPorSala, metaPeliculas, 0); 
     }
 
     function ejecutarFaseSugerencias(topPorSala, metaPeliculas, hoyNum) {
         obsoletosGlobales = []; let seQuedanData = []; let aMudarData = [];
-
         carteleraVirtual.forEach(c => {
             const estaLleno = (c.ID_Publicidad !== null) || (c.Titulo_Manual && c.Titulo_Manual !== "");
             if(estaLleno) {
                 let nombreActual = c.ID_Publicidad ? c.Nombre_Material : c.Titulo_Manual;
-                
-                let isSalaNormal = c.ID_Slot >= 8 && c.ID_Slot <= 23;
-                let numSala = c.ID_Slot - 7;
-                
+                let isSalaNormal = c.ID_Slot >= 8 && c.ID_Slot <= 23; let numSala = c.ID_Slot - 7;
                 let matchPropiaSala = false;
                 if(isSalaNormal && topPorSala[numSala] && topPorSala[numSala].length > 0) {
                     for(let topPeli of topPorSala[numSala]) { if(coinciden(nombreActual, topPeli)) { matchPropiaSala = true; break; } }
                 }
-                
                 if(matchPropiaSala) { seQuedanData.push(c.ID_Slot); } 
                 else {
                     let sirveParaOtra = false; let salaDestino = null;
@@ -496,8 +422,7 @@
         aMudarData.forEach(item => { let div = document.getElementById('slot-div-' + item.slotOrigen); let nombreDestino = carteleraVirtual.find(x=>x.ID_Slot===item.slotDestino).Ubicacion; if(div) { div.style.borderColor = 'var(--warning)'; div.innerHTML += `<div style="background:var(--warning); color:black; font-size:11px; padding:5px; margin-top:10px; border-radius:5px; font-weight:bold;">➡️ MOVER A ${nombreDestino.toUpperCase()}</div>`; } });
 
         if(obsoletosGlobales.length > 0) {
-            const btnLimpiar = document.getElementById('btnLimpiarObsoletos');
-            btnLimpiar.style.display = 'inline-block'; btnLimpiar.innerText = `🧹 Desmontar ${obsoletosGlobales.length} Obsoletos`;
+            const btnLimpiar = document.getElementById('btnLimpiarObsoletos'); btnLimpiar.style.display = 'inline-block'; btnLimpiar.innerText = `🧹 Desmontar ${obsoletosGlobales.length} Obsoletos`;
         }
 
         let topSP = [...new Set([...(topPorSala[1]||[]), ...(topPorSala[4]||[])])]; 
@@ -505,7 +430,6 @@
 
         Promise.all([fetch(API_INVENTARIO).then(r => r.json()), fetch(API_ESTRENOS).then(r => r.json())]).then(([inventarioData, estrenosData]) => {
             sugerenciasGlobales = []; let usadosIds = new Set(); let peliculasEnMuro = new Set();
-
             function buscarPosterInteligente(peliLimpia) {
                 if (peliculasEnMuro.has(peliLimpia)) return null; 
                 for (let p of inventarioData) {
@@ -530,14 +454,9 @@
                         usadosIds.add(match.posterId); peliculasEnMuro.add(peli);
                         let meta = metaPeliculas[peli] || { esp: false, sub: false, maxFecha: 0, clasif: '' };
                         let idiomaText = ""; if (meta.esp) idiomaText = "Doblada al español"; else if (meta.sub) idiomaText = "Subtitulada";
-                        
                         let reglaCalculada = reglaPredeterminada;
-                        if(hoyNum > 0 && meta.maxFecha > 0) {
-                            let diff = hoyNum - meta.maxFecha;
-                            if(diff <= 7 || diff < 0) reglaCalculada = "1️⃣ Prioridad 1: Estreno";
-                        }
-                        sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], match: match, idioma: idiomaText, clasificacion: meta.clasif ? `${reglaCalculada} (${meta.clasif})` : reglaCalculada });
-                        asignados++;
+                        if(hoyNum > 0 && meta.maxFecha > 0) { let diff = hoyNum - meta.maxFecha; if(diff <= 7 || diff < 0) reglaCalculada = "1️⃣ Prioridad 1: Estreno"; }
+                        sugerenciasGlobales.push({ slot: slotsPermitidos[asignados], match: match, idioma: idiomaText, clasificacion: meta.clasif ? `${reglaCalculada} (${meta.clasif})` : reglaCalculada }); asignados++;
                     }
                 }
             }
@@ -572,12 +491,8 @@
             let slotDiv = document.getElementById('slot-div-' + sug.slot);
             if (slotDiv && !slotDiv.classList.contains('lleno')) {
                 let m = sug.match; let bgStyle, badge, btnText;
-                
-                if (m.origen === 'estrenos') { 
-                    bgStyle = "background: rgba(111, 66, 193, 0.15); border: 2px solid #6f42c1; color: var(--text-color);"; badge = `<span style="color:#6f42c1; font-size:11px; font-weight:bold;">🟪 Bajar de Estrenos</span><br>`; btnText = "🔄 Bajar a Cartelera"; 
-                } else { 
-                    bgStyle = "background: rgba(13, 202, 240, 0.15); border: 2px solid #0dcaf0; color: var(--text-color);"; badge = `<span style="color:#0dcaf0; font-size:11px; font-weight:bold;">🟦 Sacar de Bodega</span><br>`; btnText = "✔️ Colgar Póster"; 
-                }
+                if (m.origen === 'estrenos') { bgStyle = "background: rgba(111, 66, 193, 0.15); border: 2px solid #6f42c1; color: var(--text-color);"; badge = `<span style="color:#6f42c1; font-size:11px; font-weight:bold;">🟪 Bajar de Estrenos</span><br>`; btnText = "🔄 Bajar a Cartelera"; } 
+                else { bgStyle = "background: rgba(13, 202, 240, 0.15); border: 2px solid #0dcaf0; color: var(--text-color);"; badge = `<span style="color:#0dcaf0; font-size:11px; font-weight:bold;">🟦 Sacar de Bodega</span><br>`; btnText = "✔️ Colgar Póster"; }
 
                 if(slotDiv.classList.contains('muro-slot')) bgStyle += " color: white;";
 
@@ -598,7 +513,7 @@
         });
         
         const btnAll = document.getElementById('btnInstalarTodas');
-        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Auto-Asignar ${aplicadas} pósters de la Semana ${numeroSemanaSugerida||'Nueva'}`; } 
+        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Auto-Asignar ${aplicadas} pósters nuevos`; } 
     }
 
     async function desmontarListaObsoletos() {
@@ -619,8 +534,8 @@
         const slotsParaInstalar = [];
         sugerenciasGlobales.forEach(sug => { let slotDiv = document.getElementById('slot-div-' + sug.slot); if (slotDiv && !slotDiv.classList.contains('lleno')) slotsParaInstalar.push(sug); });
         if (slotsParaInstalar.length === 0) return;
-        
         const btn = document.getElementById('btnInstalarTodas'); btn.disabled = true; btn.innerText = "Procesando...";
+
         for (let sug of slotsParaInstalar) {
             let m = sug.match;
             if (m.origen === 'estrenos') await fetch(`${API_ESTRENOS}/${m.origenId}/liberar`, { method: 'POST' });
@@ -633,15 +548,11 @@
         if(estaLleno) return; 
         slotSeleccionado = idSlot;
         document.getElementById('textoUbicacion').innerHTML = `1. Selecciona un material para: <strong>${ubicacion}</strong>`;
-        
-        document.getElementById('manualIdioma').value = '';
-        document.getElementById('selectPrioridad').value = '';
-        document.getElementById('chkManual').checked = false;
-        toggleManualMode();
+        document.getElementById('manualIdioma').value = ''; document.getElementById('selectPrioridad').value = '';
+        document.getElementById('chkManual').checked = false; toggleManualMode();
         
         const select = document.getElementById('selectorPosters');
         select.innerHTML = '<option value="">-- Elige un póster en bodega --</option>';
-        
         document.getElementById('modalAsignar').style.display = 'flex';
         fetch(API_INVENTARIO).then(res => res.json()).then(data => {
             let postersDisponibles = data.filter(p => p.Categoria === 'Poster' && p.Cantidad_Guardados > 0);
