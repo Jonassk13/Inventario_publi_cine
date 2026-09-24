@@ -6,226 +6,123 @@
     <title>Inventario de Publicidad</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --th-bg: #f1f3f5; --th-text: #333; --btn-primary: #0d6efd; --btn-success: #198754; --btn-danger: #dc3545; --btn-info: #0dcaf0; --btn-reserva: #6f42c1; --btn-dark: #212529; --btn-text: #fff; --admin-bg: #ffc107; --btn-warning: #ffc107;}
-        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --th-bg: #2c2c2c; --th-text: #e0e0e0; --btn-primary: #6ea8fe; --btn-success: #75b798; --btn-danger: #ea868f; --btn-info: #6edff6; --btn-reserva: #b288e7; --btn-dark: #f8f9fa; --btn-text: #121212; --admin-bg: #ffca2c; --btn-warning: #ffca2c;}
+        :root { --bg-color: #f4f7f6; --text-color: #333; --box-bg: #fff; --border-color: #ddd; --primary: #0d6efd; --success: #198754; --danger: #dc3545; --info: #0dcaf0; --warning: #ffc107;}
+        body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; }
         
-        body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --btn-success: #1e8449; --danger: #6e2c00; --btn-danger: #6e2c00; --info: #aec6cf; --btn-info: #aec6cf; --warning: #fd7e14; --btn-reserva: #fd7e14; --admin-bg: #fd7e14; }
+        body.theme-jacqui { --primary: #0b5345; --success: #1e8449; --danger: #6e2c00; --warning: #d35400; }
         
         body.theme-bosque-pinos { background-size: cover !important; background-position: center !important; background-attachment: fixed !important; color: #ffe8d6 !important; }
         body.theme-amanecer { background-image: linear-gradient(to bottom, rgba(168, 230, 207, 0.4), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
-        body.theme-amanecer .box, body.theme-amanecer .action-bar, body.theme-amanecer .modal-content { background: rgba(20, 60, 40, 0.5) !important; border: 1px solid #a8e6cf !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(168, 230, 207, 0.2); color: #fff !important; }
-        body.theme-amanecer table th { background-color: rgba(46, 125, 50, 0.7) !important; color: white !important; }
-        body.theme-amanecer table td { border-color: rgba(168, 230, 207, 0.3) !important; }
-        body.theme-amanecer .btn-dark { background: rgba(27, 94, 32, 0.8) !important; border: 1px solid #a8e6cf; color: white !important;}
-        body.theme-amanecer input, body.theme-amanecer select { background: rgba(0,0,0,0.4) !important; color: white !important; border: 1px solid #a8e6cf !important; }
-
+        body.theme-amanecer .box, body.theme-amanecer .modal-content, body.theme-amanecer .carpeta-slot { background: rgba(20, 60, 40, 0.6) !important; border-color: #a8e6cf !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.6); color: #fff !important; }
         body.theme-atardecer { background-image: linear-gradient(to bottom, rgba(255, 110, 64, 0.45), rgba(42, 8, 69, 0.95)), url('https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
-        body.theme-atardecer .box, body.theme-atardecer .action-bar, body.theme-atardecer .modal-content { background: rgba(30, 10, 20, 0.5) !important; border: 1px solid #ff7e5f !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(255, 110, 64, 0.2); color: #ffe8d6 !important; }
-        body.theme-atardecer table th { background-color: rgba(255, 110, 64, 0.7) !important; color: white !important; }
-        body.theme-atardecer table td { border-color: rgba(255, 110, 64, 0.3) !important; }
-        body.theme-atardecer .btn-dark { background: rgba(90, 20, 30, 0.8) !important; border: 1px solid #ff7e5f; color: white !important;}
-        body.theme-atardecer input, body.theme-atardecer select { background: rgba(0,0,0,0.5) !important; color: white !important; border: 1px solid #ff7e5f !important; }
-
+        body.theme-atardecer .box, body.theme-atardecer .modal-content, body.theme-atardecer .carpeta-slot { background: rgba(30, 10, 20, 0.6) !important; border-color: #ff7e5f !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9); color: #ffe8d6 !important; }
         body.theme-noche { background-image: linear-gradient(to bottom, rgba(10, 25, 47, 0.7), rgba(2, 6, 12, 0.98)), url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
-        body.theme-noche .box, body.theme-noche .action-bar, body.theme-noche .modal-content { background: rgba(10, 15, 30, 0.6) !important; border: 1px solid #64ffda !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(100, 255, 218, 0.1); color: #e6f1ff !important; }
-        body.theme-noche table th { background-color: rgba(2, 12, 27, 0.8) !important; color: #64ffda !important; }
-        body.theme-noche table td { border-color: rgba(100, 255, 218, 0.2) !important; }
-        body.theme-noche .btn-dark { background: rgba(2, 12, 27, 0.8) !important; border: 1px solid #64ffda; color: #64ffda !important;}
-        body.theme-noche input, body.theme-noche select { background: rgba(0,0,0,0.5) !important; color: #e6f1ff !important; border: 1px solid #64ffda !important; }
-
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); padding: 20px; margin: 0; transition: background 0.3s, color 0.3s; }
-        .header-top { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
+        body.theme-noche .box, body.theme-noche .modal-content, body.theme-noche .carpeta-slot { background: rgba(10, 15, 30, 0.7) !important; border-color: #64ffda !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9); color: #e6f1ff !important; }
+        body.theme-bosque-pinos input, body.theme-bosque-pinos select { background: rgba(0,0,0,0.5) !important; color: white !important; }
         
-        @media (max-width: 768px) {
-            .header-top { flex-direction: column; text-align: center; gap: 15px; }
-            .action-bar { flex-direction: column; align-items: stretch !important; gap: 5px !important; }
-            .action-bar .btn, .action-bar select, .action-bar a, .action-bar input { width: 100%; margin: 0; box-sizing: border-box; text-align: center; }
-            .filtros-container { flex-direction: column; width: 100%; margin-left: 0 !important; margin-top: 15px;}
-            th, td { font-size: 12px; padding: 6px; }
-            .modal-content { width: 95%; padding: 15px; }
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
+        .header-top { display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center; }
         .action-bar { display: flex; gap: 10px; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; align-items: center;}
-        input, select { padding: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); border-radius: 5px; background: var(--box-bg); color: var(--text-color); box-sizing: border-box; }
-        .btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; width: auto; border-radius: 5px; color: var(--btn-text); transition: 0.2s; text-decoration: none; display: inline-block;}
+        input, select { padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; background: var(--box-bg); color: var(--text-color); box-sizing: border-box; }
+        
+        .btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; width: auto; border-radius: 5px; transition: 0.2s; text-decoration: none; display: inline-block; color: white;}
         .btn:hover { opacity: 0.8; }
-        .btn-primary { background: var(--btn-primary); } .btn-success { background: var(--btn-success); } .btn-danger { background: var(--btn-danger); } .btn-info { background: var(--btn-info); color: #000; } .btn-reserva { background: var(--btn-reserva); } .btn-dark { background: var(--btn-dark); color: var(--bg-color); } .btn-admin { background: var(--admin-bg); color: #000; } .btn-warning { background: var(--btn-warning); color: #000; }
+        
+        .btn-c-blue { background-color: #6ea8fe; color: black; } .btn-c-yellow { background-color: #ffca2c; color: black; }
+        .btn-c-pink { background-color: #ea868f; color: black; } .btn-c-teal { background-color: #20c997; }
+        .btn-c-purple { background-color: #6f42c1; } .btn-c-hotpink { background-color: #e83e8c; }
+        .btn-c-lightpurple { background-color: #b288e7; color: black; } .btn-c-cyan { background-color: #0dcaf0; color: black; }
+        .btn-c-darkgreen { background-color: #0b5345; } .btn-c-orange { background-color: #fd7e14; }
+        .btn-c-darkorange { background-color: #d35400; } .btn-c-gray { background-color: #6c757d; }
         
         .box { background: var(--box-bg); padding: 20px; border-radius: 10px; overflow-x: auto;}
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;}
         th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left;}
-        th { background-color: var(--th-bg); color: var(--th-text); }
+        th { background-color: rgba(0,0,0,0.05); }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; z-index: 1000; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: var(--box-bg); padding: 25px; border-radius: 10px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative;}
         .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-color); background: none; border: none; padding: 0;}
-        .rol-badge { padding: 5px 10px; border-radius: 15px; font-size: 14px; font-weight: bold; background: var(--btn-success); color: white; margin-left: 10px;}
-        .badge-subgerente { background-color: #0b5345 !important; color: white !important; }
         .oculto { display: none !important; }
 
-        .estado-badge { padding: 3px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; color: white; }
-        .estado-Pendiente { background: #fd7e14; }
-        .estado-Aprobado { background: #198754; }
-        .estado-Rechazado { background: #dc3545; }
-        .estado-Entregado { background: #6f42c1; }
-        .filtros-container { display: flex; gap: 10px; margin-left: auto; }
+        .grid-carpetas { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; margin-top: 15px; }
+        .carpeta-slot { background: var(--box-bg); border: 2px solid var(--border-color); border-radius: 0 8px 8px 8px; padding: 15px; position: relative; display:flex; flex-direction:column; min-height: 180px;}
+        .carpeta-pestana { position: absolute; top: -26px; left: -2px; background: #0d6efd; color: white; font-weight: bold; font-size: 13px; padding: 5px 15px; border-radius: 8px 8px 0 0; }
     </style>
 </head>
 <body>
 
 <div class="header-top">
-    <h1 style="margin: 0; font-size: 22px;">Inventario - <span id="zona-secreta">Cine</span> <span id="etiquetaRol" class="rol-badge"></span></h1>
-    <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;">
+    <h1 style="margin: 0; font-size: 22px;">Inventario - Cine <span id="etiquetaRol" style="background:var(--success); color:white; padding:4px 8px; border-radius:10px; font-size:12px;"></span></h1>
+    <div style="display: flex; gap: 5px; flex-wrap: wrap;">
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
-        <button id="btnIngresar" class="btn btn-primary" onclick="abrirModal('modalLogin')">👤 Staff / Admin</button>
-        <button id="btnMisPedidos" class="btn btn-info oculto" style="background:#e83e8c; color:white;" onclick="abrirModalMisPedidos()">🎫 Mis Pedidos</button>
-        <button id="btnPerfil" class="btn btn-info oculto" onclick="abrirModalPerfil()">⚙️ Mi Perfil</button>
+        <button id="btnIngresar" class="btn btn-c-blue" onclick="abrirModal('modalLogin')">👤 Staff / Admin</button>
+        <button id="btnMisPedidos" class="btn btn-c-hotpink oculto" onclick="abrirModalMisPedidos()">🎫 Mis Pedidos</button>
+        <button id="btnPerfil" class="btn btn-c-teal oculto" onclick="abrirModalPerfil()">⚙️ Mi Perfil</button>
         <button id="btnSalir" class="btn btn-danger oculto" onclick="cerrarSesion()">Salir</button>
     </div>
 </div>
 
 <div class="action-bar">
-    <button class="btn btn-primary req-staff" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
-    <button class="btn btn-admin req-admin" onclick="abrirModalMasivo()">⚡ Ingreso Masivo</button>
-    <button class="btn btn-danger req-admin" onclick="abrirModalUsuarios()">👥 Gestionar Usuarios</button>
-    <button class="btn btn-admin req-admin" onclick="abrirModalCategorias()">🏷️ Categorías</button>
+    <button class="btn btn-c-blue req-staff" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
+    <button class="btn btn-c-yellow req-admin" onclick="abrirModalMasivo()">⚡ Ingreso Masivo</button>
+    <button class="btn btn-c-pink req-admin" onclick="abrirModalUsuarios()">👥 Gestionar Usuarios</button>
+    <button class="btn btn-c-yellow req-admin" onclick="abrirModalCategorias()">🏷️ Categorías</button>
+    <button class="btn btn-c-teal req-admin" onclick="abrirModalQRVisitante()">📲 QR para Cinepolitos</button>
+    <button class="btn btn-c-purple req-admin" onclick="abrirModalImpresionQR()">🖨️ QRs de Pósters</button>
+    <button class="btn btn-c-hotpink req-admin" onclick="abrirModalHistorial()">📖 Historial General</button>
     
-    <button class="btn btn-dark req-admin" style="background:#20c997; color:white;" onclick="abrirModalQRVisitante()">📲 QR para Cinepolitos</button>
-    <button class="btn btn-dark req-admin" style="background:#6f42c1; color:white;" onclick="abrirModalImpresionQR()">🖨️ QRs de Pósters</button>
-    <button class="btn btn-dark req-admin" style="background:#e83e8c; color:white;" onclick="abrirModalHistorial()">📖 Historial General</button>
-
-    <button class="btn btn-reserva req-staff req-auth" onclick="abrirModalReservas()">📋 Aprobaciones</button>
+    <button class="btn btn-c-lightpurple req-staff req-auth" onclick="abrirModalReservas()">📋 Aprobaciones</button>
+    <button class="btn btn-c-cyan req-staff" onclick="abrirModalSlots()">📂 Gestionar Slots</button>
+    <a href="carteleras.html" target="_blank" class="btn btn-c-lightpurple req-staff">🗺️ Mapa Carteleras</a>
+    <a href="proximos_estrenos.html" target="_blank" class="btn btn-c-darkgreen req-staff">🚀 Próximos Estrenos</a>
+    <a href="plano_interactivo.html" target="_blank" class="btn btn-c-hotpink req-staff">📍 Plano del Cine</a>
+    <a href="lobby_stands.html" target="_blank" class="btn btn-c-orange req-staff">🎪 Stands de Lobby</a>
+    <a href="areas_cine.html" target="_blank" class="btn btn-c-darkorange req-staff">🏢 Áreas del Cine</a>
+    <button class="btn btn-c-gray req-admin" onclick="abrirModalArchivo()">🗄️ Archivo Muerto</button>
     
-    <!-- NUEVO BOTÓN DE SLOTS -->
-    <button class="btn btn-info req-staff" onclick="abrirModalSlots()">📂 Gestionar Slots</button>
-    
-    <a href="carteleras.html" target="_blank" class="btn btn-reserva req-staff">🗺️ Mapa Carteleras</a>
-    <a href="proximos_estrenos.html" target="_blank" class="btn btn-success req-staff" style="background: #0b5345;">🚀 Próximos Estrenos</a>
-    <a href="plano_interactivo.html" target="_blank" class="btn btn-primary req-staff" style="background:#e83e8c;">📍 Plano del Cine</a>
-    <a href="lobby_stands.html" target="_blank" class="btn btn-info req-staff" style="background: #fd7e14; color: white;">🎪 Stands de Lobby</a>
-    <a href="areas_cine.html" target="_blank" class="btn btn-admin req-staff" style="background: #d35400; color: white;">🏢 Áreas del Cine</a>
-    
-    <div class="filtros-container">
-        <input type="text" id="buscadorGeneral" placeholder="🔍 Buscar material..." onkeyup="renderizarTabla()" style="width: 250px; margin-bottom: 0;">
-        <select id="filtroCategoria" onchange="renderizarTabla()" style="width: 200px; margin-bottom: 0;">
-            <option value="Todos">Todas las categorías</option>
-        </select>
+    <div style="margin-left: auto; display:flex; gap:10px;">
+        <input type="text" id="buscadorGeneral" placeholder="🔍 Buscar póster o Slot..." onkeyup="renderizarTabla()" style="width: 250px; margin:0;">
+        <select id="filtroCategoria" onchange="renderizarTabla()" style="width: 180px; margin:0;"><option value="Todos">Todas las categorías</option></select>
     </div>
 </div>
 
 <div class="box">
-    <h2 style="margin-top:0; color: var(--primary);">🍿 Inventario General (Publicidad)</h2>
-    <table>
-        <thead><tr><th>Material</th><th>Categoría</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
-        <tbody id="tablaCuerpo"></tbody>
-    </table>
+    <h2 style="margin-top:0; color: #0d6efd;">🍿 Inventario General (Publicidad)</h2>
+    <table><thead><tr><th>Material</th><th>Categoría / Slot</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead><tbody id="tablaCuerpo"></tbody></table>
 </div>
 
-<div class="box req-staff" id="cajaExclusiva" style="margin-top:20px; border: 2px solid var(--warning); display:none;">
-    <h2 style="margin-top:0; color: var(--warning);">🔒 Inventario Exclusivo (Áreas del Cine / Slots)</h2>
-    <p style="font-size: 13px; color: gray;">Este panel está oculto para los cinepolitos y visitantes.</p>
-    <table>
-        <thead><tr><th>Material</th><th>Ubicación / Slot</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
-        <tbody id="tablaCuerpoExclusivo"></tbody>
-    </table>
-</div>
+<div id="modalAlertasSupervisor" class="modal"><div class="modal-content" style="max-width: 800px;"><button class="close-btn" onclick="cerrarModal('modalAlertasSupervisor')">&times;</button><h2 style="margin-top: 0; color: #fd7e14;">⚠️ Bandeja de Autorizaciones (Pendientes)</h2><h3 style="color: var(--primary);">1. Solicitudes de Apartado</h3><div style="overflow-x:auto; margin-bottom: 20px;"><table><thead><tr><th>Material</th><th>Solicitado por</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAlertasAutorizacion"></tbody></table></div><h3 style="color: var(--danger);">2. Mermas y Destrucción</h3><div style="overflow-x:auto;"><table><thead><tr><th>Producto</th><th>Cant.</th><th>Motivo y Evidencia</th><th>Decisión</th></tr></thead><tbody id="tablaAlertasMermas"></tbody></table></div></div></div>
 
-<!-- ================= MODALES CON ACCESIBILIDAD (ENTER Y ESC) ================= -->
-<div id="modalHistorialGlobal" class="modal"><div class="modal-content" style="max-width: 900px;"><button class="close-btn" onclick="cerrarModal('modalHistorialGlobal')">&times;</button><h2 style="margin-top:0; color:#e83e8c;">📖 Historial de Movimientos y Auditoría</h2><div style="overflow-x:auto;"><table><thead><tr><th>Fecha y Hora</th><th>Usuario responsable</th><th>Producto</th><th>Tipo de Movimiento</th><th>Detalle / Razón</th></tr></thead><tbody id="cuerpoHistorialGlobal"></tbody></table></div></div></div>
+<div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: #6f42c1;">📋 Panel de Entregas y Aprobados</h2><p style="font-size:13px; color:gray;">Estos son los pósters que ya fueron aprobados por Gerencia y están listos para entregarse físicamente al Cinepolito.</p><table><thead><tr><th>Material</th><th>Cinepolito</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div>
 
-<div id="modalEditarProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button><h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2><input type="hidden" id="editIdProd"><label style="font-size: 11px; font-weight: bold;">Nombre del Material:</label>
-<input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre..." onkeydown="if(event.key==='Enter') guardarEdicionProducto()"><label style="font-size: 11px; font-weight: bold;">Categoría:</label><select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select><label style="font-size: 11px; font-weight: bold; color: var(--danger);">Cantidad actual en Bodega:</label>
-<input type="number" id="editCantidadProd" style="width:100%; border: 2px solid var(--danger); font-size:18px; font-weight:bold;" onkeydown="if(event.key==='Enter') guardarEdicionProducto()"><button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button></div></div>
+<div id="modalMisPedidos" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMisPedidos')">&times;</button><h2 style="margin-top: 0; color: #e83e8c;">🎫 Mis Pedidos</h2><table><thead><tr><th>Producto</th><th>Piezas</th><th>Estado</th></tr></thead><tbody id="tablaMisPedidosCuerpo"></tbody></table></div></div>
 
-<!-- 📂 NUEVO MODAL DE GESTIÓN DE SLOTS -->
-<div id="modalSlots" class="modal">
-    <div class="modal-content" style="max-width: 600px;">
-        <button class="close-btn" onclick="cerrarModal('modalSlots')">&times;</button>
-        <h2 style="margin-top: 0; color: var(--btn-info);">📂 Gestión de Slots Personalizados</h2>
-        <p style="font-size: 13px; color: gray;">Asigna pósters a un slot. <b>Una vez asignados, ya no aparecerán en la búsqueda para otros slots.</b></p>
-        
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
-            <input type="text" id="nuevoNombreSlot" placeholder="Escribe el nombre del nuevo Slot..." style="flex:1; margin:0;" onkeydown="if(event.key==='Enter') crearSlot()">
-            <button class="btn btn-success" onclick="crearSlot()">Crear Slot</button>
-        </div>
-        
-        <div id="contenedorSlots" style="max-height: 400px; overflow-y: auto; padding-right:10px;">
-            <!-- Aquí se renderizan los slots con JS -->
-        </div>
-    </div>
-</div>
+<div id="modalLogin" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalLogin')">&times;</button><h2 style="margin-top: 0; color: #0d6efd;">👤 Ingresar</h2><input type="password" id="claveAcceso" placeholder="Contraseña..." style="width: 100%; text-align:center; font-size:18px;" onkeydown="if(event.key==='Enter') iniciarSesion()"><button class="btn btn-c-blue" onclick="iniciarSesion()" style="width: 100%; margin-top: 15px;">Ingresar</button></div></div>
 
-<div id="modalImpresionQR" class="modal"><div class="modal-content" style="max-width: 600px;"><button class="close-btn" onclick="cerrarModal('modalImpresionQR')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">🖨️ Centro de Impresión QR</h2><div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;"><select id="filtroImpresoQR" onchange="renderizarListaImpresion()" style="flex:1;"><option value="pendientes">Pendientes por imprimir</option><option value="impresos">Ya impresos</option><option value="todos">Mostrar todos</option></select><select id="filtroGrupoQR" onchange="renderizarListaImpresion()" style="flex:1;"><option value="todos">Todos los grupos</option></select></div><input type="text" id="buscadorImpresionQR" placeholder="🔍 Buscar póster específico..." onkeyup="renderizarListaImpresion()" style="width:100%; margin-bottom:10px;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span style="font-size:12px; font-weight:bold; color:gray;" id="contadorQRLista">0 pósters encontrados</span><div><button class="btn btn-info" style="padding:4px 8px; font-size:11px;" onclick="seleccionarTodoQR(true)">Marcar Todos</button><button class="btn btn-dark" style="padding:4px 8px; font-size:11px;" onclick="seleccionarTodoQR(false)">Desmarcar</button></div></div><div id="divListaImpresion" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px; background: rgba(0,0,0,0.02);"></div><button class="btn btn-primary" style="width: 100%; background: var(--btn-reserva);" onclick="ejecutarImpresionQR()">🖨️ Generar Etiquetas Seleccionadas</button></div></div>
+<div id="modalProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button><h2>Registro Individual</h2><input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" onkeydown="if(event.key==='Enter') guardarProducto()"><select id="categoria" class="select-dinamico-cat" style="width:100%;" onkeydown="if(event.key==='Enter') guardarProducto()"></select><input type="number" id="cantidadTotal" placeholder="Cantidad Total" style="width:100%;" onkeydown="if(event.key==='Enter') guardarProducto()"><button class="btn btn-c-blue" onclick="guardarProducto()" style="width: 100%;">Guardar</button></div></div>
+<div id="modalEditarProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button><h2>✏️ Editar Producto</h2><input type="hidden" id="editIdProd"><input type="text" id="editNombreProd" style="width:100%;" onkeydown="if(event.key==='Enter') guardarEdicionProducto()"><select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select><input type="number" id="editCantidadProd" style="width:100%;" onkeydown="if(event.key==='Enter') guardarEdicionProducto()"><button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar</button></div></div>
+<div id="modalSlots" class="modal"><div class="modal-content" style="max-width: 900px;"><button class="close-btn" onclick="cerrarModal('modalSlots')">&times;</button><h2 style="margin-top: 0; color: #0dcaf0;">📂 Gestión de Carpetas (Slots)</h2><div style="display:flex; gap:10px; margin-bottom: 20px;"><input type="text" id="nuevoNombreSlot" placeholder="Nombre (Ej. A, B...)" style="flex:1;" onkeydown="if(event.key==='Enter') crearSlot()"><button class="btn btn-success" onclick="crearSlot()">Crear Carpeta</button><button class="btn btn-warning" onclick="autoAgruparSlots()">⚡ Auto-Agrupar</button></div><div id="contenedorSinAgrupar" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px;"></div><div id="contenedorSlots" class="grid-carpetas" style="max-height:400px; overflow-y:auto;"></div></div></div>
+<div id="modalArchivo" class="modal"><div class="modal-content" style="max-width: 900px;"><button class="close-btn" onclick="cerrarModal('modalArchivo')">&times;</button><h2>🗄️ Archivo Muerto</h2><table><thead><tr><th>Póster</th><th>Fecha Archivo</th><th>Tiempo</th><th>Acciones</th></tr></thead><tbody id="cuerpoArchivo"></tbody></table></div></div>
+<div id="modalCategorias" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalCategorias')">&times;</button><h2>🏷️ Categorías</h2><div style="display:flex; gap:10px; margin-bottom:20px;"><input type="hidden" id="catIdEdit"><input type="text" id="catNombre" placeholder="Nueva Categoría" style="flex:1;" onkeydown="if(event.key==='Enter') guardarCategoria()"><button class="btn btn-success" onclick="guardarCategoria()">Guardar</button></div><table><tbody id="tablaCategorias"></tbody></table></div></div>
 
-<div id="modalQRVisitante" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalQRVisitante')">&times;</button><h2 style="margin-top: 0; color: #20c997;">📲 Acceso Cinepolitos</h2><p style="font-size: 14px; color: gray;">Imprime este QR y pégalo en piso.</p><div style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin: 15px 0;"><div id="qrVisitanteContainer"></div></div><button class="btn btn-primary" style="width: 100%; font-size: 16px;" onclick="imprimirQR()">🖨️ Imprimir Ticket QR</button></div></div>
-<div id="modalMisPedidos" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMisPedidos')">&times;</button><h2 style="margin-top: 0; color: #e83e8c;">🎫 Historial de mis Pedidos</h2><table><thead><tr><th>Producto Solicitado</th><th>Piezas</th><th>Estado Actual</th></tr></thead><tbody id="tablaMisPedidosCuerpo"></tbody></table></div></div>
-
-<div id="modalLogin" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalLogin')">&times;</button><h2 style="margin-top: 0; color: var(--btn-primary);">👤 Acceso Restringido</h2>
-<input type="password" id="claveAcceso" placeholder="Contraseña..." style="width: 90%; text-align:center; font-size:18px;" onkeydown="if(event.key==='Enter') iniciarSesion()"><button class="btn btn-primary" onclick="iniciarSesion()" style="width: 95%; margin-top: 15px;">Ingresar</button></div></div>
-
-<div id="modalPerfil" class="modal">
-    <div class="modal-content" style="max-width: 400px;">
-        <button class="close-btn" onclick="cerrarModal('modalPerfil')">&times;</button>
-        <h2 style="margin-top: 0;">⚙️ Editar Mi Perfil</h2>
-        <input type="text" id="perfilNombre" style="width: 100%; margin-bottom: 15px;" onkeydown="if(event.key==='Enter') guardarPerfil()">
-        <input type="password" id="perfilClave" placeholder="Nueva contraseña (opcional)..." style="width: 100%;" onkeydown="if(event.key==='Enter') guardarPerfil()">
-        <input type="password" id="perfilClaveConf" placeholder="Confirma tu nueva contraseña..." style="width: 100%;" onkeydown="if(event.key==='Enter') guardarPerfil()">
-        
-        <hr style="border-top: 1px solid var(--border-color); margin: 20px 0;">
-        <h3 style="margin-top: 0; font-size: 14px; color: var(--btn-reserva);">🧪 Funciones Experimentales (Prueba)</h3>
-        <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: bold; cursor: pointer;">
-            <input type="checkbox" id="chkWhatsPiloto" onchange="document.getElementById('cajaWhatsNum').style.display = this.checked ? 'block' : 'none'">
-            Activar enlace automático de WhatsApp
-        </label>
-        <div id="cajaWhatsNum" style="display: none; margin-top: 10px;">
-            <p style="font-size:11px; color:gray; margin:0 0 5px 0;">Ingresa el número con lada de país (Ej. 524430000000):</p>
-            <input type="text" id="inputWhatsNum" placeholder="52..." style="width: 100%; border: 2px solid var(--btn-reserva);" onkeydown="if(event.key==='Enter') guardarPerfil()">
-        </div>
-
-        <button class="btn btn-success" onclick="guardarPerfil()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button>
-    </div>
-</div>
-
-<div id="modalUsuarios" class="modal"><div class="modal-content" style="max-width: 700px;"><button class="close-btn" onclick="cerrarModal('modalUsuarios')">&times;</button><h2 style="margin-top: 0; color: var(--btn-danger);">👥 Gestión de Usuarios</h2><div style="background: var(--bg-color); padding: 15px; border-radius: 8px; margin-bottom: 20px;"><h3 style="margin-top:0; color: var(--btn-primary);" id="tituloFormUsuario">Crear Nuevo Usuario</h3><input type="hidden" id="adminUsuarioId"><div style="display: flex; gap: 10px; flex-wrap: wrap;">
-<input type="text" id="adminUsuarioNombre" placeholder="Nombre completo" style="flex:1;" onkeydown="if(event.key==='Enter') guardarUsuarioAdmin()"><select id="adminUsuarioRol" style="flex:1;"><option value="Publicista">Publicista</option><option value="Supervisor">Supervisor</option><option value="Subgerente">Subgerente (VIP)</option><option value="Admin">Administrador</option></select></div><div style="display: flex; gap: 10px; margin-top:10px; flex-wrap: wrap;">
-<input type="password" id="adminUsuarioClave" placeholder="Contraseña..." style="flex:1;" onkeydown="if(event.key==='Enter') guardarUsuarioAdmin()">
-<input type="password" id="adminUsuarioClaveConf" placeholder="Confirmar Contraseña..." style="flex:1;" onkeydown="if(event.key==='Enter') guardarUsuarioAdmin()"></div><button class="btn btn-success" onclick="guardarUsuarioAdmin()" style="width: 100%; margin-top: 10px;">Guardar Usuario</button><button class="btn btn-dark oculto" id="btnCancelarEdicionUsuario" onclick="cancelarEdicionUsuario()" style="width: 100%; margin-top: 10px;">Cancelar Edición</button></div><div style="overflow-x:auto;"><table><thead><tr><th>ID</th><th>Nombre</th><th>Rol</th><th>Acciones</th></tr></thead><tbody id="tablaUsuariosAdmin"></tbody></table></div></div></div>
-
-<div id="modalCategorias" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalCategorias')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">🏷️ Gestión de Categorías</h2><div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap: wrap;"><input type="hidden" id="catIdEdit">
-<input type="text" id="catNombre" placeholder="Nueva Categoría" style="flex:1;" onkeydown="if(event.key==='Enter') guardarCategoria()"><button class="btn btn-success" onclick="guardarCategoria()">Guardar</button></div><table><thead><tr><th>Categoría</th><th>Acciones</th></tr></thead><tbody id="tablaCategorias"></tbody></table></div></div>
-
-<div id="modalProducto" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button><h2 style="margin-top: 0;">Registro Individual</h2>
-<input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" required onkeydown="if(event.key==='Enter') guardarProducto()"><select id="categoria" class="select-dinamico-cat" style="width:100%;"></select>
-<input type="number" id="cantidadTotal" placeholder="Cantidad Total Recibida" style="width:100%;" min="1" required onkeydown="if(event.key==='Enter') guardarProducto()"><button class="btn btn-primary" onclick="guardarProducto()" style="width: 100%;">Guardar Registro</button></div></div>
-
-<div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: var(--admin-bg);">⚡ Ingreso Masivo</h2><div style="overflow-x:auto;"><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table></div><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn btn-admin" style="float:right;" onclick="guardarIngresoMasivo()">Guardar Todo</button></div></div>
-
-<div id="modalReservas" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalReservas')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">Panel de Apartados y Entregas</h2><h3>🟡 Esperando Autorización</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th></tr></thead><tbody id="tablaPendientes"></tbody></table></div><h3 style="margin-top: 30px;">🟢 Aprobadas (Listas para Entregar)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Material</th><th>Nombre</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAprobadas"></tbody></table></div></div></div>
-
-<div id="modalAlertasSupervisor" class="modal"><div class="modal-content" style="max-width: 800px;"><button class="close-btn" onclick="cerrarModal('modalAlertasSupervisor')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">⚠️ Bandeja de Autorizaciones</h2><h3 style="color: var(--primary);">1. Solicitudes de Productos</h3><div style="overflow-x:auto; margin-bottom: 20px;"><table><thead><tr><th>Material</th><th>Solicitado por</th><th>Piezas</th><th>Acción</th></tr></thead><tbody id="tablaAlertasAutorizacion"><tr><td colspan="4">Sin solicitudes pendientes.</td></tr></tbody></table></div><h3 style="color: var(--danger);">2. Autorización de Mermas (Fotos Requeridas)</h3><div style="overflow-x:auto;"><table><thead><tr><th>Producto</th><th>Cant.</th><th>Motivo y Evidencia</th><th>Decisión</th></tr></thead><tbody id="tablaAlertasMermas"><tr><td colspan="4">Sin mermas por revisar.</td></tr></tbody></table></div></div></div>
-
-<!-- ================= SCRIPTS ================= -->
 <script>
-    document.addEventListener('contextmenu', event => event.preventDefault()); 
-    
-    // ⌨️ ESCAPE GLOBAL PARA CERRAR CUALQUIER VENTANA
     document.addEventListener('keydown', event => { 
-        if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); 
+        if (event.keyCode === 123) event.preventDefault(); 
         if (event.key === 'Escape') { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
     });
-    
-    document.body.style.userSelect = "none"; 
-    document.addEventListener('selectstart', e => { if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') e.stopPropagation(); else e.preventDefault(); });
 
     const API_URL = 'https://jonassk13.pythonanywhere.com/api/inventario';
     const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
     const API_LOGIN = 'https://jonassk13.pythonanywhere.com/api/login';
-    const API_USUARIOS = 'https://jonassk13.pythonanywhere.com/api/usuarios';
     const API_CATEGORIAS = 'https://jonassk13.pythonanywhere.com/api/categorias';
     const API_GRUPOS = 'https://jonassk13.pythonanywhere.com/api/grupos';
+    const API_MERMAS = 'https://jonassk13.pythonanywhere.com/api/mermas';
     
-    let datosInventario = []; let listaCategorias = []; let slotsData = [];
-    let rolUsuario = 'General'; let idUsuario = null; let nombreUsuario = '';
+    let datosInventario = []; let slotsData = [];
+    let rolUsuario = localStorage.getItem('rolCine') || 'General'; 
+    let idUsuario = localStorage.getItem('idCine'); 
+    let nombreUsuario = localStorage.getItem('nombreCine') || '';
 
     function aplicarTemasMagicos() {
         if(rolUsuario !== 'Subgerente') return; 
@@ -236,9 +133,6 @@
             else if (hora >= 12 && hora < 19) { document.body.classList.add('theme-atardecer'); colorSombra = "rgba(255,165,0,0.8)"; } 
             else { document.body.classList.add('theme-noche'); colorSombra = "rgba(100, 255, 218, 0.8)"; }
             
-            let audio = new Audio('https://actions.google.com/sounds/v1/nature/wind_in_trees.ogg');
-            audio.volume = 0.6; audio.play().catch(e => console.log("Autoplay bloqueado"));
-
             for(let i=0; i<25; i++) {
                 let pino = document.createElement('div'); pino.innerText = '🌲';
                 pino.style.cssText = `position:fixed; bottom:-100px; left:${Math.random()*100}vw; font-size:${Math.random()*60 + 40}px; filter: drop-shadow(0px 0px 8px ${colorSombra}); z-index:99999; transition: transform 3s ease-out, opacity 4s; opacity:0; pointer-events:none;`;
@@ -246,158 +140,17 @@
                 setTimeout(() => { pino.style.transform = `translateY(-${Math.random()*300 + 100}px)`; pino.style.opacity = 1; }, 100 + (i*50)); 
                 setTimeout(() => { pino.style.opacity = 0; }, 4000); setTimeout(() => { pino.remove(); }, 6000);
             }
-            setTimeout(() => { let fadeOut = setInterval(() => { if(audio.volume > 0.1) audio.volume -= 0.1; else { audio.pause(); clearInterval(fadeOut); } }, 200); }, 5000);
-        }
+        } else document.body.classList.add('theme-jacqui');
     }
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('modo') === 'visitante') {
-            localStorage.setItem('rolCine', 'Visitante'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine');
-            window.history.replaceState(null, null, window.location.pathname);
-        }
         verificarSesion(); cargarCategoriasGlobales(); setTimeout(aplicarTemasMagicos, 800); 
     };
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
-    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; setTimeout(()=> { let inputs = document.getElementById(id).getElementsByTagName('input'); if(inputs.length>0) inputs[0].focus(); }, 100); }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
-
-    // =======================================================
-    // 📂 LÓGICA DE GESTOR DE SLOTS
-    // =======================================================
-    function abrirModalSlots() {
-        Promise.all([
-            fetch(API_URL).then(r => r.json()),
-            fetch(API_GRUPOS).then(r => r.json())
-        ]).then(([inventario, grupos]) => {
-            datosInventario = inventario;
-            slotsData = grupos;
-            renderizarSlots();
-            abrirModal('modalSlots');
-        });
-    }
-
-    function renderizarSlots() {
-        const contenedor = document.getElementById('contenedorSlots');
-        contenedor.innerHTML = '';
-        
-        let disponibles = datosInventario.filter(p => p.Categoria === 'Poster' && (!p.GruposNombres || p.GruposNombres.trim() === ""));
-        disponibles.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
-        
-        let dropdownHTML = `<option value="">-- Elige un póster libre --</option>`;
-        disponibles.forEach(p => { dropdownHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material}</option>`; });
-
-        if (slotsData.length === 0) {
-            contenedor.innerHTML = '<p style="text-align:center; color:gray;">Aún no hay Slots creados.</p>';
-            return;
-        }
-
-        slotsData.forEach(slot => {
-            let itemsHTML = '';
-            if (slot.items && slot.items.length > 0) {
-                slot.items.forEach(item => {
-                    itemsHTML += `
-                        <div style="display:flex; justify-content:space-between; background:var(--bg-color); padding:8px; margin-bottom:5px; border-radius:5px; border:1px solid var(--border-color);">
-                            <span style="font-size:14px; font-weight:bold;">${item.Nombre_Material}</span>
-                            <button class="btn btn-danger" style="padding:4px 8px; font-size:11px;" onclick="quitarDeSlot(${slot.ID_Grupo}, ${item.ID_Publicidad})">❌ Quitar</button>
-                        </div>
-                    `;
-                });
-            } else { itemsHTML = '<p style="font-size:12px; color:gray;">El Slot está vacío.</p>'; }
-
-            contenedor.innerHTML += `
-                <div style="background: rgba(0,0,0,0.03); border: 2px dashed var(--border-color); border-radius: 8px; padding: 15px; margin-bottom: 15px;">
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-                        <h3 style="margin:0; color:var(--primary);">${slot.Nombre_Grupo}</h3>
-                        <button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="eliminarSlot(${slot.ID_Grupo})">Borrar Slot</button>
-                    </div>
-                    <div style="margin-bottom:15px;">${itemsHTML}</div>
-                    <div style="display:flex; gap:10px;">
-                        <select id="select-slot-${slot.ID_Grupo}" style="flex:1; margin:0;" onkeydown="if(event.key==='Enter') agregarASlot(${slot.ID_Grupo})">${dropdownHTML}</select>
-                        <button class="btn btn-info" onclick="agregarASlot(${slot.ID_Grupo})">➕ Añadir</button>
-                    </div>
-                </div>
-            `;
-        });
-    }
-
-    function crearSlot() {
-        const nombre = document.getElementById('nuevoNombreSlot').value.trim();
-        if(!nombre) return alert("Ingresa un nombre para el Slot");
-        fetch(API_GRUPOS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ nombre: nombre }) }).then(() => {
-            document.getElementById('nuevoNombreSlot').value = '';
-            abrirModalSlots(); cargarTabla();
-        });
-    }
-    function agregarASlot(idGrupo) {
-        const sel = document.getElementById(`select-slot-${idGrupo}`);
-        const idPub = sel.value;
-        if(!idPub) return alert("Selecciona un póster para añadir.");
-        fetch(`${API_GRUPOS}/${idGrupo}/add`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => {
-            abrirModalSlots(); cargarTabla();
-        });
-    }
-    function quitarDeSlot(idGrupo, idPub) {
-        fetch(`${API_GRUPOS}/${idGrupo}/remove/${idPub}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); });
-    }
-    function eliminarSlot(idGrupo) {
-        if(!confirm("¿Seguro que deseas eliminar este Slot completo? Los pósters no se borrarán del inventario, solo quedarán libres.")) return;
-        fetch(`${API_GRUPOS}/${idGrupo}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); });
-    }
-
-    let postersFiltradosQR = [];
-    function abrirModalImpresionQR() {
-        fetch(API_GRUPOS).then(r => r.json()).then(grupos => {
-            const sel = document.getElementById('filtroGrupoQR'); sel.innerHTML = '<option value="todos">Todos los Slots</option>';
-            grupos.forEach(g => { sel.innerHTML += `<option value="${g.Nombre_Grupo}">${g.Nombre_Grupo}</option>`; });
-            document.getElementById('filtroImpresoQR').value = 'pendientes'; document.getElementById('buscadorImpresionQR').value = '';
-            renderizarListaImpresion(); abrirModal('modalImpresionQR');
-        });
-    }
-
-    function renderizarListaImpresion() {
-        const fImpreso = document.getElementById('filtroImpresoQR').value; const fGrupo = document.getElementById('filtroGrupoQR').value; const bTexto = document.getElementById('buscadorImpresionQR').value.toLowerCase();
-        postersFiltradosQR = datosInventario.filter(p => p.Categoria === 'Poster');
-        if(fImpreso === 'pendientes') postersFiltradosQR = postersFiltradosQR.filter(p => !p.Etiqueta_Impresa);
-        if(fImpreso === 'impresos') postersFiltradosQR = postersFiltradosQR.filter(p => p.Etiqueta_Impresa);
-        if(fGrupo !== 'todos') postersFiltradosQR = postersFiltradosQR.filter(p => p.GruposNombres && p.GruposNombres.includes(fGrupo));
-        if(bTexto) postersFiltradosQR = postersFiltradosQR.filter(p => p.Nombre_Material.toLowerCase().includes(bTexto));
-        postersFiltradosQR.sort((a,b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
-
-        const div = document.getElementById('divListaImpresion'); div.innerHTML = '';
-        postersFiltradosQR.forEach(p => {
-            let badge = p.Etiqueta_Impresa ? '<span style="color:var(--success); font-size:11px;">[Ya Impreso ✔️]</span>' : '<span style="color:var(--danger); font-size:11px;">[Falta Imprimir 🖨️]</span>';
-            div.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:14px; cursor:pointer;"><input type="checkbox" class="chk-print-qr" value="${p.ID_Publicidad}"> <span>${p.Nombre_Material} ${badge}</span></label>`;
-        });
-        document.getElementById('contadorQRLista').innerText = `${postersFiltradosQR.length} pósters listados`;
-    }
-
-    function seleccionarTodoQR(marcar) { document.querySelectorAll('.chk-print-qr').forEach(cb => cb.checked = marcar); }
-    function ejecutarImpresionQR() {
-        const seleccionados = Array.from(document.querySelectorAll('.chk-print-qr:checked')).map(cb => parseInt(cb.value));
-        if(seleccionados.length === 0) return alert("⚠️ Selecciona al menos un póster.");
-        let hojas = Math.ceil(seleccionados.length / 3);
-        if(!confirm(`🖨️ Vas a imprimir ${seleccionados.length} etiquetas (${hojas} hoja(s) CARTA).\n¿Continuar?`)) return;
-        fetch(`${API_URL}/impreso`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ids: seleccionados }) }).then(() => { cargarTabla(); cerrarModal('modalImpresionQR'); let postersAImprimir = datosInventario.filter(p => seleccionados.includes(p.ID_Publicidad)); generarVentanaImpresion(postersAImprimir); });
-    }
-    function generarVentanaImpresion(listaProductos) { 
-        const ventana = window.open('', '_blank'); ventana.document.write(`<html><head><title>Impresión QR</title><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script><style>@page { size: letter portrait; margin: 0; } body { font-family: 'Arial', sans-serif; background: #fff; color: #000; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; } .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 1cm; gap: 1cm; } .etiqueta { width: 19cm; height: 8cm; border: 2px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; border-radius:10px;} .qr-code { width: 5.5cm; height: 5.5cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; } .qr-code img { max-width: 100%; max-height: 100%; } .info { flex-grow: 1; padding-left: 1.5cm; text-align: left; } .titulo { font-size: 26px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000; letter-spacing: 1px;} .subtitulo { font-size: 14px; color: #555; margin-top:10px; font-weight:bold; }</style></head><body><div class="hoja" id="qrGrid"></div><script>const productos = ${JSON.stringify(listaProductos.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material})))}; const baseUrl = "${window.location.href.split('?')[0].replace('index.html', '')}detalle.html?id="; const grid = document.getElementById('qrGrid'); productos.forEach(p => { let div = document.createElement('div'); div.className = 'etiqueta'; let qrContainer = document.createElement('div'); qrContainer.className = 'qr-code'; let info = document.createElement('div'); info.className = 'info'; let title = document.createElement('p'); title.className = 'titulo'; title.innerText = p.nombre; let sub = document.createElement('p'); sub.className = 'subtitulo'; sub.innerText = "🎬 PÓSTER OFICIAL - ESCANEAR QR PARA OPERACIONES"; info.appendChild(title); info.appendChild(sub); div.appendChild(qrContainer); div.appendChild(info); grid.appendChild(div); new QRCode(qrContainer, { text: baseUrl + p.id, width: 220, height: 220, colorDark : "#000", colorLight : "#fff" }); }); setTimeout(() => window.print(), 1500); <\/script></body></html>`); ventana.document.close(); 
-    }
-
-    function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; let whatsActivado = localStorage.getItem('whatsAppPiloto') === 'true'; document.getElementById('chkWhatsPiloto').checked = whatsActivado; document.getElementById('cajaWhatsNum').style.display = whatsActivado ? 'block' : 'none'; document.getElementById('inputWhatsNum').value = localStorage.getItem('whatsAppNumero') || ''; abrirModal('modalPerfil'); }
-    function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; localStorage.setItem('whatsAppPiloto', document.getElementById('chkWhatsPiloto').checked); localStorage.setItem('whatsAppNumero', document.getElementById('inputWhatsNum').value.trim()); if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado correctamente."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); location.reload(); } }); }
-    function abrirModalHistorial() { fetch('https://jonassk13.pythonanywhere.com/api/historial_global').then(r => r.json()).then(data => { const tb = document.getElementById('cuerpoHistorialGlobal'); tb.innerHTML = ''; if(data.length === 0) tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay movimientos registrados.</td></tr>'; data.forEach(h => { let badgeClass = h.Accion.includes('Ingreso') ? 'background:var(--success);' : (h.Accion.includes('Salida') || h.Accion.includes('Merma') || h.Accion.includes('Daño') || h.Accion.includes('Regalo') ? 'background:var(--danger);' : 'background:#6c757d;'); tb.innerHTML += `<tr><td>${h.Fecha}</td><td style="color:var(--primary); font-weight:bold;">${h.Usuario}</td><td>${h.Nombre_Material}</td><td><span class="estado-badge" style="${badgeClass}">${h.Accion}</span></td><td><i>${h.Detalle}</i></td></tr>`; }); abrirModal('modalHistorialGlobal'); }); }
-    function abrirModalQRVisitante() { const urlMagica = window.location.href.split('?')[0] + "?modo=visitante"; document.getElementById('qrVisitanteContainer').innerHTML = ""; new QRCode(document.getElementById('qrVisitanteContainer'), { text: urlMagica, width: 200, height: 200, colorDark : "#000000", colorLight : "#ffffff", correctLevel : QRCode.CorrectLevel.H }); abrirModal('modalQRVisitante'); }
-    function imprimirQR() { const contenidoQR = document.getElementById('qrVisitanteContainer').innerHTML; const ventana = window.open('', '_blank'); ventana.document.write(`<html><head><title>Ticket Visitante</title><style>body { background: #111; color: white; font-family: 'Arial', sans-serif; text-align: center; padding: 50px; } .ticket { border: 4px dashed gold; padding: 40px; border-radius: 15px; background: #222; max-width: 400px; margin: 0 auto; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); } h1 { color: gold; text-transform: uppercase; font-size: 28px; margin-bottom: 5px; } p { font-size: 16px; color: #ccc; margin-bottom: 30px; } .qr-box { background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 20px;} .footer { font-size: 12px; color: #777; margin-top: 20px; font-style: italic;}</style></head><body><div class="ticket"><h1>🎬 Cinepolitos 🍿</h1><h2 style="margin: 0; color: white;">Catálogo de Publicidad</h2><p>Escanea este código mágico con tu celular para apartar los productos a tu nombre.</p><div class="qr-box">${contenidoQR}</div><div class="footer">⚠️ La entrega está sujeta a que Corporativo no solicite el retorno de los materiales.</div></div></body></html>`); ventana.document.close(); setTimeout(() => ventana.print(), 800); }
-    function abrirModalMisPedidos() { const nombreCinepolito = localStorage.getItem('nombreCinepolito'); if(!nombreCinepolito) { alert("Todavía no has pedido nada. Abre un producto y dale clic a 'Quiero pedir esto' primero."); return; } fetch(API_RESERVAS).then(res => res.json()).then(data => { const tbody = document.getElementById('tablaMisPedidosCuerpo'); tbody.innerHTML = ''; let todosMisPedidos = []; data.pendientes.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.aprobados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.entregadas.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.rechazados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); if(todosMisPedidos.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No encontramos historial a tu nombre.</td></tr>'; } else { todosMisPedidos.forEach(pedido => { let badgeClass = `estado-${pedido.Estado}`; let textoEstado = pedido.Estado; if(pedido.Estado === 'Rechazado') textoEstado = 'Corporativo lo pidió 🔙'; if(pedido.Estado === 'Aprobado') textoEstado = 'Aprobado (Listo) ✅'; if(pedido.Estado === 'Pendiente') textoEstado = 'En Espera ⏳'; if(pedido.Estado === 'Entregado') textoEstado = 'Entregado 🎉'; tbody.innerHTML += `<tr><td><strong>${pedido.Nombre_Material}</strong></td><td>${pedido.Cantidad} pz</td><td><span class="estado-badge ${badgeClass}">${textoEstado}</span></td></tr>`; }); } abrirModal('modalMisPedidos'); }); }
-
-    function cargarCategoriasGlobales() { fetch(API_CATEGORIAS).then(res => res.json()).then(data => { listaCategorias = data; const filtro = document.getElementById('filtroCategoria'); filtro.innerHTML = '<option value="Todos">Todas las categorías</option>'; data.forEach(c => filtro.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); document.querySelectorAll('.select-dinamico-cat, .masivo-cat').forEach(sel => { let actual = sel.value; sel.innerHTML = ''; data.forEach(c => sel.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); if(actual) sel.value = actual; }); }).catch(err => console.log("Omitiendo categorías...")); }
-    function abrirModalCategorias() { fetch(API_CATEGORIAS).then(res => res.json()).then(data => { const tb = document.getElementById('tablaCategorias'); tb.innerHTML = ''; data.forEach(c => { tb.innerHTML += `<tr><td><strong>${c.Nombre}</strong></td><td><button class="btn btn-info" style="padding:5px;" onclick="editarCategoria(${c.ID_Categoria}, '${c.Nombre}')">✏️</button> <button class="btn btn-danger" style="padding:5px;" onclick="eliminarCategoria(${c.ID_Categoria})">🗑️</button></td></tr>`; }); abrirModal('modalCategorias'); }); }
-    function guardarCategoria() { const nombre = document.getElementById('catNombre').value.trim(); const id = document.getElementById('catIdEdit').value; if(!nombre) return; const config = id ? { method: 'PUT', url: `${API_CATEGORIAS}/${id}` } : { method: 'POST', url: API_CATEGORIAS }; fetch(config.url, { method: config.method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre}) }).then(() => { document.getElementById('catNombre').value = ''; document.getElementById('catIdEdit').value = ''; cargarCategoriasGlobales(); abrirModalCategorias(); }); }
-    function editarCategoria(id, nombre) { document.getElementById('catIdEdit').value = id; document.getElementById('catNombre').value = nombre; }
-    function eliminarCategoria(id) { if(confirm("¿Seguro que deseas borrar esta categoría?")) { fetch(`${API_CATEGORIAS}/${id}`, { method: 'DELETE' }).then(() => { cargarCategoriasGlobales(); abrirModalCategorias(); }); } }
 
     function verificarSesion() {
         if(localStorage.getItem('rolCine')) { rolUsuario = localStorage.getItem('rolCine'); idUsuario = localStorage.getItem('idCine'); nombreUsuario = localStorage.getItem('nombreCine'); } 
@@ -405,74 +158,138 @@
         configurarInterfaz(); cargarTabla();
         if (rolUsuario === 'Supervisor' || rolUsuario === 'Admin' || rolUsuario === 'Subgerente') revisarSolicitudesPendientes();
     }
-    function iniciarSesion() { const claveTexto = document.getElementById('claveAcceso').value; fetch(API_LOGIN, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({clave: claveTexto}) }).then(res => { if(!res.ok) throw new Error('Contraseña incorrecta'); return res.json(); }).then(user => { localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); location.reload(); }).catch(err => alert(err.message)); }
-    function cerrarSesion() { localStorage.setItem('rolCine', 'General'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine'); location.reload(); }
+    
+    function iniciarSesion() { 
+        const claveTexto = document.getElementById('claveAcceso').value; 
+        fetch(API_LOGIN, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({clave: claveTexto}) })
+        .then(res => { if(!res.ok) throw new Error('Contraseña incorrecta'); return res.json(); })
+        .then(user => { localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); location.reload(); })
+        .catch(err => alert(err.message)); 
+    }
+    function cerrarSesion() { localStorage.clear(); location.reload(); }
 
     function configurarInterfaz() {
-        let textoEtiqueta = rolUsuario; const badge = document.getElementById('etiquetaRol');
-        if(rolUsuario === 'Visitante') { textoEtiqueta = '🎫 Cinepolito'; let guardadoNombre = localStorage.getItem('nombreCinepolito'); if (guardadoNombre) textoEtiqueta += `: ${guardadoNombre}`; } 
-        else if (nombreUsuario && rolUsuario !== 'General') { textoEtiqueta = `${rolUsuario}: ${nombreUsuario}`; }
-        badge.innerText = `(${textoEtiqueta})`; badge.className = 'rol-badge'; 
-        if (rolUsuario === 'Subgerente') badge.classList.add('badge-subgerente');
-        
+        const badge = document.getElementById('etiquetaRol'); badge.innerText = rolUsuario !== 'General' ? `(${rolUsuario}: ${nombreUsuario})` : '';
         document.querySelectorAll('.req-staff, .req-admin, .req-auth').forEach(el => el.classList.remove('oculto'));
-        if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista') { document.getElementById('cajaExclusiva').style.display = 'block'; } 
-        else { document.getElementById('cajaExclusiva').style.display = 'none'; }
-
         if(rolUsuario === 'General' || rolUsuario === 'Visitante') {
-            document.getElementById('btnIngresar').classList.remove('oculto'); document.getElementById('btnSalir').classList.add('oculto'); document.getElementById('btnPerfil').classList.add('oculto');
-            document.querySelectorAll('.req-staff, .req-admin').forEach(el => el.classList.add('oculto'));
-            if(rolUsuario === 'Visitante') document.getElementById('btnMisPedidos').classList.remove('oculto');
+            document.getElementById('btnIngresar').classList.remove('oculto'); document.getElementById('btnSalir').classList.add('oculto'); document.querySelectorAll('.req-staff, .req-admin').forEach(el => el.classList.add('oculto'));
         } else {
-            document.getElementById('btnIngresar').classList.add('oculto'); document.getElementById('btnSalir').classList.remove('oculto'); document.getElementById('btnPerfil').classList.remove('oculto');
-            document.getElementById('btnMisPedidos').classList.add('oculto');
+            document.getElementById('btnIngresar').classList.add('oculto'); document.getElementById('btnSalir').classList.remove('oculto');
             if(rolUsuario === 'Publicista') { document.querySelectorAll('.req-admin, .req-auth').forEach(el => el.classList.add('oculto')); } 
             else if(rolUsuario === 'Supervisor') { document.querySelectorAll('.req-admin').forEach(el => el.classList.add('oculto')); }
         }
     }
 
-    function abrirModalUsuarios() { fetch(API_USUARIOS).then(res => res.json()).then(data => { const tb = document.getElementById('tablaUsuariosAdmin'); tb.innerHTML = ''; data.forEach(u => { tb.innerHTML += `<tr><td>${u.ID_Usuario}</td><td><strong>${u.Nombre}</strong></td><td><span class="rol-badge ${u.Rol === 'Subgerente' ? 'badge-subgerente' : ''}">${u.Rol}</span></td><td><button class="btn btn-info" style="padding: 5px;" onclick="editarUsuarioAdmin(${u.ID_Usuario}, '${u.Nombre}', '${u.Rol}')">✏️</button> <button class="btn btn-danger" style="padding: 5px;" onclick="eliminarUsuarioAdmin(${u.ID_Usuario})">🗑️</button></td></tr>`; }); abrirModal('modalUsuarios'); }); }
-    function guardarUsuarioAdmin() { const id = document.getElementById('adminUsuarioId').value; const nombre = document.getElementById('adminUsuarioNombre').value.trim(); const rol = document.getElementById('adminUsuarioRol').value; const clave = document.getElementById('adminUsuarioClave').value; const claveConf = document.getElementById('adminUsuarioClaveConf').value; if(!nombre) return alert("El nombre es obligatorio"); if(clave !== claveConf) return alert("❌ Error Humano: Las contraseñas no coinciden."); if(!id && !clave) return alert("❌ Error: Necesitas ponerle una contraseña a un usuario nuevo."); fetch(id ? `${API_USUARIOS}/${id}` : API_USUARIOS, { method: id ? 'PUT' : 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(id ? {nombre, rol, clave} : {nombre, rol, clave}) }).then(() => { alert("Usuario guardado con éxito."); cancelarEdicionUsuario(); abrirModalUsuarios(); }); }
-    function editarUsuarioAdmin(id, nombre, rol) { document.getElementById('adminUsuarioId').value = id; document.getElementById('adminUsuarioNombre').value = nombre; document.getElementById('adminUsuarioRol').value = rol; document.getElementById('btnCancelarEdicionUsuario').classList.remove('oculto'); }
-    function cancelarEdicionUsuario() { document.getElementById('adminUsuarioId').value = ''; document.getElementById('adminUsuarioNombre').value = ''; document.getElementById('adminUsuarioClave').value = ''; document.getElementById('adminUsuarioClaveConf').value = ''; document.getElementById('btnCancelarEdicionUsuario').classList.add('oculto'); }
-    function eliminarUsuarioAdmin(id) { if(id == idUsuario) return alert("❌ No puedes borrarte a ti mismo."); if(confirm("¿Eliminar usuario?")) { fetch(`${API_USUARIOS}/${id}`, { method: 'DELETE' }).then(() => abrirModalUsuarios()); } }
-
-    function limpiarTextoDuro(texto) { if (!texto) return ""; let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, ''); return limpio.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(); }
-    function cargarTabla() { fetch(API_URL).then(res => { if(!res.ok) throw new Error("Fallo de conexión"); return res.json(); }).then(data => { if(!Array.isArray(data)) throw new Error("Formato incorrecto."); datosInventario = data; renderizarTabla(); }).catch(err => { document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;"><b>🛑 Error Detectado:</b> ${err.message}.</td></tr>`; }); }
-    
-    function renderizarTabla() { 
-        const tbodyNormal = document.getElementById('tablaCuerpo'); const tbodyExclusivo = document.getElementById('tablaCuerpoExclusivo'); 
-        const filtro = document.getElementById('filtroCategoria').value; const textoBusqueda = document.getElementById('buscadorGeneral').value.toLowerCase().trim();
-        tbodyNormal.innerHTML = ''; tbodyExclusivo.innerHTML = ''; 
-        if(datosInventario.length === 0) { tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío o cargando...</td></tr>`; tbodyExclusivo.innerHTML = `<tr><td colspan="5" style="text-align:center; color:gray;">Inventario vacío...</td></tr>`; return; } 
-        let datosNormales = datosInventario.filter(item => item.Categoria !== 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro) && (item.Nombre_Material.toLowerCase().includes(textoBusqueda)));
-        let datosExclusivos = datosInventario.filter(item => item.Categoria === 'Áreas del Cine' && (filtro === "Todos" || item.Categoria === filtro) && (item.Nombre_Material.toLowerCase().includes(textoBusqueda)));
-        datosNormales.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); datosExclusivos.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
-        if(datosNormales.length === 0) tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin resultados de búsqueda</td></tr>`;
-        datosNormales.forEach(item => { const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'"); const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}', ${item.Cantidad_Guardados})">✏️</button>` : ''; const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; tbodyNormal.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; }); 
-        if(datosExclusivos.length === 0) tbodyExclusivo.innerHTML = `<tr><td colspan="5" style="text-align:center;">No hay resultados en áreas internas.</td></tr>`;
-        datosExclusivos.forEach(item => { 
-            const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'"); 
-            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px; color:black;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}', ${item.Cantidad_Guardados})">✏️</button>` : ''; 
-            const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
-            let infoGrupo = item.GruposNombres ? `<span style="font-size:11px; font-weight:bold; color:var(--success); border:1px solid var(--success); border-radius:4px; padding:2px 4px; display:inline-block; margin-top:4px;">${item.GruposNombres}</span>` : `<span style="font-size:11px; color:gray; font-style:italic; display:inline-block; margin-top:4px;">Sin Slot</span>`;
-            tbodyExclusivo.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${infoGrupo}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
+   
+    function revisarSolicitudesPendientes() {
+        Promise.all([fetch(API_RESERVAS).then(r => r.json()), fetch(API_MERMAS).then(r => r.json())]).then(([reservasData, mermasData]) => {
+            const tbPosters = document.getElementById('tablaAlertasAutorizacion'); tbPosters.innerHTML = '';
+            const tbMermas = document.getElementById('tablaAlertasMermas'); tbMermas.innerHTML = '';
+            let hayAlertas = false;
+            
+            if(reservasData.pendientes.length > 0) {
+                hayAlertas = true;
+                reservasData.pendientes.forEach(r => {
+                    tbPosters.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad} pz</td>
+                    <td><button class="btn btn-success" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️ Aprobar</button> <button class="btn btn-danger" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌ Denegar</button></td></tr>`;
+                });
+            } else { tbPosters.innerHTML = '<tr><td colspan="4" style="text-align:center; color:gray;">Sin solicitudes de apartados.</td></tr>'; }
+            
+            if(mermasData.length > 0) {
+                hayAlertas = true;
+                mermasData.forEach(m => {
+                    let imgHtml = m.Foto_Base64 ? `<br><img src="${m.Foto_Base64}" style="width:80px; height:80px; object-fit:cover; border-radius:5px; cursor:pointer;" onclick="window.open().document.write('<img src=${m.Foto_Base64}>')">` : '';
+                    tbMermas.innerHTML += `<tr><td><strong>${m.Nombre_Material}</strong><br><small>${m.Usuario_Solicita}</small></td><td>${m.Cantidad} pz</td><td>${m.Motivo} ${imgHtml}</td>
+                    <td><button class="btn btn-success" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Tirar</button> <button class="btn btn-danger" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Guardar</button></td></tr>`;
+                });
+            } else { tbMermas.innerHTML = '<tr><td colspan="4" style="text-align:center; color:gray;">Sin mermas por revisar.</td></tr>'; }
+            
+            if(hayAlertas) abrirModal('modalAlertasSupervisor');
         });
     }
 
+    function autorizarSolicitud(id, accion) {
+        fetch(`${API_RESERVAS}/${id}/autorizar`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({accion}) }).then(() => { cargarTabla(); revisarSolicitudesPendientes(); });
+    }
+    function autorizarMerma(id, accion) {
+        fetch(`${API_MERMAS}/${id}/${accion}`, { method: 'PUT' }).then(() => { cargarTabla(); revisarSolicitudesPendientes(); });
+    }
+
+    function abrirModalReservas() {
+        fetch(API_RESERVAS).then(res => res.json()).then(data => {
+            const tb = document.getElementById('tablaAprobadas'); tb.innerHTML = '';
+            if(data.aprobados.length > 0) {
+                data.aprobados.forEach(r => {
+                    tb.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad} pz</td>
+                    <td><button class="btn btn-success" onclick="entregarReserva(${r.ID_Reserva})">Entregar a Empleado</button></td></tr>`;
+                });
+            } else tb.innerHTML = '<tr><td colspan="4" style="text-align:center; color:gray;">No hay pósters listos para entregar.</td></tr>';
+            abrirModal('modalReservas');
+        });
+    }
+    function entregarReserva(id) { fetch(`${API_RESERVAS}/${id}/entregar`, {method: 'PUT'}).then(()=>abrirModalReservas()); }
+
+  
+    function abrirModalArchivo() {
+        const tbody = document.getElementById('cuerpoArchivo'); tbody.innerHTML = '';
+        let archivados = datosInventario.filter(p => p.Categoria === 'Archivo');
+        if(archivados.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">El archivo está limpio.</td></tr>'; } 
+        else {
+            let hoy = new Date();
+            archivados.forEach(p => {
+                let fechaArch = p.Fecha_Archivo ? new Date(p.Fecha_Archivo.replace(' ', 'T')) : new Date();
+                let diffTime = hoy - fechaArch; let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                let alertaHTML = diffDays >= 14 ? `<span style="background:var(--danger); color:white; padding:3px 6px; border-radius:5px; font-weight:bold; font-size:11px;">⚠️ RÓMPASE Y TÍRESE (+2 Semanas)</span>` : `<span style="color:gray; font-size:12px;">Conservar en bodega</span>`;
+                let fechaTxt = p.Fecha_Archivo ? p.Fecha_Archivo.split(' ')[0] : 'Desconocida';
+                tbody.innerHTML += `<tr><td><strong>${p.Nombre_Material}</strong></td><td>${fechaTxt}</td><td>Hace ${diffDays} días<br>${alertaHTML}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button class="btn btn-success" style="padding:5px 10px; font-size:12px;" onclick="desarchivarPoster(${p.ID_Publicidad})">♻️ Restaurar</button><button class="btn btn-danger" style="padding:5px 10px; font-size:12px;" onclick="eliminarProducto(${p.ID_Publicidad})">🗑️ Borrar Permanente</button></td></tr>`;
+            });
+        }
+        abrirModal('modalArchivo');
+    }
+    function desarchivarPoster(id) { if(confirm("¿Restaurar a activos?")) { fetch(`${API_URL}/${id}/desarchivar`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({usuario: rolUsuario}) }).then(() => { cargarTabla(); setTimeout(abrirModalArchivo, 500); }); } }
+
+    function cargarTabla() { fetch(API_URL).then(res => res.json()).then(data => { datosInventario = data; renderizarTabla(); }); }
+    function renderizarTabla() { 
+        const tbodyNormal = document.getElementById('tablaCuerpo'); const filtro = document.getElementById('filtroCategoria').value; const textoBusqueda = document.getElementById('buscadorGeneral').value.toLowerCase().trim();
+        tbodyNormal.innerHTML = '';
+        let datosNormales = datosInventario.filter(item => item.Categoria !== 'Áreas del Cine' && item.Categoria !== 'Archivo' && (filtro === "Todos" || item.Categoria === filtro) && (item.Nombre_Material.toLowerCase().includes(textoBusqueda) || (item.GruposNombres && item.GruposNombres.toLowerCase().includes(textoBusqueda))));
+        datosNormales.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        if(datosNormales.length === 0) tbodyNormal.innerHTML = `<tr><td colspan="5" style="text-align:center;">Sin resultados</td></tr>`;
+        datosNormales.forEach(item => { 
+            const nombreSeguro = item.Nombre_Material.replace(/'/g, "\\'"); 
+            const btnEditar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-warning" style="padding: 6px 12px; font-size:12px;" onclick="abrirModalEditar(${item.ID_Publicidad}, '${nombreSeguro}', '${item.Categoria}', ${item.Cantidad_Guardados})">✏️</button>` : ''; 
+            const btnBorrar = (rolUsuario === 'Admin' || rolUsuario === 'Subgerente') ? `<button class="btn btn-danger" style="padding: 6px 12px;" onclick="eliminarProducto(${item.ID_Publicidad})">🗑️</button>` : ''; 
+            let infoGrupo = item.GruposNombres ? `<br><span style="font-size:11px; font-weight:bold; color:var(--success); border:1px solid var(--success); border-radius:4px; padding:2px 4px; display:inline-block; margin-top:4px;">📂 Slot ${item.GruposNombres}</span>` : `<br><span style="font-size:11px; color:var(--danger); display:inline-block; margin-top:4px;">📌 Sin Agrupar</span>`;
+            tbodyNormal.innerHTML += `<tr><td><strong>${item.Nombre_Material}</strong></td><td>${item.Categoria}${infoGrupo}</td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Guardados}</span></td><td><span style="font-weight:bold; font-size:16px;">${item.Cantidad_Cartelera}</span></td><td style="display:flex; flex-wrap:wrap; gap:8px;"><a href="detalle.html?id=${item.ID_Publicidad}" target="_blank" class="btn btn-info" style="padding: 6px 12px; font-size:12px;">Abrir 👁️</a>${btnEditar}${btnBorrar}</td></tr>`; 
+        }); 
+    }
+
+    function cargarCategoriasGlobales() { fetch(API_CATEGORIAS).then(res => res.json()).then(data => { listaCategorias = data; const filtro = document.getElementById('filtroCategoria'); filtro.innerHTML = '<option value="Todos">Todas las categorías</option>'; data.forEach(c => filtro.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); document.querySelectorAll('.select-dinamico-cat, .masivo-cat').forEach(sel => { let actual = sel.value; sel.innerHTML = ''; data.forEach(c => sel.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); if(actual) sel.value = actual; }); }); }
+    function guardarProducto() { const nombreIn = document.getElementById('nombre').value.trim(); const catIn = document.getElementById('categoria').value; const cantIn = parseInt(document.getElementById('cantidadTotal').value); if(!nombreIn) return; fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombreIn, categoria: catIn, cantidad_total: cantIn, usuario: rolUsuario }) }).then(() => { cerrarModal('modalProducto'); document.getElementById('nombre').value = ''; cargarTabla(); }); }
     function abrirModalEditar(id, nombre, categoria, cantidad) { document.getElementById('editIdProd').value = id; document.getElementById('editNombreProd').value = nombre; document.getElementById('editCategoriaProd').value = categoria; document.getElementById('editCantidadProd').value = cantidad; abrirModal('modalEditarProducto'); }
-    function guardarEdicionProducto() { const id = document.getElementById('editIdProd').value; const nombre = document.getElementById('editNombreProd').value.trim(); const cat = document.getElementById('editCategoriaProd').value; const cant = document.getElementById('editCantidadProd').value; const usuarioAct = nombreUsuario || rolUsuario; if(!nombre) return alert("El nombre no puede estar vacío"); fetch(`${API_URL}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, categoria: cat, cantidad: cant, usuario: usuarioAct }) }).then(() => { cerrarModal('modalEditarProducto'); cargarTabla(); }); }
-    function guardarProducto() { const nombreIn = document.getElementById('nombre').value.trim(); const catIn = document.getElementById('categoria').value; const cantIn = parseInt(document.getElementById('cantidadTotal').value); const usuarioAct = nombreUsuario || rolUsuario; if(!nombreIn) return; const nombreNuevoLimpio = limpiarTextoDuro(nombreIn); let posibleDuplicado = datosInventario.find(p => { let nombreInvLimpio = limpiarTextoDuro(p.Nombre_Material); return nombreNuevoLimpio === nombreInvLimpio || nombreNuevoLimpio.includes(nombreInvLimpio) || nombreInvLimpio.includes(nombreNuevoLimpio); }); if(posibleDuplicado) { let confirmacion = confirm(`⚠️ POSIBLE MATERIAL DUPLICADO:\n\nEstás registrando "${nombreIn}", pero ya tienes un material llamado "${posibleDuplicado.Nombre_Material}".\n\n¿Estás seguro de registrarlo separado?`); if(!confirmacion) return; } fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombreIn, categoria: catIn, cantidad_total: cantIn, usuario: usuarioAct }) }).then(() => { document.getElementById('modalProducto').style.display='none'; document.getElementById('nombre').value = ''; cargarTabla(); }); }
-    function eliminarProducto(id) { if(confirm("¿Eliminar registro?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => cargarTabla()); } }
-    function agregarFilaMasivo() { let opciones = listaCategorias.map(c => `<option value="${c.Nombre}">${c.Nombre}</option>`).join(''); const tr = document.createElement('tr'); tr.className = 'fila-masiva'; tr.innerHTML = `<td><input type="text" class="masivo-nombre" required style="width:90%;"></td><td><select class="masivo-cat" style="width:90%;">${opciones}</select></td><td><input type="number" class="masivo-cant" min="1" required style="width:70%;"></td><td><button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">X</button></td>`; document.getElementById('cuerpoMasivo').appendChild(tr); }
-    function abrirModalMasivo() { document.getElementById('cuerpoMasivo').innerHTML = ''; agregarFilaMasivo(); abrirModal('modalMasivo'); }
-    function guardarIngresoMasivo() { let productos = []; const usuarioAct = nombreUsuario || rolUsuario; document.querySelectorAll('.fila-masiva').forEach(fila => { productos.push({ nombre: fila.querySelector('.masivo-nombre').value, categoria: fila.querySelector('.masivo-cat').value, cantidad_total: parseInt(fila.querySelector('.masivo-cant').value), usuario: usuarioAct }); }); fetch(API_URL + '/masivo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productos) }).then(() => { cerrarModal('modalMasivo'); cargarTabla(); }); }
-    
-    function abrirFotoEvidencia(btn) { const base64Data = btn.getAttribute('data-foto'); const nuevaPestana = window.open(); nuevaPestana.document.write(`<html><head><title>Evidencia de Merma</title></head><body style="margin:0; background:#111; display:flex; justify-content:center; align-items:center; height:100vh;"><img src="${base64Data}" style="max-width:100%; max-height:100%; object-fit:contain; box-shadow: 0 0 20px rgba(0,0,0,0.8);"></body></html>`); nuevaPestana.document.close(); }
-    function revisarSolicitudesPendientes() { Promise.all([fetch(API_RESERVAS).then(r => r.json()), fetch('https://jonassk13.pythonanywhere.com/api/mermas').then(r => r.json())]).then(([reservasData, mermasData]) => { const tbPosters = document.getElementById('tablaAlertasAutorizacion'); tbPosters.innerHTML = ''; const tbMermas = document.getElementById('tablaAlertasMermas'); tbMermas.innerHTML = ''; let hayAlertas = false; if(reservasData.pendientes.length > 0) { hayAlertas = true; reservasData.pendientes.forEach(r => { tbPosters.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td style="display:flex; flex-wrap:wrap; gap:5px;"><button class="btn btn-success" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️</button> <button class="btn btn-danger" style="padding:5px 10px;" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌</button></td></tr>`; }); } else { tbPosters.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin solicitudes de empleados.</td></tr>'; } if(mermasData.length > 0) { hayAlertas = true; mermasData.forEach(m => { let imgHtml = m.Foto_Base64 ? `<div style="margin-top: 10px;"><img src="${m.Foto_Base64}" onclick="abrirFotoEvidencia(this)" data-foto="${m.Foto_Base64}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; cursor: pointer; border: 2px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;" title="Clic para ver en grande" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><br><small style="color:var(--primary); font-size:10px; cursor:pointer;" onclick="this.previousElementSibling.click()">🔍 Ampliar</small></div>` : '<div style="margin-top:10px;"><span style="color:gray;">Sin foto</span></div>'; tbMermas.innerHTML += `<tr><td><strong>${m.Nombre_Material}</strong><br><small>Por: ${m.Usuario_Solicita}</small></td><td>${m.Cantidad} pz</td><td><i>"${m.Motivo}"</i>${imgHtml}</td><td style="display:flex; flex-direction:column; gap:5px;"><button class="btn btn-success" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Autorizar (Tirar)</button> <button class="btn btn-danger" style="font-size:12px;" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Negar (Guardar)</button></td></tr>`; }); } else { tbMermas.innerHTML = '<tr><td colspan="4" style="text-align:center;">Sin mermas por revisar.</td></tr>'; } if(hayAlertas) { abrirModal('modalAlertasSupervisor'); } }); }
-    function autorizarSolicitud(id, accion) { fetch(`${API_RESERVAS}/${id}/autorizar`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({accion}) }).then(() => { cerrarModal('modalAlertasSupervisor'); cargarTabla(); revisarSolicitudesPendientes(); }); }
-    function autorizarMerma(id, accion) { if(!confirm(`¿Seguro que deseas ${accion === 'aprobar' ? 'TIRAR' : 'GUARDAR'} esta pieza?`)) return; fetch(`https://jonassk13.pythonanywhere.com/api/mermas/${id}/${accion}`, { method: 'PUT' }).then(() => { alert(`Merma procesada.`); cerrarModal('modalAlertasSupervisor'); cargarTabla(); revisarSolicitudesPendientes(); }); }
-    function abrirModalReservas() { fetch(API_RESERVAS).then(res => res.json()).then(data => { document.getElementById('tablaPendientes').innerHTML = data.pendientes.map(r => `<tr><td>${r.Nombre_Material}</td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td></tr>`).join(''); document.getElementById('tablaAprobadas').innerHTML = data.aprobados.map(r => `<tr><td>${r.Nombre_Material}</td><td>${r.Nombre_Persona}</td><td>${r.Cantidad}</td><td><button class="btn btn-success" onclick="fetch('${API_RESERVAS}/${r.ID_Reserva}/entregar', {method: 'PUT'}).then(()=>abrirModalReservas())">Entregar</button></td></tr>`).join(''); abrirModal('modalReservas'); }); }
+    function guardarEdicionProducto() { const id = document.getElementById('editIdProd').value; const nombre = document.getElementById('editNombreProd').value.trim(); const cat = document.getElementById('editCategoriaProd').value; const cant = document.getElementById('editCantidadProd').value; if(!nombre) return; fetch(`${API_URL}/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nombre: nombre, categoria: cat, cantidad: cant, usuario: rolUsuario }) }).then(() => { cerrarModal('modalEditarProducto'); cargarTabla(); }); }
+    function eliminarProducto(id) { if(confirm("¿Eliminar registro de la base de datos permanentemente?")) { fetch(`${API_URL}/${id}`, { method: 'DELETE' }).then(() => { cargarTabla(); cerrarModal('modalArchivo'); setTimeout(abrirModalArchivo, 500); }); } }
+
+    function abrirModalSlots() { Promise.all([fetch(API_URL).then(r => r.json()), fetch(API_GRUPOS).then(r => r.json())]).then(([inventario, grupos]) => { datosInventario = inventario; slotsData = grupos; renderizarSlots(); abrirModal('modalSlots'); }); }
+    function renderizarSlots() {
+        const contenedor = document.getElementById('contenedorSlots'); const contenedorSinAgrupar = document.getElementById('contenedorSinAgrupar');
+        contenedor.innerHTML = ''; contenedorSinAgrupar.innerHTML = '';
+        let disponibles = datosInventario.filter(p => p.Categoria === 'Poster' && (!p.GruposNombres || p.GruposNombres.trim() === "")); disponibles.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        let dropdownHTML = `<option value="">-- Elige un póster libre --</option>`;
+        if(disponibles.length === 0) contenedorSinAgrupar.innerHTML = '<p style="color:var(--success); font-size:13px; font-weight:bold; margin:0;">¡Excelente! Todos los pósters activos están guardados en sus carpetas.</p>';
+        else disponibles.forEach(p => { dropdownHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material}</option>`; contenedorSinAgrupar.innerHTML += `<span style="background: white; border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 15px; font-size: 11px; font-weight: bold;">📌 ${p.Nombre_Material}</span>`; });
+        if (slotsData.length === 0) { contenedor.innerHTML = '<p style="text-align:center; color:gray; grid-column:1/-1;">Aún no hay Carpetas creadas.</p>'; return; }
+        slotsData.forEach(slot => {
+            let itemsHTML = '';
+            if (slot.items && slot.items.length > 0) slot.items.forEach(item => { itemsHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.8); padding:5px; margin-bottom:5px; border-radius:4px; border:1px solid var(--border-color);"><span style="font-size:12px; font-weight:bold; color:black;">${item.Nombre_Material}</span><button class="btn btn-danger" style="padding:2px 6px; font-size:10px;" onclick="quitarDeSlot(${slot.ID_Grupo}, ${item.ID_Publicidad})">✖️</button></div>`; }); else itemsHTML = '<p style="font-size:11px; color:gray; font-style:italic;">Carpeta vacía.</p>';
+            contenedor.innerHTML += `<div class="carpeta-slot"><div class="carpeta-pestana">${slot.Nombre_Grupo}</div><button class="btn btn-danger" style="position:absolute; top:5px; right:5px; padding:2px 6px; font-size:10px;" onclick="eliminarSlot(${slot.ID_Grupo})">Borrar</button><div style="margin-top:15px; margin-bottom:10px; max-height:120px; overflow-y:auto; padding-right:5px;">${itemsHTML}</div><div style="display:flex; gap:5px; margin-top:auto;"><select id="select-slot-${slot.ID_Grupo}" style="flex:1; margin:0; font-size:11px; padding:5px;" onkeydown="if(event.key==='Enter') agregarASlot(${slot.ID_Grupo})">${dropdownHTML}</select><button class="btn btn-success" style="padding:5px; font-size:11px;" onclick="agregarASlot(${slot.ID_Grupo})">➕</button></div></div>`;
+        });
+    }
+    function crearSlot() { const nombre = document.getElementById('nuevoNombreSlot').value.trim(); if(!nombre) return alert("Ingresa un nombre para la carpeta"); fetch(API_GRUPOS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ nombre: nombre }) }).then(() => { document.getElementById('nuevoNombreSlot').value = ''; abrirModalSlots(); cargarTabla(); }); }
+    function agregarASlot(idGrupo) { const sel = document.getElementById(`select-slot-${idGrupo}`); const idPub = sel.value; if(!idPub) return alert("Selecciona un póster para añadir."); fetch(`${API_GRUPOS}/${idGrupo}/add`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { abrirModalSlots(); cargarTabla(); }); }
+    function quitarDeSlot(idGrupo, idPub) { fetch(`${API_GRUPOS}/${idGrupo}/remove/${idPub}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); }); }
+    function eliminarSlot(idGrupo) { if(!confirm("¿Seguro que deseas eliminar esta carpeta completa? Los pósters quedarán libres.")) return; fetch(`${API_GRUPOS}/${idGrupo}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); }); }
+    function autoAgruparSlots() { if(!confirm("⚡ MODO INTELIGENTE (A-Z):\n\nEl sistema leerá las letras en el nombre de tus slots y asignará los pósters automáticamente.\n\n⚠️ Si no tienes ningún slot, creará mágicamente los 6 slots oficiales (A-D, E-H, etc.) y ordenará toda la bodega.\n\n¿Continuar?")) return; fetch(`${API_GRUPOS}/auto_organizar`, { method: 'POST' }).then(res => res.json()).then(data => { abrirModalSlots(); cargarTabla(); alert("✅ " + data.mensaje); }); }
 </script>
 </body>
 </html>
