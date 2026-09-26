@@ -101,7 +101,7 @@
         if(rolUsuario !== 'Subgerente') return; 
         if(nombreUsuario.toLowerCase().includes('jacqui') || nombreUsuario.toLowerCase().includes('jacqueline')) {
             document.body.classList.add('theme-bosque-pinos');
-            let hora = new Date().getHours(); 
+            let hora = new Date().getHours();
             if (hora >= 6 && hora < 12) { document.body.classList.add('theme-amanecer'); } 
             else if (hora >= 12 && hora < 19) { document.body.classList.add('theme-atardecer'); } 
             else { document.body.classList.add('theme-noche'); }
@@ -189,24 +189,24 @@
         <style>
             @page { size: letter portrait; margin: 0; } 
             body { font-family: 'Arial', sans-serif; background: #fff; color: #000; margin: 0; padding: 0; } 
-            .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 0.5cm; gap: 0.5cm; } 
-            .etiqueta { width: 100%; height: 8cm; border-top: 2px dashed #777; border-bottom: 2px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; border-radius:0px;} 
-            .qr-code { width: 6cm; height: 6cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; } 
+            .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 0.5cm; gap: 0.4cm; } 
+            .etiqueta { width: 19.5cm; height: 4.1cm; border: 2px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; border-radius: 8px;} 
+            .qr-code { width: 3.2cm; height: 3.2cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; } 
             .qr-code img { max-width: 100%; max-height: 100%; } 
-            .info { flex-grow: 1; padding-left: 2cm; text-align: left; } 
-            .titulo { font-size: 30px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000; letter-spacing: 1px;} 
-            .subtitulo { font-size: 16px; color: #555; margin-top:10px; font-weight:bold; }
+            .info { flex-grow: 1; padding-left: 1cm; text-align: left; } 
+            .titulo { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000;} 
+            .subtitulo { font-size: 12px; color: #555; margin-top:5px; font-weight:bold; }
         </style></head><body>
             <div class="hoja">
                 <div class="etiqueta">
                     <div class="qr-code" id="qrIndividual"></div>
                     <div class="info">
                         <p class="titulo">${prodGlobal.Nombre_Material}</p>
-                        <p class="subtitulo">🎬 PÓSTER OFICIAL - ESCANEAR QR PARA OPERACIONES</p>
+                        <p class="subtitulo">🎬 PÓSTER OFICIAL - ESCANEAR PARA OPERACIONES</p>
                     </div>
                 </div>
             </div>
-            <script>new QRCode(document.getElementById('qrIndividual'), { text: "${urlMaterial}", width: 250, height: 250, colorDark : "#000", colorLight : "#fff" }); setTimeout(() => window.print(), 800);<\/script>
+            <script>new QRCode(document.getElementById('qrIndividual'), { text: "${urlMaterial}", width: 120, height: 120, colorDark : "#000", colorLight : "#fff" }); setTimeout(() => window.print(), 800);<\/script>
         </body></html>`);
         ventana.document.close();
     }
