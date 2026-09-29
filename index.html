@@ -13,21 +13,21 @@
         
         body.theme-bosque-pinos { background-size: cover !important; background-position: center !important; background-attachment: fixed !important; color: #ffe8d6 !important; }
         body.theme-amanecer { background-image: linear-gradient(to bottom, rgba(168, 230, 207, 0.4), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
-        body.theme-amanecer .box, body.theme-amanecer .action-bar, body.theme-amanecer .modal-content { background: rgba(20, 60, 40, 0.5) !important; border: 1px solid #a8e6cf !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(168, 230, 207, 0.2); color: #fff !important; }
+        body.theme-amanecer .box, body.theme-amanecer .action-bar, body.theme-amanecer .modal-content, body.theme-amanecer #pantallaBloqueo { background: rgba(20, 60, 40, 0.5) !important; border: 1px solid #a8e6cf !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(168, 230, 207, 0.2); color: #fff !important; }
         body.theme-amanecer table th { background-color: rgba(46, 125, 50, 0.7) !important; color: white !important; }
         body.theme-amanecer table td { border-color: rgba(168, 230, 207, 0.3) !important; }
         body.theme-amanecer .btn-dark { background: rgba(27, 94, 32, 0.8) !important; border: 1px solid #a8e6cf; color: white !important;}
         body.theme-amanecer input, body.theme-amanecer select { background: rgba(0,0,0,0.4) !important; color: white !important; border: 1px solid #a8e6cf !important; }
 
         body.theme-atardecer { background-image: linear-gradient(to bottom, rgba(255, 110, 64, 0.45), rgba(42, 8, 69, 0.95)), url('https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
-        body.theme-atardecer .box, body.theme-atardecer .action-bar, body.theme-atardecer .modal-content { background: rgba(30, 10, 20, 0.5) !important; border: 1px solid #ff7e5f !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(255, 110, 64, 0.2); color: #ffe8d6 !important; }
+        body.theme-atardecer .box, body.theme-atardecer .action-bar, body.theme-atardecer .modal-content, body.theme-atardecer #pantallaBloqueo { background: rgba(30, 10, 20, 0.5) !important; border: 1px solid #ff7e5f !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(255, 110, 64, 0.2); color: #ffe8d6 !important; }
         body.theme-atardecer table th { background-color: rgba(255, 110, 64, 0.7) !important; color: white !important; }
         body.theme-atardecer table td { border-color: rgba(255, 110, 64, 0.3) !important; }
         body.theme-atardecer .btn-dark { background: rgba(90, 20, 30, 0.8) !important; border: 1px solid #ff7e5f; color: white !important;}
         body.theme-atardecer input, body.theme-atardecer select { background: rgba(0,0,0,0.5) !important; color: white !important; border: 1px solid #ff7e5f !important; }
 
         body.theme-noche { background-image: linear-gradient(to bottom, rgba(10, 25, 47, 0.7), rgba(2, 6, 12, 0.98)), url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
-        body.theme-noche .box, body.theme-noche .action-bar, body.theme-noche .modal-content { background: rgba(10, 15, 30, 0.6) !important; border: 1px solid #64ffda !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(100, 255, 218, 0.1); color: #e6f1ff !important; }
+        body.theme-noche .box, body.theme-noche .action-bar, body.theme-noche .modal-content, body.theme-noche #pantallaBloqueo { background: rgba(10, 15, 30, 0.6) !important; border: 1px solid #64ffda !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(100, 255, 218, 0.1); color: #e6f1ff !important; }
         body.theme-noche table th { background-color: rgba(2, 12, 27, 0.8) !important; color: #64ffda !important; }
         body.theme-noche table td { border-color: rgba(100, 255, 218, 0.2) !important; }
         body.theme-noche .btn-dark { background: rgba(2, 12, 27, 0.8) !important; border: 1px solid #64ffda; color: #64ffda !important;}
@@ -82,58 +82,71 @@
     <h1 style="margin: 0; font-size: 22px;">Inventario - <span id="zona-secreta">Cine</span> <span id="etiquetaRol" class="rol-badge"></span></h1>
     <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: center;">
         <button class="btn" style="background:#222; color:white;" onclick="toggleDarkMode()">🌙 / ☀️</button>
-        <button id="btnIngresar" class="btn btn-c-blue" onclick="abrirModal('modalLogin')">👤 Staff / Admin</button>
+        <button id="btnIngresar" class="btn btn-c-blue" onclick="abrirModal('modalLogin')">👤 Iniciar Sesión</button>
         <button id="btnMisPedidos" class="btn btn-c-hotpink oculto" onclick="abrirModalMisPedidos()">🎫 Mis Pedidos</button>
         <button id="btnPerfil" class="btn btn-c-teal oculto" onclick="abrirModalPerfil()">⚙️ Mi Perfil</button>
         <button id="btnSalir" class="btn" style="background:#dc3545;" onclick="cerrarSesion()">Salir</button>
     </div>
 </div>
 
-<div class="action-bar">
-    <button class="btn btn-c-blue req-staff" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
-    <button class="btn btn-c-yellow req-admin" onclick="abrirModalMasivo()">⚡ Ingreso Masivo</button>
-    <button class="btn btn-c-pink req-admin" onclick="abrirModalUsuarios()">👥 Gestionar Usuarios</button>
-    <button class="btn btn-c-yellow req-admin" onclick="abrirModalCategorias()">🏷️ Categorías</button>
-    
-    <button class="btn btn-c-teal req-admin" onclick="abrirModalQRVisitante()">📲 QR para Cinepolitos</button>
-    <button class="btn btn-c-purple req-admin" onclick="abrirModalImpresionQR()">🖨️ QRs de Pósters</button>
-    <button class="btn btn-c-hotpink req-admin" onclick="abrirModalHistorial()">📖 Historial General</button>
+<div id="pantallaBloqueo" style="display:none; text-align:center; padding: 60px 20px; background: var(--box-bg); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-top: 20px; border: 2px dashed var(--danger);">
+    <h1 style="color: var(--danger); font-size: 30px;">🔒 Acceso Restringido</h1>
+    <p style="font-size: 16px; color: gray; margin-bottom: 30px;">El inventario de publicidad es información interna y privada. Inicia sesión con tu cuenta de Staff o Administrador para operar.</p>
+    <button class="btn btn-c-blue" onclick="abrirModal('modalLogin')" style="font-size: 20px; padding: 15px 40px; border-radius: 8px;">🔑 Iniciar Sesión</button>
+</div>
 
-    <button class="btn btn-c-lightpurple req-staff req-auth" onclick="revisarSolicitudesPendientes()">📋 Aprobaciones</button>
-    <button class="btn btn-c-cyan req-staff" onclick="abrirModalSlots()">📂 Gestionar Slots</button>
-    
-    <a href="carteleras.html" target="_blank" class="btn btn-c-lightpurple req-staff">🗺️ Mapa Carteleras</a>
-    <a href="proximos_estrenos.html" target="_blank" class="btn btn-c-darkgreen req-staff">🚀 Próximos Estrenos</a>
-    <a href="plano_interactivo.html" target="_blank" class="btn btn-c-hotpink req-staff">📍 Plano del Cine</a>
-    <a href="lobby_stands.html" target="_blank" class="btn btn-c-orange req-staff">🎪 Stands de Lobby</a>
-    <a href="areas_cine.html" target="_blank" class="btn btn-c-darkorange req-staff">🏢 Áreas del Cine</a>
-    <button class="btn btn-c-gray req-admin" onclick="abrirModalArchivo()">🗄️ Archivo Muerto</button>
-    
-    <div class="filtros-container" style="margin-left: auto; display:flex; gap:10px;">
-        <input type="text" id="buscadorGeneral" placeholder="🔍 Buscar póster o Slot..." onkeyup="renderizarTabla()" style="width: 280px; margin-bottom: 0;">
-        <select id="filtroCategoria" onchange="renderizarTabla()" style="width: 180px; margin-bottom: 0;">
-            <option value="Todos">Todas las categorías</option>
-        </select>
+<!-- INTERFAZ PROTEGIDA -->
+<div id="interfazProtegida" style="display: none;">
+    <div class="action-bar">
+        <button class="btn btn-c-blue req-staff" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
+        <button class="btn btn-c-yellow req-admin" onclick="abrirModalMasivo()">⚡ Ingreso Masivo</button>
+        <button class="btn btn-c-pink req-admin" onclick="abrirModalUsuarios()">👥 Gestionar Usuarios</button>
+        <button class="btn btn-c-yellow req-admin" onclick="abrirModalCategorias()">🏷️ Categorías</button>
+        
+        <button class="btn btn-c-teal req-admin" onclick="abrirModalQRVisitante()">📲 QR para Cinepolitos</button>
+        <button class="btn btn-c-purple req-admin" onclick="abrirModalImpresionQR()">🖨️ QRs de Pósters</button>
+        
+        <button class="btn btn-c-hotpink req-admin" onclick="abrirModalHistorial()">📖 Historial General</button>
+        <button class="btn btn-c-blue req-admin" onclick="abrirModalAccesos()">🕵️ Ver Accesos</button>
+
+        <button class="btn btn-c-lightpurple req-staff req-auth" onclick="revisarSolicitudesPendientes()">📋 Aprobaciones</button>
+        <button class="btn btn-c-cyan req-staff" onclick="abrirModalSlots()">📂 Gestionar Slots</button>
+        
+        <a href="carteleras.html" target="_blank" class="btn btn-c-lightpurple req-staff">🗺️ Mapa Carteleras</a>
+        <a href="proximos_estrenos.html" target="_blank" class="btn btn-c-darkgreen req-staff">🚀 Próximos Estrenos</a>
+        <a href="plano_interactivo.html" target="_blank" class="btn btn-c-hotpink req-staff">📍 Plano del Cine</a>
+        <a href="lobby_stands.html" target="_blank" class="btn btn-c-orange req-staff">🎪 Stands de Lobby</a>
+        <a href="areas_cine.html" target="_blank" class="btn btn-c-darkorange req-staff">🏢 Áreas del Cine</a>
+        <button class="btn btn-c-gray req-admin" onclick="abrirModalArchivo()">🗄️ Archivo Muerto</button>
+        
+        <div class="filtros-container" style="margin-left: auto; display:flex; gap:10px;">
+            <input type="text" id="buscadorGeneral" placeholder="🔍 Buscar póster o Slot..." onkeyup="renderizarTabla()" style="width: 280px; margin-bottom: 0;">
+            <select id="filtroCategoria" onchange="renderizarTabla()" style="width: 180px; margin-bottom: 0;">
+                <option value="Todos">Todas las categorías</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="box">
+        <h2 style="margin-top:0; color: #0d6efd;">🍿 Inventario General (Publicidad)</h2>
+        <table>
+            <thead><tr><th>Material</th><th>Categoría / Carpeta</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaCuerpo"></tbody>
+        </table>
+    </div>
+
+    <div class="box req-staff" id="cajaExclusiva" style="margin-top:20px; border: 2px solid var(--warning); display:none;">
+        <h2 style="margin-top:0; color: var(--warning);">🔒 Inventario Exclusivo (Áreas del Cine)</h2>
+        <table>
+            <thead><tr><th>Material</th><th>Ubicación / Slot</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
+            <tbody id="tablaCuerpoExclusivo"></tbody>
+        </table>
     </div>
 </div>
 
-<div class="box">
-    <h2 style="margin-top:0; color: #0d6efd;">🍿 Inventario General (Publicidad)</h2>
-    <table>
-        <thead><tr><th>Material</th><th>Categoría / Carpeta</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
-        <tbody id="tablaCuerpo"></tbody>
-    </table>
-</div>
 
-<div class="box req-staff" id="cajaExclusiva" style="margin-top:20px; border: 2px solid var(--warning); display:none;">
-    <h2 style="margin-top:0; color: var(--warning);">🔒 Inventario Exclusivo (Áreas del Cine)</h2>
-    <table>
-        <thead><tr><th>Material</th><th>Ubicación / Slot</th><th>Bodega</th><th>Exhibición</th><th>Acciones</th></tr></thead>
-        <tbody id="tablaCuerpoExclusivo"></tbody>
-    </table>
-</div>
+<div id="modalAccesos" class="modal"><div class="modal-content" style="max-width: 700px;"><button class="close-btn" onclick="cerrarModal('modalAccesos')">&times;</button><h2 style="margin-top:0; color:#0d6efd;">🕵️ Historial de Accesos al Sistema</h2><p style="font-size:13px; color:gray;">Registro de auditoría de todas las personas que han iniciado sesión.</p><div style="overflow-x:auto;"><table><thead><tr><th>Fecha y Hora</th><th>Usuario</th><th>Rol</th></tr></thead><tbody id="cuerpoAccesos"></tbody></table></div></div></div>
 
-<!-- ================= MODALES DEL SISTEMA ================= -->
 <div id="modalHistorialGlobal" class="modal"><div class="modal-content" style="max-width: 900px;"><button class="close-btn" onclick="cerrarModal('modalHistorialGlobal')">&times;</button><h2 style="margin-top:0; color:#e83e8c;">📖 Historial de Movimientos y Auditoría</h2><div style="overflow-x:auto;"><table><thead><tr><th>Fecha y Hora</th><th>Usuario responsable</th><th>Producto</th><th>Tipo de Movimiento</th><th>Detalle / Razón</th></tr></thead><tbody id="cuerpoHistorialGlobal"></tbody></table></div></div></div>
 
 <div id="modalEditarProducto" class="modal"><div class="modal-content" style="max-width: 400px;"><button class="close-btn" onclick="cerrarModal('modalEditarProducto')">&times;</button><h2 style="margin-top: 0; color: var(--warning);">✏️ Editar Producto</h2><input type="hidden" id="editIdProd"><label style="font-size: 11px; font-weight: bold;">Nombre del Material:</label><input type="text" id="editNombreProd" style="width:100%;" placeholder="Nuevo nombre..." onkeydown="if(event.key==='Enter') guardarEdicionProducto()"><label style="font-size: 11px; font-weight: bold;">Categoría:</label><select id="editCategoriaProd" class="select-dinamico-cat" style="width:100%;"></select><label style="font-size: 11px; font-weight: bold; color: var(--danger);">Cantidad actual en Bodega:</label><input type="number" id="editCantidadProd" style="width:100%; border: 2px solid var(--danger); font-size:18px; font-weight:bold;" onkeydown="if(event.key==='Enter') guardarEdicionProducto()"><button class="btn btn-warning" onclick="guardarEdicionProducto()" style="width: 100%; margin-top: 15px;">Guardar Cambios</button></div></div>
@@ -219,9 +232,15 @@
                 pino.style.cssText = `position:fixed; bottom:-100px; left:${Math.random()*100}vw; font-size:${Math.random()*60 + 40}px; filter: drop-shadow(0px 0px 8px ${colorSombra}); z-index:99999; transition: transform 3s ease-out, opacity 4s; opacity:0; pointer-events:none;`;
                 document.body.appendChild(pino);
                 setTimeout(() => { pino.style.transform = `translateY(-${Math.random()*300 + 100}px)`; pino.style.opacity = 1; }, 100 + (i*50)); 
-                setTimeout(() => { pino.style.opacity = 0; }, 4000); setTimeout(() => { pino.remove(); }, 6000);
+                setTimeout(() => { pino.style.opacity = 0; }, 4000); 
+                setTimeout(() => { pino.remove(); }, 6000);
             }
-            setTimeout(() => { let fadeOut = setInterval(() => { if(audio.volume > 0.1) audio.volume -= 0.1; else { audio.pause(); clearInterval(fadeOut); } }, 200); }, 5000);
+            setTimeout(() => { 
+                let fadeOut = setInterval(() => { 
+                    if(audio.volume > 0.1) audio.volume -= 0.1; 
+                    else { audio.pause(); clearInterval(fadeOut); } 
+                }, 200); 
+            }, 5000);
         } else {
             document.body.classList.add('theme-jacqui');
         }
@@ -234,17 +253,20 @@
             localStorage.setItem('rolCine', 'Visitante'); localStorage.removeItem('idCine'); localStorage.removeItem('nombreCine');
             window.history.replaceState(null, null, window.location.pathname);
         }
-        verificarSesion(); cargarCategoriasGlobales(); setTimeout(aplicarTemasMagicos, 800); 
+        verificarSesion(); 
+        cargarCategoriasGlobales(); 
+        setTimeout(aplicarTemasMagicos, 800); 
     };
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
-    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; setTimeout(()=> { let inputs = document.getElementById(id).getElementsByTagName('input'); if(inputs.length>0) inputs[0].focus(); }, 100); }
+    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; setTimeout(()=> { let inputs = document.getElementById(id).getElementsByTagName('input'); if(inputs.length > 0) inputs[0].focus(); }, 100); }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
     function verificarSesion() {
         if(localStorage.getItem('rolCine')) { rolUsuario = localStorage.getItem('rolCine'); idUsuario = localStorage.getItem('idCine'); nombreUsuario = localStorage.getItem('nombreCine'); } 
         else { rolUsuario = 'General'; localStorage.setItem('rolCine', 'General'); }
-        configurarInterfaz(); cargarTabla();
+        configurarInterfaz(); 
+        if(rolUsuario !== 'General') cargarTabla();
         if (rolUsuario === 'Supervisor' || rolUsuario === 'Admin' || rolUsuario === 'Subgerente') revisarSolicitudesPendientes();
     }
     
@@ -252,23 +274,49 @@
         const claveTexto = document.getElementById('claveAcceso').value; 
         fetch(API_LOGIN, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({clave: claveTexto}) })
         .then(res => { if(!res.ok) throw new Error('Contraseña incorrecta'); return res.json(); })
-        .then(user => { localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); location.reload(); })
+        .then(user => { 
+            localStorage.setItem('rolCine', user.Rol); localStorage.setItem('idCine', user.ID_Usuario); localStorage.setItem('nombreCine', user.Nombre); 
+            document.getElementById('claveAcceso').value = ''; cerrarModal('modalLogin'); verificarSesion(); location.reload(); 
+        })
         .catch(err => alert(err.message)); 
     }
     function cerrarSesion() { localStorage.clear(); location.reload(); }
 
     function configurarInterfaz() {
-        const badge = document.getElementById('etiquetaRol'); badge.innerText = rolUsuario !== 'General' ? `(${rolUsuario}: ${nombreUsuario})` : '';
-        document.querySelectorAll('.req-staff, .req-admin, .req-auth').forEach(el => el.classList.remove('oculto'));
-        if(rolUsuario === 'General' || rolUsuario === 'Visitante') {
-            document.getElementById('btnIngresar').classList.remove('oculto'); document.getElementById('btnSalir').classList.add('oculto'); document.querySelectorAll('.req-staff, .req-admin').forEach(el => el.classList.add('oculto'));
+        const badge = document.getElementById('etiquetaRol'); 
+        badge.innerText = rolUsuario !== 'General' ? `(${rolUsuario}: ${nombreUsuario})` : '';
+        
+        if (rolUsuario === 'General') {
+            document.getElementById('pantallaBloqueo').style.display = 'block';
+            document.getElementById('interfazProtegida').style.display = 'none';
+            document.getElementById('btnIngresar').classList.remove('oculto');
+            document.getElementById('btnSalir').classList.add('oculto');
+        } else if (rolUsuario === 'Visitante') {
+            document.getElementById('pantallaBloqueo').style.display = 'none';
+            document.getElementById('interfazProtegida').style.display = 'block';
+            document.getElementById('btnIngresar').classList.remove('oculto'); 
+            document.getElementById('btnSalir').classList.add('oculto'); 
+            document.getElementById('btnPerfil').classList.add('oculto');
+            document.querySelectorAll('.req-staff, .req-admin').forEach(el => el.classList.add('oculto'));
+            document.getElementById('btnMisPedidos').classList.remove('oculto');
         } else {
-            document.getElementById('btnIngresar').classList.add('oculto'); document.getElementById('btnSalir').classList.remove('oculto');
+            document.getElementById('pantallaBloqueo').style.display = 'none';
+            document.getElementById('interfazProtegida').style.display = 'block';
+            document.getElementById('btnIngresar').classList.add('oculto'); 
+            document.getElementById('btnSalir').classList.remove('oculto');
+            document.getElementById('btnPerfil').classList.remove('oculto');
+            document.getElementById('btnMisPedidos').classList.add('oculto');
+            document.querySelectorAll('.req-staff, .req-admin, .req-auth').forEach(el => el.classList.remove('oculto'));
+            
             if(rolUsuario === 'Publicista') { document.querySelectorAll('.req-admin, .req-auth').forEach(el => el.classList.add('oculto')); } 
             else if(rolUsuario === 'Supervisor') { document.querySelectorAll('.req-admin').forEach(el => el.classList.add('oculto')); }
+            
+            if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista') { document.getElementById('cajaExclusiva').style.display = 'block'; } 
+            else { document.getElementById('cajaExclusiva').style.display = 'none'; }
         }
     }
 
+   
     function revisarSolicitudesPendientes() {
         Promise.all([fetch(API_RESERVAS).then(r => r.json()), fetch(API_MERMAS).then(r => r.json())]).then(([reservasData, mermasData]) => {
             const tbPosters = document.getElementById('tablaAlertasAutorizacion'); tbPosters.innerHTML = '';
@@ -278,8 +326,10 @@
             if(reservasData.pendientes.length > 0) {
                 hayAlertas = true;
                 reservasData.pendientes.forEach(r => {
-                    tbPosters.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad} pz</td>
-                    <td><button class="btn btn-success" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️ Aprobar</button> <button class="btn btn-danger" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌ Denegar</button></td></tr>`;
+                    tbPosters.innerHTML += `<tr>
+                        <td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad} pz</td>
+                        <td><button class="btn btn-success" onclick="autorizarSolicitud(${r.ID_Reserva}, 'aprobar')">✔️ Aprobar</button> <button class="btn btn-danger" onclick="autorizarSolicitud(${r.ID_Reserva}, 'rechazar')">❌ Denegar</button></td>
+                    </tr>`;
                 });
             } else { tbPosters.innerHTML = '<tr><td colspan="4" style="text-align:center; color:gray;">Sin solicitudes de apartados.</td></tr>'; }
             
@@ -287,8 +337,10 @@
                 hayAlertas = true;
                 mermasData.forEach(m => {
                     let imgHtml = m.Foto_Base64 ? `<br><img src="${m.Foto_Base64}" style="width:80px; height:80px; object-fit:cover; border-radius:5px; cursor:pointer;" onclick="window.open().document.write('<img src=${m.Foto_Base64}>')">` : '';
-                    tbMermas.innerHTML += `<tr><td><strong>${m.Nombre_Material}</strong><br><small>${m.Usuario_Solicita}</small></td><td>${m.Cantidad} pz</td><td>${m.Motivo} ${imgHtml}</td>
-                    <td><button class="btn btn-success" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Tirar</button> <button class="btn btn-danger" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Guardar</button></td></tr>`;
+                    tbMermas.innerHTML += `<tr>
+                        <td><strong>${m.Nombre_Material}</strong><br><small>${m.Usuario_Solicita}</small></td><td>${m.Cantidad} pz</td><td>${m.Motivo} ${imgHtml}</td>
+                        <td><button class="btn btn-success" onclick="autorizarMerma(${m.ID_Merma}, 'aprobar')">✔️ Tirar</button> <button class="btn btn-danger" onclick="autorizarMerma(${m.ID_Merma}, 'rechazar')">❌ Guardar</button></td>
+                    </tr>`;
                 });
             } else { tbMermas.innerHTML = '<tr><td colspan="4" style="text-align:center; color:gray;">Sin mermas por revisar.</td></tr>'; }
             
@@ -305,13 +357,29 @@
             if(data.aprobados.length > 0) {
                 data.aprobados.forEach(r => {
                     tb.innerHTML += `<tr><td><strong>${r.Nombre_Material}</strong></td><td>${r.Nombre_Persona}</td><td>${r.Cantidad} pz</td>
-                    <td><button class="btn btn-success" onclick="entregarReserva(${r.ID_Reserva})">Entregar a Empleado</button></td></tr>`;
+                    <td><button class="btn btn-success" onclick="entregarReserva(${r.ID_Reserva})">✔️ Entregar a Empleado</button></td></tr>`;
                 });
-            } else tb.innerHTML = '<tr><td colspan="4" style="text-align:center; color:gray;">No hay pósters listos para entregar.</td></tr>';
+            } else { tb.innerHTML = '<tr><td colspan="4" style="text-align:center; color:gray;">No hay pósters listos para entregar.</td></tr>'; }
             abrirModal('modalReservas');
         });
     }
-    function entregarReserva(id) { fetch(`${API_RESERVAS}/${id}/entregar`, {method: 'PUT'}).then(()=>abrirModalReservas()); }
+
+    function entregarReserva(id) { fetch(`${API_RESERVAS}/${id}/entregar`, {method: 'PUT'}).then(() => abrirModalReservas()); }
+
+    
+    function abrirModalAccesos() {
+        fetch('https://jonassk13.pythonanywhere.com/api/historial_logins').then(r => r.json()).then(data => {
+            const tb = document.getElementById('cuerpoAccesos'); tb.innerHTML = '';
+            if(data.length === 0) { tb.innerHTML = '<tr><td colspan="3" style="text-align:center;">No hay accesos registrados aún.</td></tr>'; } 
+            else {
+                data.forEach(h => {
+                    let badgeClass = h.Rol === 'Subgerente' ? 'background:var(--primary);' : (h.Rol === 'Admin' ? 'background:var(--danger);' : (h.Rol === 'Supervisor' ? 'background:var(--warning); color:black;' : 'background:var(--success);'));
+                    tb.innerHTML += `<tr><td>${h.Fecha}</td><td><strong>${h.Nombre}</strong></td><td><span style="${badgeClass} color:white; padding:3px 8px; border-radius:10px; font-size:11px; font-weight:bold;">${h.Rol}</span></td></tr>`;
+                });
+            }
+            abrirModal('modalAccesos');
+        });
+    }
 
     function abrirModalArchivo() {
         const tbody = document.getElementById('cuerpoArchivo'); tbody.innerHTML = '';
@@ -324,51 +392,153 @@
                 let diffTime = hoy - fechaArch; let diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
                 let alertaHTML = diffDays >= 14 ? `<span style="background:var(--danger); color:white; padding:3px 6px; border-radius:5px; font-weight:bold; font-size:11px;">⚠️ DESTRUIR (Más de 2 semanas)</span>` : `<span style="color:gray; font-size:12px;">Conservar en bodega</span>`;
                 let fechaTxt = p.Fecha_Archivo ? p.Fecha_Archivo.split(' ')[0] : 'Desconocida';
-                tbody.innerHTML += `<tr><td><strong>${p.Nombre_Material}</strong></td><td>${fechaTxt}</td><td>Hace ${diffDays} días<br>${alertaHTML}</td><td style="display:flex; gap:5px; flex-wrap:wrap;"><button class="btn" style="background:#198754; color:white; padding:5px 10px; font-size:12px;" onclick="desarchivarPoster(${p.ID_Publicidad})">♻️ Restaurar</button><button class="btn" style="background:#dc3545; color:white; padding:5px 10px; font-size:12px;" onclick="eliminarProducto(${p.ID_Publicidad})">🗑️ Borrar Permanente</button></td></tr>`;
+                
+                tbody.innerHTML += `<tr>
+                    <td><strong>${p.Nombre_Material}</strong></td><td>${fechaTxt}</td><td>Hace ${diffDays} días<br>${alertaHTML}</td>
+                    <td style="display:flex; gap:5px; flex-wrap:wrap;">
+                        <button class="btn" style="background:#198754; color:white; padding:5px 10px; font-size:12px;" onclick="desarchivarPoster(${p.ID_Publicidad})">♻️ Restaurar</button>
+                        <button class="btn" style="background:#dc3545; color:white; padding:5px 10px; font-size:12px;" onclick="eliminarProducto(${p.ID_Publicidad})">🗑️ Borrar Permanente</button>
+                    </td>
+                </tr>`;
             });
         }
         abrirModal('modalArchivo');
     }
-    function desarchivarPoster(id) { if(confirm("¿Restaurar a activos?")) { fetch(`${API_URL}/${id}/desarchivar`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({usuario: rolUsuario}) }).then(() => { cargarTabla(); setTimeout(abrirModalArchivo, 500); }); } }
 
-    function abrirModalSlots() { Promise.all([fetch(API_URL).then(r => r.json()), fetch(API_GRUPOS).then(r => r.json())]).then(([inventario, grupos]) => { datosInventario = inventario; slotsData = grupos; renderizarSlots(); abrirModal('modalSlots'); }); }
+    function desarchivarPoster(id) { 
+        if(confirm("¿Restaurar a activos?")) { 
+            let usr = nombreUsuario || rolUsuario;
+            fetch(`${API_URL}/${id}/desarchivar`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({usuario: usr}) })
+            .then(() => { cargarTabla(); setTimeout(abrirModalArchivo, 500); }); 
+        } 
+    }
+
+   
+    function abrirModalSlots() { 
+        Promise.all([fetch(API_URL).then(r => r.json()), fetch(API_GRUPOS).then(r => r.json())]).then(([inventario, grupos]) => { 
+            datosInventario = inventario; slotsData = grupos; renderizarSlots(); abrirModal('modalSlots'); 
+        }); 
+    }
+
     function renderizarSlots() {
         const contenedor = document.getElementById('contenedorSlots'); const contenedorSinAgrupar = document.getElementById('contenedorSinAgrupar');
         contenedor.innerHTML = ''; contenedorSinAgrupar.innerHTML = '';
-        let disponibles = datosInventario.filter(p => p.Categoria === 'Poster' && (!p.GruposNombres || p.GruposNombres.trim() === "")); disponibles.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        
+        let disponibles = datosInventario.filter(p => p.Categoria === 'Poster' && (!p.GruposNombres || p.GruposNombres.trim() === "")); 
+        disponibles.sort((a, b) => a.Nombre_Material.localeCompare(b.Nombre_Material));
+        
         let dropdownHTML = `<option value="">-- Elige un póster libre --</option>`;
-        if(disponibles.length === 0) contenedorSinAgrupar.innerHTML = '<p style="color:var(--success); font-size:13px; font-weight:bold; margin:0;">¡Excelente! Todos los pósters activos están guardados en sus carpetas.</p>';
-        else disponibles.forEach(p => { dropdownHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material}</option>`; contenedorSinAgrupar.innerHTML += `<span style="background: white; border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 15px; font-size: 11px; font-weight: bold;">📌 ${p.Nombre_Material}</span>`; });
+        if(disponibles.length === 0) { 
+            contenedorSinAgrupar.innerHTML = '<p style="color:var(--success); font-size:13px; font-weight:bold; margin:0;">¡Excelente! Todos los pósters activos están guardados en sus carpetas.</p>'; 
+        } else { 
+            disponibles.forEach(p => { 
+                dropdownHTML += `<option value="${p.ID_Publicidad}">${p.Nombre_Material}</option>`; 
+                contenedorSinAgrupar.innerHTML += `<span style="background: white; border: 1px solid var(--danger); color: var(--danger); padding: 4px 8px; border-radius: 15px; font-size: 11px; font-weight: bold;">📌 ${p.Nombre_Material}</span>`; 
+            }); 
+        }
+
         if (slotsData.length === 0) { contenedor.innerHTML = '<p style="text-align:center; color:gray; grid-column:1/-1;">Aún no hay Carpetas creadas.</p>'; return; }
+
         slotsData.forEach(slot => {
             let itemsHTML = '';
-            if (slot.items && slot.items.length > 0) slot.items.forEach(item => { itemsHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.8); padding:5px; margin-bottom:5px; border-radius:4px; border:1px solid var(--border-color);"><span style="font-size:12px; font-weight:bold; color:black;">${item.Nombre_Material}</span><button class="btn" style="background:#dc3545; color:white; padding:2px 6px; font-size:10px;" onclick="quitarDeSlot(${slot.ID_Grupo}, ${item.ID_Publicidad})">✖️</button></div>`; }); else itemsHTML = '<p style="font-size:11px; color:gray; font-style:italic;">Carpeta vacía.</p>';
-            contenedor.innerHTML += `<div class="carpeta-slot"><div class="carpeta-pestana">${slot.Nombre_Grupo}</div><button class="btn" style="background:#dc3545; color:white; position:absolute; top:5px; right:5px; padding:2px 6px; font-size:10px;" onclick="eliminarSlot(${slot.ID_Grupo})">Borrar</button><div style="margin-top:15px; margin-bottom:10px; max-height:120px; overflow-y:auto; padding-right:5px;">${itemsHTML}</div><div style="display:flex; gap:5px; margin-top:auto;"><select id="select-slot-${slot.ID_Grupo}" style="flex:1; margin:0; font-size:11px; padding:5px;" onkeydown="if(event.key==='Enter') agregarASlot(${slot.ID_Grupo})">${dropdownHTML}</select><button class="btn" style="background:#198754; color:white; padding:5px; font-size:11px;" onclick="agregarASlot(${slot.ID_Grupo})">➕</button></div></div>`;
+            if (slot.items && slot.items.length > 0) { 
+                slot.items.forEach(item => { 
+                    itemsHTML += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.8); padding:5px; margin-bottom:5px; border-radius:4px; border:1px solid var(--border-color);"><span style="font-size:12px; font-weight:bold; color:black;">${item.Nombre_Material}</span><button class="btn" style="background:#dc3545; color:white; padding:2px 6px; font-size:10px;" onclick="quitarDeSlot(${slot.ID_Grupo}, ${item.ID_Publicidad})">✖️</button></div>`; 
+                }); 
+            } else { itemsHTML = '<p style="font-size:11px; color:gray; font-style:italic;">Carpeta vacía.</p>'; }
+
+            contenedor.innerHTML += `
+                <div class="carpeta-slot">
+                    <div class="carpeta-pestana">${slot.Nombre_Grupo}</div>
+                    <button class="btn" style="background:#dc3545; color:white; position:absolute; top:5px; right:5px; padding:2px 6px; font-size:10px;" onclick="eliminarSlot(${slot.ID_Grupo})">Borrar</button>
+                    <div style="margin-top:15px; margin-bottom:10px; max-height:120px; overflow-y:auto; padding-right:5px;">${itemsHTML}</div>
+                    <div style="display:flex; gap:5px; margin-top:auto;">
+                        <select id="select-slot-${slot.ID_Grupo}" style="flex:1; margin:0; font-size:11px; padding:5px;" onkeydown="if(event.key==='Enter') agregarASlot(${slot.ID_Grupo})">${dropdownHTML}</select>
+                        <button class="btn" style="background:#198754; color:white; padding:5px; font-size:11px;" onclick="agregarASlot(${slot.ID_Grupo})">➕</button>
+                    </div>
+                </div>
+            `;
         });
     }
+
     function crearSlot() { const nombre = document.getElementById('nuevoNombreSlot').value.trim(); if(!nombre) return alert("Ingresa un nombre para la carpeta"); fetch(API_GRUPOS, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ nombre: nombre }) }).then(() => { document.getElementById('nuevoNombreSlot').value = ''; abrirModalSlots(); cargarTabla(); }); }
     function agregarASlot(idGrupo) { const sel = document.getElementById(`select-slot-${idGrupo}`); const idPub = sel.value; if(!idPub) return alert("Selecciona un póster para añadir."); fetch(`${API_GRUPOS}/${idGrupo}/add`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id_publicidad: parseInt(idPub) }) }).then(() => { abrirModalSlots(); cargarTabla(); }); }
     function quitarDeSlot(idGrupo, idPub) { fetch(`${API_GRUPOS}/${idGrupo}/remove/${idPub}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); }); }
     function eliminarSlot(idGrupo) { if(!confirm("¿Seguro que deseas eliminar esta carpeta completa? Los pósters quedarán libres.")) return; fetch(`${API_GRUPOS}/${idGrupo}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); }); }
     function autoAgruparSlots() { if(!confirm("⚡ MODO INTELIGENTE (A-Z):\n\nEl sistema leerá las letras en el nombre de tus slots y asignará los pósters automáticamente.\n\n⚠️ Si no tienes ningún slot, creará mágicamente los 6 slots oficiales (A-D, E-H, etc.) y ordenará toda la bodega.\n\n¿Continuar?")) return; fetch(`${API_GRUPOS}/auto_organizar`, { method: 'POST' }).then(res => res.json()).then(data => { abrirModalSlots(); cargarTabla(); alert("✅ " + data.mensaje); }); }
 
+ 
     let postersFiltradosQR = [];
-    function abrirModalImpresionQR() { fetch(API_GRUPOS).then(r => r.json()).then(grupos => { const sel = document.getElementById('filtroGrupoQR'); sel.innerHTML = '<option value="todos">Todas las carpetas</option>'; grupos.forEach(g => { sel.innerHTML += `<option value="${g.Nombre_Grupo}">${g.Nombre_Grupo}</option>`; }); document.getElementById('filtroImpresoQR').value = 'pendientes'; document.getElementById('buscadorImpresionQR').value = ''; renderizarListaImpresion(); abrirModal('modalImpresionQR'); }); }
-    function renderizarListaImpresion() { const fImpreso = document.getElementById('filtroImpresoQR').value; const fGrupo = document.getElementById('filtroGrupoQR').value; const bTexto = document.getElementById('buscadorImpresionQR').value.toLowerCase(); postersFiltradosQR = datosInventario.filter(p => p.Categoria === 'Poster'); if(fImpreso === 'pendientes') postersFiltradosQR = postersFiltradosQR.filter(p => !p.Etiqueta_Impresa); if(fImpreso === 'impresos') postersFiltradosQR = postersFiltradosQR.filter(p => p.Etiqueta_Impresa); if(fGrupo !== 'todos') postersFiltradosQR = postersFiltradosQR.filter(p => p.GruposNombres && p.GruposNombres.includes(fGrupo)); if(bTexto) postersFiltradosQR = postersFiltradosQR.filter(p => p.Nombre_Material.toLowerCase().includes(bTexto)); postersFiltradosQR.sort((a,b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); const div = document.getElementById('divListaImpresion'); div.innerHTML = ''; postersFiltradosQR.forEach(p => { let badge = p.Etiqueta_Impresa ? '<span style="color:var(--success); font-size:11px;">[Ya Impreso ✔️]</span>' : '<span style="color:var(--danger); font-size:11px;">[Falta Imprimir 🖨️]</span>'; div.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:14px; cursor:pointer;"><input type="checkbox" class="chk-print-qr" value="${p.ID_Publicidad}"> <span>${p.Nombre_Material} ${badge}</span></label>`; }); document.getElementById('contadorQRLista').innerText = `${postersFiltradosQR.length} pósters listados`; }
+    function abrirModalImpresionQR() { 
+        fetch(API_GRUPOS).then(r => r.json()).then(grupos => { 
+            const sel = document.getElementById('filtroGrupoQR'); sel.innerHTML = '<option value="todos">Todas las carpetas</option>'; 
+            grupos.forEach(g => { sel.innerHTML += `<option value="${g.Nombre_Grupo}">${g.Nombre_Grupo}</option>`; }); 
+            document.getElementById('filtroImpresoQR').value = 'pendientes'; document.getElementById('buscadorImpresionQR').value = ''; 
+            renderizarListaImpresion(); abrirModal('modalImpresionQR'); 
+        }); 
+    }
+
+    function renderizarListaImpresion() { 
+        const fImpreso = document.getElementById('filtroImpresoQR').value; const fGrupo = document.getElementById('filtroGrupoQR').value; const bTexto = document.getElementById('buscadorImpresionQR').value.toLowerCase(); 
+        postersFiltradosQR = datosInventario.filter(p => p.Categoria === 'Poster'); 
+        if(fImpreso === 'pendientes') postersFiltradosQR = postersFiltradosQR.filter(p => !p.Etiqueta_Impresa); 
+        if(fImpreso === 'impresos') postersFiltradosQR = postersFiltradosQR.filter(p => p.Etiqueta_Impresa); 
+        if(fGrupo !== 'todos') postersFiltradosQR = postersFiltradosQR.filter(p => p.GruposNombres && p.GruposNombres.includes(fGrupo)); 
+        if(bTexto) postersFiltradosQR = postersFiltradosQR.filter(p => p.Nombre_Material.toLowerCase().includes(bTexto)); 
+        postersFiltradosQR.sort((a,b) => a.Nombre_Material.localeCompare(b.Nombre_Material)); 
+        const div = document.getElementById('divListaImpresion'); div.innerHTML = ''; 
+        postersFiltradosQR.forEach(p => { let badge = p.Etiqueta_Impresa ? '<span style="color:var(--success); font-size:11px;">[Ya Impreso ✔️]</span>' : '<span style="color:var(--danger); font-size:11px;">[Falta Imprimir 🖨️]</span>'; div.innerHTML += `<label style="display:flex; align-items:center; gap:10px; margin-bottom:8px; font-size:14px; cursor:pointer;"><input type="checkbox" class="chk-print-qr" value="${p.ID_Publicidad}"> <span>${p.Nombre_Material} ${badge}</span></label>`; }); document.getElementById('contadorQRLista').innerText = `${postersFiltradosQR.length} pósters listados`; 
+    }
+
     function seleccionarTodoQR(marcar) { document.querySelectorAll('.chk-print-qr').forEach(cb => cb.checked = marcar); }
+    
     function ejecutarImpresionQR() { 
         const seleccionados = Array.from(document.querySelectorAll('.chk-print-qr:checked')).map(cb => parseInt(cb.value)); 
         if(seleccionados.length === 0) return alert("⚠️ Selecciona al menos un póster."); 
         let hojas = Math.ceil(seleccionados.length / 6); 
         if(!confirm(`🖨️ Vas a imprimir ${seleccionados.length} etiquetas que ocuparán todo el ancho de la hoja (6 por página).\n¿Continuar?`)) return; 
-        fetch(`${API_URL}/impreso`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ids: seleccionados }) }).then(() => { cargarTabla(); cerrarModal('modalImpresionQR'); let postersAImprimir = datosInventario.filter(p => seleccionados.includes(p.ID_Publicidad)); generarVentanaImpresion(postersAImprimir); }); 
+        fetch(`${API_URL}/impreso`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ids: seleccionados }) })
+        .then(() => { cargarTabla(); cerrarModal('modalImpresionQR'); let postersAImprimir = datosInventario.filter(p => seleccionados.includes(p.ID_Publicidad)); generarVentanaImpresion(postersAImprimir); }); 
     }
+
     function generarVentanaImpresion(listaProductos) { 
         const ventana = window.open('', '_blank'); 
-        ventana.document.write(`<html><head><title>Impresión QR</title><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script><style>@page { size: letter portrait; margin: 0; } body { font-family: 'Arial', sans-serif; background: #fff; color: #000; margin: 0; padding: 0; } .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 0.5cm; gap: 0.4cm; } .etiqueta { width: 19.5cm; height: 4.1cm; border: 2px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; border-radius: 8px;} .qr-code { width: 3.2cm; height: 3.2cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; } .qr-code img { max-width: 100%; max-height: 100%; } .info { flex-grow: 1; padding-left: 1cm; text-align: left; } .titulo { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000;} .subtitulo { font-size: 12px; color: #555; margin-top:5px; font-weight:bold; }</style></head><body><div class="hoja" id="qrGrid"></div><script>const productos = ${JSON.stringify(listaProductos.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material})))}; const baseUrl = "${window.location.href.split('?')[0].replace('index.html', '')}detalle.html?id="; const grid = document.getElementById('qrGrid'); productos.forEach(p => { let div = document.createElement('div'); div.className = 'etiqueta'; let qrContainer = document.createElement('div'); qrContainer.className = 'qr-code'; let info = document.createElement('div'); info.className = 'info'; let title = document.createElement('p'); title.className = 'titulo'; title.innerText = p.nombre; let sub = document.createElement('p'); sub.className = 'subtitulo'; sub.innerText = "🎬 PÓSTER OFICIAL - ESCANEAR PARA OPERACIONES"; info.appendChild(title); info.appendChild(sub); div.appendChild(qrContainer); div.appendChild(info); grid.appendChild(div); new QRCode(qrContainer, { text: baseUrl + p.id, width: 120, height: 120, colorDark : "#000", colorLight : "#fff" }); }); setTimeout(() => window.print(), 1500); <\/script></body></html>`); 
+        ventana.document.write(`
+        <html><head><title>Impresión QR</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>
+        <style>
+            @page { size: letter portrait; margin: 0; } 
+            body { font-family: 'Arial', sans-serif; background: #fff; color: #000; margin: 0; padding: 0; } 
+            .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 0.5cm; gap: 0.4cm; } 
+            .etiqueta { width: 19.5cm; height: 4.1cm; border-top: 2px dashed #777; border-bottom: 2px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; border-radius:0px;} 
+            .qr-code { width: 3.2cm; height: 3.2cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; } 
+            .qr-code img { max-width: 100%; max-height: 100%; } 
+            .info { flex-grow: 1; padding-left: 1.5cm; text-align: left; } 
+            .titulo { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000;} 
+            .subtitulo { font-size: 11px; color: #555; margin-top:5px; font-weight:bold; }
+        </style></head><body><div class="hoja" id="qrGrid"></div>
+        <script>
+            const productos = ${JSON.stringify(listaProductos.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material})))}; 
+            // NUEVO: SE AGREGA ?modo=visitante PARA SALTAR LA PANTALLA DE BLOQUEO
+            const baseUrl = "${window.location.href.split('?')[0].replace('index.html', '')}detalle.html?modo=visitante&id="; 
+            const grid = document.getElementById('qrGrid'); 
+            productos.forEach(p => { 
+                let div = document.createElement('div'); div.className = 'etiqueta'; 
+                let qrContainer = document.createElement('div'); qrContainer.className = 'qr-code'; 
+                let info = document.createElement('div'); info.className = 'info'; 
+                let title = document.createElement('p'); title.className = 'titulo'; title.innerText = p.nombre; 
+                let sub = document.createElement('p'); sub.className = 'subtitulo'; sub.innerText = "🎬 PÓSTER OFICIAL - ESCANEAR PARA PEDIDOS DE STAFF"; 
+                info.appendChild(title); info.appendChild(sub); 
+                div.appendChild(qrContainer); div.appendChild(info); 
+                grid.appendChild(div); 
+                new QRCode(qrContainer, { text: baseUrl + p.id, width: 120, height: 120, colorDark : "#000", colorLight : "#fff" }); 
+            }); 
+            setTimeout(() => window.print(), 1500); 
+        <\/script></body></html>`); 
         ventana.document.close(); 
     }
 
+  
     function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; let whatsActivado = localStorage.getItem('whatsAppPiloto') === 'true'; document.getElementById('chkWhatsPiloto').checked = whatsActivado; document.getElementById('cajaWhatsNum').style.display = whatsActivado ? 'block' : 'none'; document.getElementById('inputWhatsNum').value = localStorage.getItem('whatsAppNumero') || ''; abrirModal('modalPerfil'); }
     function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; localStorage.setItem('whatsAppPiloto', document.getElementById('chkWhatsPiloto').checked); localStorage.setItem('whatsAppNumero', document.getElementById('inputWhatsNum').value.trim()); if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado correctamente."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); location.reload(); } }); }
     function abrirModalHistorial() { fetch('https://jonassk13.pythonanywhere.com/api/historial_global').then(r => r.json()).then(data => { const tb = document.getElementById('cuerpoHistorialGlobal'); tb.innerHTML = ''; if(data.length === 0) tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay movimientos registrados.</td></tr>'; data.forEach(h => { let badgeClass = h.Accion.includes('Ingreso') ? 'background:var(--success);' : (h.Accion.includes('Salida') || h.Accion.includes('Merma') || h.Accion.includes('Daño') || h.Accion.includes('Regalo') ? 'background:var(--danger);' : 'background:#6c757d;'); tb.innerHTML += `<tr><td>${h.Fecha}</td><td style="color:var(--primary); font-weight:bold;">${h.Usuario}</td><td>${h.Nombre_Material}</td><td><span class="estado-badge" style="${badgeClass}">${h.Accion}</span></td><td><i>${h.Detalle}</i></td></tr>`; }); abrirModal('modalHistorialGlobal'); }); }
