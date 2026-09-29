@@ -42,7 +42,6 @@
         .btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; width: auto; border-radius: 5px; transition: 0.2s; text-decoration: none; display: inline-block; color: white;}
         .btn:hover { opacity: 0.8; }
         
-        /* COLORES DE BOTONES */
         .btn-c-blue { background-color: #6ea8fe; color: black; }
         .btn-c-yellow { background-color: #ffca2c; color: black; }
         .btn-c-pink { background-color: #ea868f; color: black; }
@@ -90,14 +89,12 @@
     </div>
 </div>
 
-<!-- 🛑 PANTALLA DE BLOQUEO PARA USUARIOS SIN CUENTA 🛑 -->
 <div id="pantallaBloqueo" style="display:none; text-align:center; padding: 60px 20px; background: var(--box-bg); border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-top: 20px; border: 2px dashed var(--danger);">
     <h1 style="color: var(--danger); font-size: 30px;">🔒 Acceso Restringido</h1>
     <p style="font-size: 16px; color: gray; margin-bottom: 30px;">El inventario de publicidad es información interna y privada. Inicia sesión con tu cuenta de Staff o Administrador para operar.</p>
     <button class="btn btn-c-blue" onclick="abrirModal('modalLogin')" style="font-size: 20px; padding: 15px 40px; border-radius: 8px;">🔑 Iniciar Sesión</button>
 </div>
 
-<!-- INTERFAZ PROTEGIDA -->
 <div id="interfazProtegida" style="display: none;">
     <div class="action-bar">
         <button class="btn btn-c-blue req-staff" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
@@ -110,7 +107,6 @@
         <button class="btn btn-c-hotpink req-admin" onclick="abrirModalHistorial()">📖 Historial General</button>
         <button class="btn btn-c-blue req-admin" onclick="abrirModalAccesos()">🕵️ Ver Accesos</button>
 
-        <!-- BOTÓN DE APROBACIONES REPARADO -->
         <button class="btn btn-c-lightpurple req-staff req-auth" onclick="revisarSolicitudesPendientes()">📋 Aprobaciones</button>
         
         <button class="btn btn-c-cyan req-staff" onclick="abrirModalSlots()">📂 Gestionar Slots</button>
@@ -147,7 +143,6 @@
     </div>
 </div>
 
-<!-- ================= MODALES DEL SISTEMA ================= -->
 
 <div id="modalAccesos" class="modal">
     <div class="modal-content" style="max-width: 700px;">
@@ -240,7 +235,7 @@
     </div>
 </div>
 
-<!-- ================= SCRIPTS ================= -->
+
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault()); 
     document.addEventListener('keydown', event => { 
@@ -361,9 +356,6 @@
         }
     }
 
-    // =======================================================
-    // 📋 ADUANA DE APROBACIONES PARA GERENCIA
-    // =======================================================
     function revisarSolicitudesPendientes() {
         Promise.all([fetch(API_RESERVAS).then(r => r.json()), fetch(API_MERMAS).then(r => r.json())]).then(([reservasData, mermasData]) => {
             const tbPosters = document.getElementById('tablaAlertasAutorizacion'); 
@@ -399,7 +391,6 @@
                 });
             } else { tbMermas.innerHTML = '<tr><td colspan="4" style="text-align:center; color:gray;">Sin mermas por revisar.</td></tr>'; }
             
-            // SE ABRE SIEMPRE AUNQUE ESTÉ VACÍA, PARA QUE EL USUARIO VEA QUE FUNCIONA
             abrirModal('modalAlertasSupervisor');
         });
     }
@@ -426,9 +417,7 @@
 
     function entregarReserva(id) { fetch(`${API_RESERVAS}/${id}/entregar`, {method: 'PUT'}).then(() => abrirModalReservas()); }
 
-    // =======================================================
-    // 🗄️ ARCHIVO MUERTO Y LOGINS
-    // =======================================================
+   
     function abrirModalAccesos() {
         fetch('https://jonassk13.pythonanywhere.com/api/historial_logins').then(r => r.json()).then(data => {
             const tb = document.getElementById('cuerpoAccesos'); tb.innerHTML = '';
@@ -475,9 +464,7 @@
         } 
     }
 
-    // =======================================================
-    // 📂 GESTOR DE CARPETAS (SLOTS)
-    // =======================================================
+   
     function abrirModalSlots() { 
         Promise.all([fetch(API_URL).then(r => r.json()), fetch(API_GRUPOS).then(r => r.json())]).then(([inventario, grupos]) => { 
             datosInventario = inventario; slotsData = grupos; renderizarSlots(); abrirModal('modalSlots'); 
@@ -531,9 +518,7 @@
     function eliminarSlot(idGrupo) { if(!confirm("¿Seguro que deseas eliminar esta carpeta completa? Los pósters quedarán libres.")) return; fetch(`${API_GRUPOS}/${idGrupo}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); }); }
     function autoAgruparSlots() { if(!confirm("⚡ MODO INTELIGENTE (A-Z):\n\nEl sistema leerá las letras en el nombre de tus slots y asignará los pósters automáticamente.\n\n⚠️ Si no tienes ningún slot, creará mágicamente los 6 slots oficiales (A-D, E-H, etc.) y ordenará toda la bodega.\n\n¿Continuar?")) return; fetch(`${API_GRUPOS}/auto_organizar`, { method: 'POST' }).then(res => res.json()).then(data => { abrirModalSlots(); cargarTabla(); alert("✅ " + data.mensaje); }); }
 
-    // =======================================================
-    // 🖨️ IMPRESIÓN QR
-    // =======================================================
+
     let postersFiltradosQR = [];
     function abrirModalImpresionQR() { 
         fetch(API_GRUPOS).then(r => r.json()).then(grupos => { 
@@ -603,9 +588,7 @@
         ventana.document.close(); 
     }
 
-    // =======================================================
-    // RESTO DE FUNCIONALIDADES OPERATIVAS
-    // =======================================================
+    
     function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; let whatsActivado = localStorage.getItem('whatsAppPiloto') === 'true'; document.getElementById('chkWhatsPiloto').checked = whatsActivado; document.getElementById('cajaWhatsNum').style.display = whatsActivado ? 'block' : 'none'; document.getElementById('inputWhatsNum').value = localStorage.getItem('whatsAppNumero') || ''; abrirModal('modalPerfil'); }
     function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; localStorage.setItem('whatsAppPiloto', document.getElementById('chkWhatsPiloto').checked); localStorage.setItem('whatsAppNumero', document.getElementById('inputWhatsNum').value.trim()); if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado correctamente."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); location.reload(); } }); }
     function abrirModalHistorial() { fetch('https://jonassk13.pythonanywhere.com/api/historial_global').then(r => r.json()).then(data => { const tb = document.getElementById('cuerpoHistorialGlobal'); tb.innerHTML = ''; if(data.length === 0) tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay movimientos registrados.</td></tr>'; data.forEach(h => { let badgeClass = h.Accion.includes('Ingreso') ? 'background:var(--success);' : (h.Accion.includes('Salida') || h.Accion.includes('Merma') || h.Accion.includes('Daño') || h.Accion.includes('Regalo') ? 'background:var(--danger);' : 'background:#6c757d;'); tb.innerHTML += `<tr><td>${h.Fecha}</td><td style="color:var(--primary); font-weight:bold;">${h.Usuario}</td><td>${h.Nombre_Material}</td><td><span class="estado-badge" style="${badgeClass}">${h.Accion}</span></td><td><i>${h.Detalle}</i></td></tr>`; }); abrirModal('modalHistorialGlobal'); }); }
