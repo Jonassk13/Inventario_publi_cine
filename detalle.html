@@ -83,7 +83,6 @@
 </div>
 
 <script>
-    // ⌨️ ESCAPE GLOBAL
     document.addEventListener('keydown', event => { 
         if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); 
         if (event.key === 'Escape') { document.getElementById('modalMerma').style.display = 'none'; }
@@ -93,6 +92,12 @@
     const API_RESERVAS = 'https://jonassk13.pythonanywhere.com/api/reservas';
     const urlParams = new URLSearchParams(window.location.search);
     const idProducto = urlParams.get('id');
+    
+    // TRUCO DE BYPASS: Si la URL trae modo=visitante (porque se escaneó un QR), evitamos que la pantalla de bloqueo de Index.html le impida ver esto
+    if (urlParams.get('modo') === 'visitante') {
+        localStorage.setItem('rolCine', 'Visitante');
+    }
+    
     let prodGlobal = null;
     let rolUsuario = localStorage.getItem('rolCine') || 'General';
     let nombreUsuario = localStorage.getItem('nombreCine') || '';
@@ -101,7 +106,7 @@
         if(rolUsuario !== 'Subgerente') return; 
         if(nombreUsuario.toLowerCase().includes('jacqui') || nombreUsuario.toLowerCase().includes('jacqueline')) {
             document.body.classList.add('theme-bosque-pinos');
-            let hora = new Date().getHours();
+            let hora = new Date().getHours(); 
             if (hora >= 6 && hora < 12) { document.body.classList.add('theme-amanecer'); } 
             else if (hora >= 12 && hora < 19) { document.body.classList.add('theme-atardecer'); } 
             else { document.body.classList.add('theme-noche'); }
@@ -144,7 +149,7 @@
                 panelEditor = `<div class="editor-imagen"><label style="font-size: 11px; font-weight: bold; color: gray;">¿Imagen incorrecta o no aparece?</label><button class="btn-info" style="margin-bottom: 5px;" onclick="buscarEnGoogle()">🔍 Buscar en Google</button><input type="text" id="urlManual" placeholder="Pega el link de la imagen (.jpg, .png) aquí..." onkeydown="if(event.key==='Enter') guardarImagenManual()"><button class="btn-dark" style="padding: 6px;" onclick="guardarImagenManual()">💾 Guardar Imagen</button></div>`;
                 botonesHTML += `
                     <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 15px 0;">
-                    <button class="btn-dark" onclick="imprimirQRPoster()">🖨️ Imprimir Etiqueta (Ancho Completo)</button>
+                    <button class="btn-dark" onclick="imprimirQRPoster()">🖨️ Imprimir Etiqueta</button>
                     <button class="btn-sacar" onclick="registrarMovimiento('salida')">📤 Sacar a Piso (Directo)</button>
                     <button class="btn-regresar" onclick="registrarMovimiento('regreso')">📥 Regresar a Bodega</button>
                     <button class="btn-daño" onclick="abrirModalMerma()">📸 Tomar Foto para Merma</button>
@@ -181,7 +186,7 @@
     function imprimirQRPoster() {
         fetch(`${API_URL}/impreso`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ids: [parseInt(idProducto)] }) });
 
-        const urlMaterial = window.location.href; 
+        const urlMaterial = window.location.href.split('?')[0] + "?modo=visitante&id=" + idProducto; 
         const ventana = window.open('', '_blank');
         ventana.document.write(`
         <html><head><title>Etiqueta QR - ${prodGlobal.Nombre_Material}</title>
@@ -190,19 +195,19 @@
             @page { size: letter portrait; margin: 0; } 
             body { font-family: 'Arial', sans-serif; background: #fff; color: #000; margin: 0; padding: 0; } 
             .hoja { width: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 0.5cm; gap: 0.4cm; } 
-            .etiqueta { width: 19.5cm; height: 4.1cm; border: 2px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; border-radius: 8px;} 
+            .etiqueta { width: 19.5cm; height: 4.1cm; border-top: 2px dashed #777; border-bottom: 2px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; border-radius:0px;} 
             .qr-code { width: 3.2cm; height: 3.2cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; } 
             .qr-code img { max-width: 100%; max-height: 100%; } 
             .info { flex-grow: 1; padding-left: 1cm; text-align: left; } 
             .titulo { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000;} 
-            .subtitulo { font-size: 12px; color: #555; margin-top:5px; font-weight:bold; }
+            .subtitulo { font-size: 11px; color: #555; margin-top:5px; font-weight:bold; }
         </style></head><body>
             <div class="hoja">
                 <div class="etiqueta">
                     <div class="qr-code" id="qrIndividual"></div>
                     <div class="info">
                         <p class="titulo">${prodGlobal.Nombre_Material}</p>
-                        <p class="subtitulo">🎬 PÓSTER OFICIAL - ESCANEAR PARA OPERACIONES</p>
+                        <p class="subtitulo">🎬 PÓSTER OFICIAL - ESCANEAR PARA PEDIDOS DE STAFF</p>
                     </div>
                 </div>
             </div>
