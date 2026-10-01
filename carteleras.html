@@ -31,6 +31,7 @@
         body.theme-noche .zona-titulo { background: #020c1b !important; color: #64ffda !important; border-color: #64ffda !important; }
 
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
+        
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; gap: 10px; border-top: 5px solid var(--primary);}
         button.btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; }
         button.btn:hover { opacity: 0.8; } button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -111,7 +112,7 @@
         <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
         
         <button id="btnLimpiarObsoletos" class="btn btn-danger" style="display:none; animation: parpadeo 1.5s infinite alternate;" onclick="desmontarListaObsoletos()">🧹 Desmontar Obsoletos</button>
-        <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Nuevos</button>
+        <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Sugerencias</button>
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
     </div>
 </div>
@@ -146,7 +147,7 @@
     <div class="zona zona-derecha"><div class="zona-titulo">➡️ Ala Derecha (Salas 8 al 16)</div><div class="slots-grid" id="ala-derecha"></div></div>
 </div>
 
-<!-- 🚨 ADUANA: MODAL DE ASIGNACIÓN -->
+<!-- 🚨 ADUANA: MODAL DE ASIGNACIÓN CON ENTER -->
 <div id="modalAsignar" class="modal">
     <div class="modal-content">
         <button class="close-btn" onclick="cerrarModal()">&times;</button>
@@ -174,7 +175,7 @@
                 <option value="2️⃣ Prioridad 2: Concierto">2️⃣ Prioridad 2: Concierto</option>
                 <option value="3️⃣ Prioridad 3: Más Repetida">3️⃣ Prioridad 3: Película con más funciones</option>
                 <option value="🌟 Prioridad 4: Especial">🌟 Prioridad 4: Función Especial</option>
-                <option value="🖼️️ Exhibidor de cartelera">🖼️ Exhibidor de cartelera</option>
+                <option value="🖼 Exhibidor de cartelera">🖼️ Exhibidor de cartelera</option>
             </select>
         </div>
 
@@ -214,7 +215,7 @@
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
     function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function cerrarModal() { document.getElementById(id).style.display = 'none'; slotSeleccionado = null; }
+    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; slotSeleccionado = null; }
 
     function cargarHistorialSemanas() {
         fetch(API_HISTORIAL_SEMANAS).then(r => r.json()).then(data => {
@@ -312,7 +313,7 @@
     }
 
     // =======================================================
-    // 🧠 LECTOR DUAL DE EXCEL CON STOCK AWARENESS Y PRIORIDAD VIP
+    // 🧠 LECTOR DUAL DE EXCEL (BACKUP DE INVENTARIO Y PRIORIDAD DE SALAS VIP)
     // =======================================================
     function procesarExcel(event) {
         const file = event.target.files[0]; if (!file) return;
@@ -460,7 +461,7 @@
                         peliculasSugeridas.add(peliTitle);
                         peliculasParaSalasVirtuales[slot] = peliTitle;
                         
-                        // Auditoría de Clasificación
+                        // Auditoría de Clasificación (Usando la fecha real de hoy)
                         let reglaAuditoria = "🌟 Prioridad 4: Especial / Funciones";
                         let req = null;
                         for(let sn in postersSolicitados) { if(coinciden(postersSolicitados[sn].titulo, peliTitle)) { req = postersSolicitados[sn]; break; } }
