@@ -54,6 +54,8 @@
         .btn-c-orange { background-color: #fd7e14; }
         .btn-c-darkorange { background-color: #d35400; }
         .btn-c-gray { background-color: #6c757d; }
+        .btn-c-nuke { background-color: #dc3545; color: white; border: 2px solid white; box-shadow: 0 0 10px red; animation: pulsoRojo 2s infinite; }
+        @keyframes pulsoRojo { 0% { box-shadow: 0 0 5px red; } 50% { box-shadow: 0 0 20px red; } 100% { box-shadow: 0 0 5px red; } }
         
         .box { background: var(--box-bg); padding: 20px; border-radius: 10px; overflow-x: auto;}
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;}
@@ -74,6 +76,14 @@
         body.dark-mode .carpeta-slot { background: rgba(255,255,255,0.02); }
         
         .filtros-container { display: flex; gap: 10px; margin-left: auto; }
+
+      
+        #modalNuke { background: rgba(25, 0, 0, 0.95); }
+        .terminal-nuke { background: #0a0a0a; color: #0f0; font-family: monospace; padding: 20px; border-radius: 5px; text-align: left; height: 150px; overflow: hidden; position: relative; border: 1px solid #0f0; margin-top: 20px; font-size: 14px;}
+        .glitch-nuke { color: red; font-size: 40px; font-weight: bold; text-transform: uppercase; text-shadow: 2px 2px 0px black, -2px -2px 0px darkred; animation: temblor 0.2s infinite; }
+        @keyframes temblor { 0% { transform: translate(1px, 1px) rotate(0deg); } 20% { transform: translate(-1px, -2px) rotate(-1deg); } 40% { transform: translate(-3px, 0px) rotate(1deg); } 60% { transform: translate(3px, 2px) rotate(0deg); } 80% { transform: translate(1px, -1px) rotate(1deg); } 100% { transform: translate(-1px, 2px) rotate(-1deg); } }
+        .barra-progreso { width: 100%; background: #333; height: 20px; border-radius: 10px; margin-top: 20px; overflow: hidden; border: 1px solid red;}
+        .barra-llena { width: 0%; height: 100%; background: red; transition: width 3s linear; }
     </style>
 </head>
 <body>
@@ -107,8 +117,9 @@
         <button class="btn btn-c-hotpink req-admin" onclick="abrirModalHistorial()">📖 Historial General</button>
         <button class="btn btn-c-blue req-admin" onclick="abrirModalAccesos()">🕵️ Ver Accesos</button>
 
+        <button id="btnNuke" class="btn btn-c-nuke" style="display:none;" onclick="prepararProtocoloCero()">⚠️ Protocolo Cero</button>
+
         <button class="btn btn-c-lightpurple req-staff req-auth" onclick="revisarSolicitudesPendientes()">📋 Aprobaciones</button>
-        
         <button class="btn btn-c-cyan req-staff" onclick="abrirModalSlots()">📂 Gestionar Slots</button>
         
         <a href="carteleras.html" target="_blank" class="btn btn-c-lightpurple req-staff">🗺️ Mapa Carteleras</a>
@@ -144,19 +155,30 @@
 </div>
 
 
-<div id="modalAccesos" class="modal">
-    <div class="modal-content" style="max-width: 700px;">
-        <button class="close-btn" onclick="cerrarModal('modalAccesos')">&times;</button>
-        <h2 style="margin-top:0; color:#0d6efd;">🕵️ Historial de Accesos al Sistema</h2>
-        <p style="font-size:13px; color:gray;">Registro de auditoría de todas las personas que han iniciado sesión.</p>
-        <div style="overflow-x:auto;">
-            <table>
-                <thead><tr><th>Fecha y Hora</th><th>Usuario</th><th>Rol</th></tr></thead>
-                <tbody id="cuerpoAccesos"></tbody>
-            </table>
+<div id="modalNuke" class="modal">
+    <div class="modal-content" style="max-width: 600px; text-align: center; border: 2px solid red; box-shadow: 0 0 50px red;">
+        <button class="close-btn" id="btnCerrarNuke" onclick="cerrarModal('modalNuke')">&times;</button>
+        <h2 class="glitch-nuke" id="nukeTitle">⚠️ PROTOCOLO CERO ⚠️</h2>
+        <p style="color:white; font-size:16px;">¿Estás seguro de que deseas <strong style="color:red;">ELIMINAR TODOS LOS PÓSTERS</strong> de la base de datos para reiniciar el inventario?</p>
+        <p style="color:gray; font-size:13px;">(Se hará un respaldo automático antes de la destrucción).</p>
+        
+        <div class="terminal-nuke" id="nukeTerminal" style="display:none;">
+            > Autorización Aceptada.<br>
+            > Generando respaldo DB en PythonAnywhere...<br>
+        </div>
+
+        <div class="barra-progreso" id="nukeBarContainer" style="display:none;">
+            <div class="barra-llena" id="nukeBar"></div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:20px;" id="nukeBotones">
+            <button class="btn" style="background:#555; flex:1;" onclick="cerrarModal('modalNuke')">Cancelar</button>
+            <button class="btn btn-danger" style="flex:1; font-size:18px;" onclick="iniciarDestruccion()">☢️ INICIAR BORRADO ☢️</button>
         </div>
     </div>
 </div>
+
+<div id="modalAccesos" class="modal"><div class="modal-content" style="max-width: 700px;"><button class="close-btn" onclick="cerrarModal('modalAccesos')">&times;</button><h2 style="margin-top:0; color:#0d6efd;">🕵️ Historial de Accesos al Sistema</h2><p style="font-size:13px; color:gray;">Registro de auditoría de todas las personas que han iniciado sesión.</p><div style="overflow-x:auto;"><table><thead><tr><th>Fecha y Hora</th><th>Usuario</th><th>Rol</th></tr></thead><tbody id="cuerpoAccesos"></tbody></table></div></div></div>
 
 <div id="modalHistorialGlobal" class="modal"><div class="modal-content" style="max-width: 900px;"><button class="close-btn" onclick="cerrarModal('modalHistorialGlobal')">&times;</button><h2 style="margin-top:0; color:#e83e8c;">📖 Historial de Movimientos y Auditoría</h2><div style="overflow-x:auto;"><table><thead><tr><th>Fecha y Hora</th><th>Usuario responsable</th><th>Producto</th><th>Tipo de Movimiento</th><th>Detalle / Razón</th></tr></thead><tbody id="cuerpoHistorialGlobal"></tbody></table></div></div></div>
 
@@ -186,7 +208,6 @@
 <div id="modalImpresionQR" class="modal"><div class="modal-content" style="max-width: 600px;"><button class="close-btn" onclick="cerrarModal('modalImpresionQR')">&times;</button><h2 style="margin-top: 0; color: var(--btn-reserva);">🖨️ Centro de Impresión QR</h2><div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;"><select id="filtroImpresoQR" onchange="renderizarListaImpresion()" style="flex:1;"><option value="pendientes">Pendientes por imprimir</option><option value="impresos">Ya impresos</option><option value="todos">Mostrar todos</option></select><select id="filtroGrupoQR" onchange="renderizarListaImpresion()" style="flex:1;"><option value="todos">Todas las carpetas</option></select></div><input type="text" id="buscadorImpresionQR" placeholder="🔍 Buscar póster específico..." onkeyup="renderizarListaImpresion()" style="width:100%; margin-bottom:10px;"><div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span style="font-size:12px; font-weight:bold; color:gray;" id="contadorQRLista">0 pósters encontrados</span><div><button class="btn btn-info" style="padding:4px 8px; font-size:11px;" onclick="seleccionarTodoQR(true)">Marcar Todos</button><button class="btn" style="background:#222; color:white; padding:4px 8px; font-size:11px;" onclick="seleccionarTodoQR(false)">Desmarcar</button></div></div><div id="divListaImpresion" style="max-height: 250px; overflow-y: auto; border: 1px solid var(--border-color); padding: 10px; margin-bottom: 15px; border-radius: 5px; background: rgba(0,0,0,0.02);"></div><button class="btn" style="background:#6f42c1; color:white; width: 100%;" onclick="ejecutarImpresionQR()">🖨️ Generar Etiquetas Seleccionadas</button></div></div>
 
 <div id="modalQRVisitante" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalQRVisitante')">&times;</button><h2 style="margin-top: 0; color: #20c997;">📲 Acceso Cinepolitos</h2><p style="font-size: 14px; color: gray;">Imprime este QR y pégalo en piso.</p><div style="background: white; padding: 20px; border-radius: 10px; display: inline-block; margin: 15px 0;"><div id="qrVisitanteContainer"></div></div><button class="btn btn-primary" style="width: 100%; font-size: 16px;" onclick="imprimirQR()">🖨️ Imprimir Ticket QR</button></div></div>
-
 <div id="modalMisPedidos" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMisPedidos')">&times;</button><h2 style="margin-top: 0; color: #e83e8c;">🎫 Historial de mis Pedidos</h2><table><thead><tr><th>Producto Solicitado</th><th>Piezas</th><th>Estado Actual</th></tr></thead><tbody id="tablaMisPedidosCuerpo"></tbody></table></div></div>
 
 <div id="modalLogin" class="modal"><div class="modal-content" style="max-width: 400px; text-align: center;"><button class="close-btn" onclick="cerrarModal('modalLogin')">&times;</button><h2 style="margin-top: 0; color: #0d6efd;">👤 Acceso Restringido</h2><input type="password" id="claveAcceso" placeholder="Contraseña..." style="width: 90%; text-align:center; font-size:18px;" onkeydown="if(event.key==='Enter') iniciarSesion()"><button class="btn" style="background:#0d6efd; color:white; width: 95%; margin-top: 15px;" onclick="iniciarSesion()">Ingresar</button></div></div>
@@ -235,7 +256,6 @@
     </div>
 </div>
 
-
 <script>
     document.addEventListener('contextmenu', event => event.preventDefault()); 
     document.addEventListener('keydown', event => { 
@@ -254,6 +274,7 @@
     const API_CATEGORIAS = 'https://jonassk13.pythonanywhere.com/api/categorias';
     const API_GRUPOS = 'https://jonassk13.pythonanywhere.com/api/grupos';
     const API_MERMAS = 'https://jonassk13.pythonanywhere.com/api/mermas';
+    const API_RESET = 'https://jonassk13.pythonanywhere.com/api/inventario/reset'; // NUEVO API
     
     let datosInventario = []; let listaCategorias = []; let slotsData = [];
     let rolUsuario = 'General'; let idUsuario = null; let nombreUsuario = '';
@@ -353,7 +374,65 @@
             
             if(rolUsuario === 'Admin' || rolUsuario === 'Subgerente' || rolUsuario === 'Supervisor' || rolUsuario === 'Publicista') { document.getElementById('cajaExclusiva').style.display = 'block'; } 
             else { document.getElementById('cajaExclusiva').style.display = 'none'; }
+
+            if(rolUsuario === 'Admin' || (rolUsuario === 'Subgerente' && nombreUsuario.toLowerCase().includes('jacqui'))) {
+                document.getElementById('btnNuke').style.display = 'inline-block';
+            } else {
+                document.getElementById('btnNuke').style.display = 'none';
+            }
         }
+    }
+
+    
+    function prepararProtocoloCero() {
+        abrirModal('modalNuke');
+        document.getElementById('nukeTerminal').style.display = 'none';
+        document.getElementById('nukeBarContainer').style.display = 'none';
+        document.getElementById('nukeBotones').style.display = 'flex';
+        document.getElementById('nukeTitle').innerText = '⚠️ PROTOCOLO CERO ⚠️';
+        document.getElementById('btnCerrarNuke').style.display = 'block';
+    }
+
+    function iniciarDestruccion() {
+        document.getElementById('nukeBotones').style.display = 'none';
+        document.getElementById('btnCerrarNuke').style.display = 'none';
+        document.getElementById('nukeTitle').innerText = '🔥 HACKEANDO RED CORE 🔥';
+        
+        let terminal = document.getElementById('nukeTerminal');
+        terminal.style.display = 'block';
+        terminal.innerHTML = '> Bypass de seguridad Admin... OK<br>> Conectando a Base de Datos en PythonAnywhere...<br>';
+        
+        let barContainer = document.getElementById('nukeBarContainer');
+        let bar = document.getElementById('nukeBar');
+        barContainer.style.display = 'block';
+        
+        setTimeout(() => { terminal.innerHTML += '> Compilando respaldo físico...<br>'; }, 800);
+        setTimeout(() => { terminal.innerHTML += '> Ejecutando borrado de SQL (Categoria = Poster)...<br>'; }, 1800);
+        
+        setTimeout(() => { bar.style.width = '100%'; }, 100);
+
+        setTimeout(() => {
+            fetch(API_RESET, { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'}, 
+                body: JSON.stringify({usuario: nombreUsuario, rol: rolUsuario}) 
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.error) {
+                    terminal.innerHTML += `<br><strong style="color:red;">> ERROR: ${data.error}</strong>`;
+                    setTimeout(() => cerrarModal('modalNuke'), 3000);
+                } else {
+                    document.getElementById('nukeTitle').innerText = '💥 DESTRUCCIÓN COMPLETADA 💥';
+                    terminal.innerHTML += `<br>> <b>Respaldo seguro creado:</b> ${data.respaldo}<br>> Limpieza finalizada.<br>> Reiniciando el sistema en 2 segundos...`;
+                    setTimeout(() => { location.reload(); }, 2500);
+                }
+            })
+            .catch(err => {
+                terminal.innerHTML += `<br><strong style="color:red;">> FALLO DE RED: ${err}</strong>`;
+                setTimeout(() => cerrarModal('modalNuke'), 3000);
+            });
+        }, 3000);
     }
 
     function revisarSolicitudesPendientes() {
@@ -464,7 +543,6 @@
         } 
     }
 
-   
     function abrirModalSlots() { 
         Promise.all([fetch(API_URL).then(r => r.json()), fetch(API_GRUPOS).then(r => r.json())]).then(([inventario, grupos]) => { 
             datosInventario = inventario; slotsData = grupos; renderizarSlots(); abrirModal('modalSlots'); 
@@ -518,7 +596,6 @@
     function eliminarSlot(idGrupo) { if(!confirm("¿Seguro que deseas eliminar esta carpeta completa? Los pósters quedarán libres.")) return; fetch(`${API_GRUPOS}/${idGrupo}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); }); }
     function autoAgruparSlots() { if(!confirm("⚡ MODO INTELIGENTE (A-Z):\n\nEl sistema leerá las letras en el nombre de tus slots y asignará los pósters automáticamente.\n\n⚠️ Si no tienes ningún slot, creará mágicamente los 6 slots oficiales (A-D, E-H, etc.) y ordenará toda la bodega.\n\n¿Continuar?")) return; fetch(`${API_GRUPOS}/auto_organizar`, { method: 'POST' }).then(res => res.json()).then(data => { abrirModalSlots(); cargarTabla(); alert("✅ " + data.mensaje); }); }
 
-
     let postersFiltradosQR = [];
     function abrirModalImpresionQR() { 
         fetch(API_GRUPOS).then(r => r.json()).then(grupos => { 
@@ -564,9 +641,9 @@
             .etiqueta { width: 19.5cm; height: 4.1cm; border-top: 2px dashed #777; border-bottom: 2px dashed #777; box-sizing: border-box; display: flex; align-items: center; padding: 0 1cm; page-break-inside: avoid; border-radius:0px;} 
             .qr-code { width: 3.2cm; height: 3.2cm; flex-shrink: 0; display: flex; justify-content: center; align-items: center; } 
             .qr-code img { max-width: 100%; max-height: 100%; } 
-            .info { flex-grow: 1; padding-left: 2cm; text-align: left; } 
-            .titulo { font-size: 30px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000; letter-spacing: 1px;} 
-            .subtitulo { font-size: 16px; color: #555; margin-top:5px; font-weight:bold; }
+            .info { flex-grow: 1; padding-left: 1.5cm; text-align: left; } 
+            .titulo { font-size: 20px; font-weight: bold; text-transform: uppercase; margin: 0; color: #000;} 
+            .subtitulo { font-size: 11px; color: #555; margin-top:5px; font-weight:bold; }
         </style></head><body><div class="hoja" id="qrGrid"></div>
         <script>
             const productos = ${JSON.stringify(listaProductos.map(p => ({id: p.ID_Publicidad, nombre: p.Nombre_Material})))}; 
@@ -581,14 +658,14 @@
                 info.appendChild(title); info.appendChild(sub); 
                 div.appendChild(qrContainer); div.appendChild(info); 
                 grid.appendChild(div); 
-                new QRCode(qrContainer, { text: baseUrl + p.id, width: 250, height: 250, colorDark : "#000", colorLight : "#fff" }); 
+                new QRCode(qrContainer, { text: baseUrl + p.id, width: 120, height: 120, colorDark : "#000", colorLight : "#fff" }); 
             }); 
             setTimeout(() => window.print(), 1500); 
         <\/script></body></html>`); 
         ventana.document.close(); 
     }
 
-    
+ 
     function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; let whatsActivado = localStorage.getItem('whatsAppPiloto') === 'true'; document.getElementById('chkWhatsPiloto').checked = whatsActivado; document.getElementById('cajaWhatsNum').style.display = whatsActivado ? 'block' : 'none'; document.getElementById('inputWhatsNum').value = localStorage.getItem('whatsAppNumero') || ''; abrirModal('modalPerfil'); }
     function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; localStorage.setItem('whatsAppPiloto', document.getElementById('chkWhatsPiloto').checked); localStorage.setItem('whatsAppNumero', document.getElementById('inputWhatsNum').value.trim()); if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado correctamente."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); location.reload(); } }); }
     function abrirModalHistorial() { fetch('https://jonassk13.pythonanywhere.com/api/historial_global').then(r => r.json()).then(data => { const tb = document.getElementById('cuerpoHistorialGlobal'); tb.innerHTML = ''; if(data.length === 0) tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay movimientos registrados.</td></tr>'; data.forEach(h => { let badgeClass = h.Accion.includes('Ingreso') ? 'background:var(--success);' : (h.Accion.includes('Salida') || h.Accion.includes('Merma') || h.Accion.includes('Daño') || h.Accion.includes('Regalo') ? 'background:var(--danger);' : 'background:#6c757d;'); tb.innerHTML += `<tr><td>${h.Fecha}</td><td style="color:var(--primary); font-weight:bold;">${h.Usuario}</td><td>${h.Nombre_Material}</td><td><span class="estado-badge" style="${badgeClass}">${h.Accion}</span></td><td><i>${h.Detalle}</i></td></tr>`; }); abrirModal('modalHistorialGlobal'); }); }
@@ -608,6 +685,8 @@
     function cancelarEdicionUsuario() { document.getElementById('adminUsuarioId').value = ''; document.getElementById('adminUsuarioNombre').value = ''; document.getElementById('adminUsuarioClave').value = ''; document.getElementById('adminUsuarioClaveConf').value = ''; document.getElementById('btnCancelarEdicionUsuario').classList.add('oculto'); }
     function eliminarUsuarioAdmin(id) { if(id == idUsuario) return alert("❌ No puedes borrarte a ti mismo."); if(confirm("¿Eliminar usuario?")) { fetch(`${API_USUARIOS}/${id}`, { method: 'DELETE' }).then(() => abrirModalUsuarios()); } }
 
+    function limpiarTextoDuro(texto) { if (!texto) return ""; let limpio = texto.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); limpio = limpio.replace(/\b(el|la|los|las|un|una|unos|unas|esp|sub|3d|imax|4dx|sj|xe|atmos|sp|led|screenx|2d|finb)\b/gi, ''); return limpio.replace(/[^a-zA-Z0-9]/g, '').toLowerCase(); }
+    
     function cargarTabla() { fetch(API_URL).then(res => { if(!res.ok) throw new Error("Fallo de conexión"); return res.json(); }).then(data => { if(!Array.isArray(data)) throw new Error("Formato incorrecto."); datosInventario = data; renderizarTabla(); }).catch(err => { document.getElementById('tablaCuerpo').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center;"><b>🛑 Error Detectado:</b> ${err.message}.</td></tr>`; }); }
     
     function renderizarTabla() { 
