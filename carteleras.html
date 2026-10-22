@@ -10,7 +10,6 @@
         body.dark-mode { --bg-color: #121212; --text-color: #e0e0e0; --box-bg: #1e1e1e; --border-color: #444; --primary: #6ea8fe; }
         body.theme-jacqui { --primary: #0b5345; --btn-primary: #0b5345; --success: #1e8449; --danger: #6e2c00; --warning: #d35400;}
         
-        /* 🌲🌅🌃 MAGIA: EL BOSQUE CAMBIANTE DE JACQUELINE */
         body.theme-bosque-pinos { background-size: cover !important; background-position: center !important; background-attachment: fixed !important; color: #ffe8d6 !important; }
         body.theme-amanecer { background-image: linear-gradient(to bottom, rgba(168, 230, 207, 0.4), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
         body.theme-amanecer .box, body.theme-amanecer .tarjeta-semana, body.theme-amanecer .muro-taquilla, body.theme-amanecer .zona, body.theme-amanecer .modal-content { background: rgba(20, 60, 40, 0.6) !important; border-color: #a8e6cf !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(168, 230, 207, 0.2); color: #fff !important; }
@@ -37,12 +36,13 @@
         button.btn:hover { opacity: 0.8; } button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000; } .btn-success { background: var(--success); } .btn-warning { background: var(--warning); color: #000;} .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 10px; }
 
-        .panel-semanas { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tarjeta-semana { flex: 1; background: var(--box-bg); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color); text-align: center; font-weight: bold; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-width: 250px;}
+        .carrusel-semanas { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
+        .tarjeta-semana { flex: 0 0 auto; background: var(--box-bg); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color); text-align: center; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-width: 180px; transition: 0.2s;}
+        .tarjeta-semana:hover { transform: translateY(-3px); border-color: var(--primary); }
         .tarjeta-semana small { display: block; font-weight: normal; font-size: 12px; color: gray; margin-top: 5px; }
-        .semana-anterior { border-color: #6c757d; color: #6c757d; }
-        .semana-actual { border-color: var(--primary); color: var(--primary); }
-        .semana-nueva { border-color: var(--warning); color: var(--warning); background: rgba(255, 193, 7, 0.05); }
+        .tarjeta-activa { border-color: var(--primary); background: rgba(13, 110, 253, 0.05); color: var(--primary); }
+
+        .banner-historico { background: var(--warning); color: black; padding: 10px; text-align: center; font-weight: bold; border-radius: 5px; margin-bottom: 15px; display: none; box-shadow: 0 4px 15px rgba(255,193,7,0.4); }
 
         .box-reglas { background: var(--box-bg); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid var(--warning); box-shadow: 0 4px 6px rgba(0,0,0,0.05);}
         
@@ -82,6 +82,12 @@
         .sugerencia-box { margin-top: 8px; padding: 8px; border-radius: 5px; font-size: 12px; width: 90%; animation: parpadeo 1.5s infinite alternate; background: var(--box-bg);}
         @keyframes parpadeo { from { opacity: 0.8; } to { opacity: 1; } }
 
+        .tabla-analisis { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        .tabla-analisis th, .tabla-analisis td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
+        .tabla-analisis th { background-color: var(--th-bg); color: var(--th-text); }
+        .tr-ganador { background: rgba(25, 135, 84, 0.15) !important; border-left: 4px solid var(--success) !important; font-weight: bold; }
+        body.dark-mode .tr-ganador { background: rgba(25, 135, 84, 0.25) !important; }
+
         @media (max-width: 800px) {
             .mapa-container { grid-template-columns: 1fr; }
             .muro-row { flex-direction: column; gap: 10px; padding: 10px 0; border-bottom: 1px solid #333;}
@@ -90,7 +96,6 @@
             .slots-grid { grid-template-columns: repeat(2, 1fr); }
             .header { flex-direction: column; align-items: stretch; text-align: center;}
             .header div { display: flex; flex-direction: column; gap: 5px;}
-            .panel-semanas { flex-direction: column; }
         }
 
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 1000; }
@@ -106,10 +111,11 @@
         <h1 style="margin:0;">🗺️ Plano de Exhibición</h1>
         <p style="margin:0; font-size:12px; color:gray;">Control Operativo de 16 Salas</p>
     </div>
-    <div>
-        <button class="btn btn-warning" onclick="guardarCarteleraEnHistorial()">💾 Guardar Semana Actual</button>
-        <button class="btn btn-info" onclick="document.getElementById('archivoExcel').click()">🪄 Sugerir por Excel</button>
-        <input type="file" id="archivoExcel" accept=".xlsx, .xls" style="display: none;" onchange="procesarExcel(event)">
+    <div id="botones-edicion" style="display: flex; gap: 5px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="abrirModalAnalisis()">📊 Análisis de Salas</button>
+        <button class="btn btn-warning" onclick="guardarCarteleraManual()">💾 Guardar Cambios Manuales</button>
+        <button class="btn btn-info" onclick="document.getElementById('archivosExcel').click()">🪄 Sugerir por Excel (7 Días)</button>
+        <input type="file" id="archivosExcel" accept=".xlsx, .xls" multiple style="display: none;" onchange="procesarMultiplesExcel(event)">
         
         <button id="btnLimpiarObsoletos" class="btn btn-danger" style="display:none; animation: parpadeo 1.5s infinite alternate;" onclick="desmontarListaObsoletos()">🧹 Desmontar Obsoletos</button>
         <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Sugerencias</button>
@@ -117,7 +123,15 @@
     </div>
 </div>
 
-<div class="box-reglas">
+<div class="carrusel-semanas" id="listaSemanas">
+</div>
+
+<div class="banner-historico" id="banner-historico">
+    🎞️ MODO HISTÓRICO: Estás visualizando un archivo pasado. 
+    <button class="btn btn-dark btn-sm" style="margin-left: 10px;" onclick="cargarMapa()">Volver al Presente</button>
+</div>
+
+<div class="box-reglas" id="box-reglas">
     <h3 style="margin-top:0; color:var(--warning);">📜 Reglamento Operativo de Carteleras</h3>
     <p style="font-size:13px; margin-bottom: 5px;">Todo material asignado a una sala o al muro de taquilla debe cumplir <strong>estrictamente</strong> la siguiente jerarquía:</p>
     <ol style="font-size:13px; font-weight:bold; margin-top: 0;">
@@ -127,12 +141,6 @@
         <li>✨ Prioridad 4: Funciones Especiales o ciclos de cine alternativo.</li>
         <li>🖼️ Exhibidor de cartelera: Material promocional genérico sin función específica.</li>
     </ol>
-</div>
-
-<div class="panel-semanas">
-    <div class="tarjeta-semana semana-anterior" id="ui-semana-ant">No hay datos <small>Semana Anterior</small></div>
-    <div class="tarjeta-semana semana-actual" id="ui-semana-act">Cargando... <small>Cartelera Física Actual</small></div>
-    <div class="tarjeta-semana semana-nueva" id="ui-semana-nueva" style="display:none;">--- <small>Nueva Sugerencia</small></div>
 </div>
 
 <div class="muro-taquilla">
@@ -147,10 +155,9 @@
     <div class="zona zona-derecha"><div class="zona-titulo">➡️ Ala Derecha (Salas 8 al 16)</div><div class="slots-grid" id="ala-derecha"></div></div>
 </div>
 
-<!-- 🚨 ADUANA: MODAL DE ASIGNACIÓN CON ENTER -->
 <div id="modalAsignar" class="modal">
     <div class="modal-content">
-        <button class="close-btn" onclick="cerrarModal()">&times;</button>
+        <button class="close-btn" onclick="cerrarModal('modalAsignar')">&times;</button>
         <h2 style="margin-top:0; color: var(--success);">📥 Colocar Póster en Cartelera</h2>
         <p id="textoUbicacion" style="font-size: 14px;">1. Selecciona un material de la bodega:</p>
         
@@ -184,6 +191,29 @@
     </div>
 </div>
 
+<div id="modalAnalisis" class="modal">
+    <div class="modal-content" style="max-width: 850px;">
+        <button class="close-btn" onclick="cerrarModal('modalAnalisis')">&times;</button>
+        <h2 style="margin-top:0; color:var(--primary);">📊 Análisis Logístico de Salas</h2>
+        <p style="font-size:13px; color:gray;">Distribución de funciones extraída de los 7 archivos de Excel.<br>La fila resaltada en verde representa la película que el algoritmo eligió para el póster físico de esa sala.</p>
+        
+        <div style="overflow-y:auto; max-height: 60vh;">
+            <table class="tabla-analisis">
+                <thead>
+                    <tr>
+                        <th>Sala</th>
+                        <th>Película Proyectada</th>
+                        <th>Entre Semana<br><small>(Lun-Jue)</small></th>
+                        <th>Fin de Semana<br><small>(Vie-Dom)</small></th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoAnalisis"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 <script>
     document.addEventListener('keydown', event => { 
         if (event.keyCode === 123 || (event.ctrlKey && event.shiftKey && event.keyCode === 73)) event.preventDefault(); 
@@ -195,8 +225,14 @@
     const API_ESTRENOS = 'https://jonassk13.pythonanywhere.com/api/estrenos'; 
     const API_HISTORIAL_SEMANAS = 'https://jonassk13.pythonanywhere.com/api/carteleras/historial';
     
-    let slotSeleccionado = null; let sugerenciasGlobales = []; let obsoletosGlobales = []; let numeroSemanaSugerida = null; let carteleraVirtual = [];
-    let rolUsuario = localStorage.getItem('rolCine') || 'General'; let nombreUsuario = localStorage.getItem('nombreCine') || '';
+    let slotSeleccionado = null; 
+    let sugerenciasGlobales = []; 
+    let obsoletosGlobales = []; 
+    let carteleraVirtual = [];
+    let analisisGlobalSalas = {}; 
+    let rolUsuario = localStorage.getItem('rolCine') || 'General'; 
+    let nombreUsuario = localStorage.getItem('nombreCine') || '';
+    let modoHistorico = false;
 
     function aplicarTemasMagicos() {
         if(rolUsuario !== 'Subgerente') return; 
@@ -210,7 +246,7 @@
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        cargarMapa(); cargarHistorialSemanas(); aplicarTemasMagicos(); 
+        cargarHistorialSemanas(); cargarMapa(); aplicarTemasMagicos(); 
     };
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
@@ -219,75 +255,121 @@
 
     function cargarHistorialSemanas() {
         fetch(API_HISTORIAL_SEMANAS).then(r => r.json()).then(data => {
-            if(data.length > 0) {
-                document.getElementById('ui-semana-act').innerHTML = `SEMANA ${data[0].Semana} <small>Guardada el ${data[0].Fecha.split(' ')[0]}</small>`;
-                if(data.length > 1) { document.getElementById('ui-semana-ant').innerHTML = `SEMANA ${data[1].Semana} <small>Guardada el ${data[1].Fecha.split(' ')[0]}</small>`; }
-            } else { document.getElementById('ui-semana-act').innerHTML = `Semana Desconocida <small>Nunca se ha guardado</small>`; }
+            const contenedor = document.getElementById('listaSemanas');
+            contenedor.innerHTML = `<div class="tarjeta-semana tarjeta-activa" id="btn-semana-actual" onclick="cargarMapa()">🎬 SEMANA ACTUAL<small>En Vivo</small></div>`;
+            
+            data.forEach(sem => {
+                let btn = document.createElement('div');
+                btn.className = 'tarjeta-semana';
+                btn.innerHTML = `SEMANA ${sem.Semana} <small>${sem.Fecha.split(' ')[0]}</small>`;
+                btn.onclick = () => {
+                    document.querySelectorAll('.tarjeta-semana').forEach(el => el.classList.remove('tarjeta-activa'));
+                    btn.classList.add('tarjeta-activa');
+                    renderizarPlano(JSON.parse(sem.Datos_JSON), true);
+                };
+                contenedor.appendChild(btn);
+            });
         });
     }
 
-    function guardarCarteleraEnHistorial() {
-        let nSemana = prompt("¿Qué número de semana vas a guardar? (Ejemplo: 34)");
+    function guardarCarteleraManual() {
+        let nSemana = prompt("💾 Has modificado la cartelera manualmente.\n\nIngresa el NÚMERO DE SEMANA para registrar esta versión en el historial:");
         if(!nSemana || isNaN(parseInt(nSemana))) return;
-        let datosA_Guardar = carteleraVirtual.map(c => { return { slot: c.ID_Slot, peli: c.ID_Publicidad ? c.Nombre_Material : c.Titulo_Manual } });
-        fetch(API_HISTORIAL_SEMANAS, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ semana: parseInt(nSemana), datos: datosA_Guardar })
-        }).then(() => { alert("¡Cartelera física respaldada con éxito!"); cargarHistorialSemanas(); });
+        ejecutarGuardadoHistorial(nSemana);
     }
 
-    function cargarMapa(mostrarAlerta = false) {
+    function ejecutarGuardadoHistorial(numSemana) {
+        let datosA_Guardar = carteleraVirtual.map(c => { 
+            return { 
+                slot: c.ID_Slot, 
+                peli: (c.ID_Publicidad || c.Titulo_Manual !== "") ? (c.ID_Publicidad ? c.Nombre_Material : c.Titulo_Manual) : "Espacio Vacío",
+                clasificacion: c.Clasificacion || "",
+                idioma: c.Idioma || "",
+                Ubicacion: c.Ubicacion
+            };
+        });
+        fetch(API_HISTORIAL_SEMANAS, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ semana: parseInt(numSemana), datos: datosA_Guardar })
+        }).then(() => { 
+            alert("¡Cartelera física respaldada en la Semana " + numSemana + "!"); 
+            cargarHistorialSemanas(); 
+        });
+    }
+
+    function cargarMapa() {
         document.getElementById('btnInstalarTodas').style.display = 'none';
         document.getElementById('btnLimpiarObsoletos').style.display = 'none';
+        document.querySelectorAll('.tarjeta-semana').forEach(el => el.classList.remove('tarjeta-activa'));
+        let btnAct = document.getElementById('btn-semana-actual');
+        if(btnAct) btnAct.classList.add('tarjeta-activa');
 
         fetch(API_CARTELERAS).then(res => res.json()).then(data => {
             carteleraVirtual = data;
-            document.getElementById('taquilla-pluus').innerHTML = [1, 2].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
-            document.getElementById('taquilla-4dx').innerHTML = [3, 4].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
-            document.getElementById('taquilla-screenx').innerHTML = [5, 6].map(id => crearMuroSlot(data.find(c => c.ID_Slot === id))).join('');
-            document.getElementById('taquilla-jr').innerHTML = crearMuroSlot(data.find(c => c.ID_Slot === 7)) + `<div class="muro-slot info-panel">📄 Panel Fijo<br><small>Info</small></div>`;
-
-            const alaIzquierda = data.filter(c => c.ID_Slot >= 8 && c.ID_Slot <= 14);
-            const alaDerecha = data.filter(c => c.ID_Slot >= 15 && c.ID_Slot <= 23);
-            
-            document.getElementById('ala-izquierda').innerHTML = alaIzquierda.map(c => crearSlotEstandar(c)).join('');
-            document.getElementById('ala-derecha').innerHTML = alaDerecha.map(c => crearSlotEstandar(c)).join('');
-            
-            if (sugerenciasGlobales.length > 0) dibujarSugerenciasEnPantalla(mostrarAlerta);
+            renderizarPlano(data, false);
+            if (sugerenciasGlobales.length > 0) dibujarSugerenciasEnPantalla();
         });
     }
 
-    function generarBotonLiberar(c) {
-        let esManual = (c.Titulo_Manual && c.Titulo_Manual !== ""); let texto = esManual ? "Borrar Letrero" : "Desmontar";
-        return `<button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${c.ID_Slot})">${texto}</button>`;
+    function renderizarPlano(datos, historico = false) {
+        modoHistorico = historico;
+        let tituloBanner = document.getElementById('banner-historico');
+        
+        if (historico) {
+            tituloBanner.style.display = 'block';
+            document.getElementById('botones-edicion').style.display = 'none';
+            document.getElementById('box-reglas').style.display = 'none';
+            document.querySelectorAll('.sugerencia-box').forEach(e => e.remove());
+        } else {
+            tituloBanner.style.display = 'none';
+            document.getElementById('botones-edicion').style.display = 'flex';
+            document.getElementById('box-reglas').style.display = 'block';
+        }
+
+        document.getElementById('taquilla-pluus').innerHTML = [1, 2].map(id => crearSlotVisual(datos.find(c => (c.ID_Slot || c.slot) === id), true)).join('');
+        document.getElementById('taquilla-4dx').innerHTML = [3, 4].map(id => crearSlotVisual(datos.find(c => (c.ID_Slot || c.slot) === id), true)).join('');
+        document.getElementById('taquilla-screenx').innerHTML = [5, 6].map(id => crearSlotVisual(datos.find(c => (c.ID_Slot || c.slot) === id), true)).join('');
+        
+        let jrData = datos.find(c => (c.ID_Slot || c.slot) === 7);
+        document.getElementById('taquilla-jr').innerHTML = crearSlotVisual(jrData, true) + `<div class="muro-slot info-panel" style="${historico?'display:none;':''}">📄 Panel Fijo<br><small>Info</small></div>`;
+
+        const alaIzquierda = datos.filter(c => (c.ID_Slot || c.slot) >= 8 && (c.ID_Slot || c.slot) <= 14);
+        const alaDerecha = datos.filter(c => (c.ID_Slot || c.slot) >= 15 && (c.ID_Slot || c.slot) <= 23);
+        
+        document.getElementById('ala-izquierda').innerHTML = alaIzquierda.map(c => crearSlotVisual(c, false)).join('');
+        document.getElementById('ala-derecha').innerHTML = alaDerecha.map(c => crearSlotVisual(c, false)).join('');
     }
 
-    function crearMuroSlot(c) {
-        if(!c) return ''; const esManual = c.Titulo_Manual && c.Titulo_Manual !== ""; const estaLleno = c.ID_Publicidad !== null || esManual;
-        const clase = estaLleno ? 'muro-slot lleno' : 'muro-slot';
+    function crearSlotVisual(c, esMuro) {
+        if(!c) c = { ID_Slot: 0 };
+        const slotId = c.ID_Slot || c.slot;
+        const estaLleno = modoHistorico ? (c.peli && c.peli !== "Espacio Vacío") : ((c.ID_Publicidad !== null && c.ID_Publicidad !== undefined) || (c.Titulo_Manual && c.Titulo_Manual !== ""));
+        
+        const clase = estaLleno ? (esMuro ? 'muro-slot lleno' : 'slot lleno') : (esMuro ? 'muro-slot' : 'slot');
+        
         let extras = '';
         if(estaLleno) {
-            let badgeRegla = c.Clasificacion ? `<div style="margin-top:5px; font-size:10px; color:var(--warning); border:1px dashed var(--warning); padding:2px; border-radius:3px;">${c.Clasificacion}</div>` : '';
-            let badgeIdioma = c.Idioma ? `<span class="badge-idioma" style="margin-top:5px; display:inline-block;">${c.Idioma}</span>` : '';
+            let clasif = c.Clasificacion || c.clasificacion;
+            let idioma = c.Idioma || c.idioma;
+            let badgeRegla = clasif ? `<div style="margin-top:5px; font-size:${esMuro?'10px':'11px'}; color:var(--success); border:1px dashed var(--success); padding:2px; border-radius:3px;">${clasif}</div>` : '';
+            let badgeIdioma = idioma ? `<span class="badge-idioma" style="margin-top:5px; display:inline-block;">${idioma}</span>` : '';
             extras = `<div>${badgeIdioma}${badgeRegla}</div>`;
         }
-        let nombreVisual = esManual ? c.Titulo_Manual + ' ✍️' : c.Nombre_Material;
-        const contenido = estaLleno ? `<span class="poster-nombre">${nombreVisual}</span>${extras}${generarBotonLiberar(c)}` : `<span style="color:gray; font-size:12px;">Slot #${c.ID_Slot}<br>Clic para Instalar</span>`;
-        return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, 'Muro de Taquilla', ${estaLleno})">${contenido}</div>`;
-    }
+        
+        let nombreVisual = '';
+        if (modoHistorico) { nombreVisual = c.peli; } 
+        else { nombreVisual = c.Titulo_Manual ? c.Titulo_Manual + ' ✍️' : c.Nombre_Material; }
 
-    function crearSlotEstandar(c) {
-        if(!c) return ''; const esManual = c.Titulo_Manual && c.Titulo_Manual !== ""; const estaLleno = c.ID_Publicidad !== null || esManual;
-        const clase = estaLleno ? 'slot lleno' : 'slot';
-        let extras = '';
-        if(estaLleno) {
-            let badgeRegla = c.Clasificacion ? `<div style="margin-top:5px; font-size:11px; font-weight:bold; color:var(--success); border:1px dashed var(--success); padding:3px; border-radius:5px;">${c.Clasificacion}</div>` : '';
-            let badgeIdioma = c.Idioma ? `<span class="badge-idioma" style="margin-top:5px; display:inline-block;">${c.Idioma}</span>` : '';
-            extras = `<div>${badgeIdioma}${badgeRegla}</div>`;
+        let contenido = estaLleno ? `<span class="poster-nombre" style="${esMuro?'color:white;':''}">${nombreVisual}</span>${extras}` : `<span style="color:gray; font-size:12px;">Slot #${slotId}<br>${modoHistorico?'Vacío':'Clic para Instalar'}</span>`;
+        
+        if (!modoHistorico && estaLleno) {
+            contenido += `<button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${slotId})">${c.Titulo_Manual ? "Borrar Letrero" : "Desmontar"}</button>`;
         }
-        let nombreVisual = esManual ? c.Titulo_Manual + ' ✍️' : c.Nombre_Material;
-        const contenido = estaLleno ? `<span class="poster-nombre">${nombreVisual}</span>${extras}${generarBotonLiberar(c)}` : `<span style="color:gray;">Espacio Vacío</span>`;
-        return `<div id="slot-div-${c.ID_Slot}" class="${clase}" onclick="abrirAsignacion(${c.ID_Slot}, '${c.Ubicacion}', ${estaLleno})"><div class="slot-numero">Espacio #${c.ID_Slot}</div><div class="slot-titulo">${c.Ubicacion}</div>${contenido}</div>`;
+        
+        let onclickAttr = (!modoHistorico && !estaLleno) ? `onclick="abrirAsignacion(${slotId}, '${c.Ubicacion || 'Sala '+(slotId-7)}', ${estaLleno})"` : '';
+
+        if (esMuro) return `<div id="slot-div-${slotId}" class="${clase}" ${onclickAttr}>${contenido}</div>`;
+        return `<div id="slot-div-${slotId}" class="${clase}" ${onclickAttr}><div class="slot-numero">Espacio #${slotId}</div><div class="slot-titulo">${c.Ubicacion || 'Sala ' + (slotId-7)}</div>${contenido}</div>`;
     }
 
     function limpiarTituloDCP(titulo) {
@@ -312,111 +394,130 @@
         return new Date(parseInt(str.substring(0,4)), parseInt(str.substring(4,6))-1, parseInt(str.substring(6,8)));
     }
 
-    // =======================================================
-    // 🧠 LECTOR DUAL DE EXCEL (BACKUP DE INVENTARIO Y PRIORIDAD DE SALAS VIP)
-    // =======================================================
-    function procesarExcel(event) {
-        const file = event.target.files[0]; if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'});
-            
-            let sheetPoster = workbook.SheetNames.find(n => n.toLowerCase().replace(/\s/g,'').includes('postersolicitado'));
-            let sheetTodas = workbook.SheetNames.find(n => n.toLowerCase().replace(/\s/g,'').includes('todaslasfunciones'));
-            
-            if (!sheetPoster || !sheetTodas) {
-                alert("⚠️ Error: El Excel debe contener las pestañas 'Poster solicitado' y 'todas las funciones'."); return;
-            }
+    function procesarMultiplesExcel(event) {
+        const files = event.target.files;
+        if (files.length !== 7) {
+            alert("⚠️ Error Operativo: Debes seleccionar estrictamente los 7 archivos de Excel correspondientes a cada día de la semana.");
+            event.target.value = '';
+            return;
+        }
 
-            // --- 1. LEER "Poster solicitado" ---
-            const jsonPoster = XLSX.utils.sheet_to_json(workbook.Sheets[sheetPoster], {header: 1});
-            let colSalaP = -1, colFuncP = -1, colClasifP = -1, headerIdxP = -1;
-            
-            for(let i=0; i<10; i++) {
-                if(jsonPoster[i]) {
-                    let rowStr = jsonPoster[i].map(c => String(c).toLowerCase().trim());
-                    if(rowStr.includes('salas') && rowStr.findIndex(c => c.includes('funciones')) !== -1) {
-                        headerIdxP = i; colSalaP = rowStr.indexOf('salas'); 
-                        colFuncP = rowStr.findIndex(c => c.includes('funciones'));
-                        colClasifP = colFuncP + 1; // La clasificación suele estar pegada
-                        break;
-                    }
-                }
-            }
-            
-            let postersSolicitados = {};
-            if(headerIdxP !== -1) {
-                for(let i = headerIdxP + 1; i < jsonPoster.length; i++) {
-                    let row = jsonPoster[i];
-                    if(!row || row[colSalaP] === undefined) continue;
-                    let salaNum = parseInt(row[colSalaP]);
-                    if(isNaN(salaNum)) continue;
-                    
-                    let dcp = String(row[colFuncP] || '');
-                    let clasif = String(row[colClasifP] || '').trim();
-                    if(clasif.toLowerCase() === '(en blanco)') clasif = '';
-                    
-                    let titulo = dcp.split('_')[0]; 
-                    postersSolicitados[salaNum] = { dcp: dcp, titulo: titulo, clasif: clasif };
-                }
-            }
+        let promesas = Array.from(files).map(file => new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result); 
+                const workbook = XLSX.read(data, {type: 'array'});
+                const sheetName = workbook.SheetNames[0];
+                const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                resolve(json);
+            };
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+        }));
 
-            // --- 2. LEER "todas las funciones" ---
-            const jsonTodas = XLSX.utils.sheet_to_json(workbook.Sheets[sheetTodas], {header: 1});
-            let colSalaT = -1, colFuncT = -1, headerIdxT = -1, numeroSemanaSugerida = null;
-
-            for(let i=0; i<15; i++) {
-                if(jsonTodas[i]) {
-                    let rowStrUpper = jsonTodas[i].join(' ').toUpperCase();
-                    let matchSemana = rowStrUpper.match(/SEMANA\s*(\d+)/);
-                    if(matchSemana && !numeroSemanaSugerida) numeroSemanaSugerida = matchSemana[1];
-
-                    let rowStr = jsonTodas[i].map(c => String(c).toUpperCase().trim());
-                    if(rowStr.includes('AUDITORIUM') && rowStr.includes('FEATURE')) {
-                        headerIdxT = i; colSalaT = rowStr.indexOf('AUDITORIUM'); colFuncT = rowStr.indexOf('FEATURE'); break;
-                    }
-                }
-            }
-
+        Promise.all(promesas).then(resultados => {
+            let fechasEncontradas = new Set();
             let conteoSala = {}; 
-            if(headerIdxT !== -1) {
-                for(let i = headerIdxT + 1; i < jsonTodas.length; i++) {
-                    let row = jsonTodas[i];
-                    if(!row || !row[colSalaT] || !row[colFuncT]) continue;
-                    let salaStr = String(row[colSalaT]); let feature = String(row[colFuncT]);
-                    let numMatch = salaStr.match(/\d+/); if(!numMatch) continue;
-                    let salaNum = parseInt(numMatch[0]);
-                    
-                    let peliLimpia = feature.split('_')[0];
-                    if (!conteoSala[salaNum]) conteoSala[salaNum] = {};
-                    conteoSala[salaNum][peliLimpia] = (conteoSala[salaNum][peliLimpia] || 0) + 1;
-                }
+            
+            let hoy = new Date();
+            hoy.setHours(0, 0, 0, 0); 
+            let errorFechasPasadas = false;
+
+            resultados.forEach(hoja => {
+                hoja.forEach(row => {
+                    let aud = row['AUDITORIUM'];
+                    let sched = row['SCHEDULED_TIME'];
+                    let feature = row['FEATURE'];
+                    let rating = row['FEATURE_RATING'];
+
+                    if (aud && sched && feature) {
+                        let datePart = String(sched).split(' ')[0]; 
+                        fechasEncontradas.add(datePart);
+                        
+                        let partesFecha = datePart.split('-');
+                        let rowDate = null;
+                        if(partesFecha.length === 3) {
+                            rowDate = new Date(parseInt(partesFecha[0]), parseInt(partesFecha[1])-1, parseInt(partesFecha[2]));
+                            if (rowDate < hoy) errorFechasPasadas = true;
+                        }
+
+                        let numMatch = String(aud).match(/\d+/);
+                        if (numMatch) {
+                            let salaNum = parseInt(numMatch[0]);
+                            let dcp = String(feature);
+                            let titulo = dcp.split('_')[0]; 
+                            let r = rating ? String(rating).trim() : "";
+                            if (r.toLowerCase() === '(en blanco)') r = "";
+
+                            if (!conteoSala[salaNum]) conteoSala[salaNum] = {};
+                            if (!conteoSala[salaNum][titulo]) {
+                                conteoSala[salaNum][titulo] = { conteo: 0, rating: r, dcp: dcp, entreSemana: 0, finSemana: 0 };
+                            }
+                            conteoSala[salaNum][titulo].conteo++;
+
+                            if (rowDate) {
+                                let diaSemana = rowDate.getDay(); 
+                                if (diaSemana === 0 || diaSemana === 5 || diaSemana === 6) {
+                                    conteoSala[salaNum][titulo].finSemana++;
+                                } else {
+                                    conteoSala[salaNum][titulo].entreSemana++;
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+
+            if (fechasEncontradas.size < 7) {
+                alert(`⚠️ Error Logístico: Los archivos parecen no cubrir la semana completa. Solo se encontraron ${fechasEncontradas.size} fechas distintas.`);
+                event.target.value = ''; return;
             }
 
-            if(numeroSemanaSugerida) {
-                document.getElementById('ui-semana-nueva').style.display = 'block';
-                document.getElementById('ui-semana-nueva').innerHTML = `SEMANA ${numeroSemanaSugerida} <small>Sugerencia de Excel</small>`;
+            if (errorFechasPasadas) {
+                alert("⚠️ Error Logístico: Se detectaron fechas inferiores al día de hoy. No puedes armar carteleras con base en días pasados.");
+                event.target.value = ''; return;
             }
 
-            generarSugerenciasIntegradas(postersSolicitados, conteoSala, numeroSemanaSugerida);
-        };
-        reader.readAsArrayBuffer(file); event.target.value = '';
+            generarSugerenciasIntegradas(conteoSala);
+        }).catch(err => {
+            alert("Error al leer los archivos: " + err);
+        });
+        
+        event.target.value = '';
     }
 
-    function generarSugerenciasIntegradas(postersSolicitados, conteoSala, numeroSemanaSugerida) {
+    
+    function obtenerPrioridad(dcp, conteo) {
+        let dcpUpper = String(dcp).toUpperCase();
+        let esConcierto = dcpUpper.includes('TOUR') || dcpUpper.includes('CONCERT') || dcpUpper.includes('EVENT') || dcpUpper.includes('LIVE') || dcpUpper.includes('MUSIC');
         
+        let fechaMatch = dcp.match(/_(\d{8})_/);
+        let esEstreno = false;
+        let hoy = new Date();
+        
+        if(fechaMatch) {
+            let dcpDate = parseDateDCP(fechaMatch[1]);
+            let diffDays = (hoy - dcpDate) / (1000 * 60 * 60 * 24);
+            if(diffDays <= 7 && diffDays >= -30) esEstreno = true;
+        }
+
+        if(esEstreno) return { score: 10000 + conteo, etiqueta: "1️⃣ Prioridad 1: Estreno" };
+        if(esConcierto) return { score: 5000 + conteo, etiqueta: "2️⃣ Prioridad 2: Concierto" };
+        return { score: conteo, etiqueta: "3️⃣ Prioridad 3: Más Repetida" };
+    }
+
+    function generarSugerenciasIntegradas(conteoSala) {
+        analisisGlobalSalas = conteoSala; 
+
         Promise.all([fetch(API_INVENTARIO).then(r => r.json()), fetch(API_ESTRENOS).then(r => r.json())]).then(([inventarioData, estrenosData]) => {
             
-            let peliculasParaSalasVirtuales = {}; // Aquí guardaremos la asignación final de qué título va en qué slot
-            let infoAsignacion = {}; // Aquí guardaremos los metadatos para UI
-            
+            let peliculasParaSalasVirtuales = {}; 
+            let infoAsignacion = {}; 
             let usadosIds = new Set(); 
-            let peliculasSugeridas = new Set(); // Para que no se repitan carteles en todo el cine
-            let hoy = new Date();
+            let peliculasSugeridas = new Set(); 
 
             function buscarPosterInteligente(peliLimpia) {
-                if (!peliLimpia) return null;
-                if (peliculasSugeridas.has(peliLimpia)) return null; 
+                if (!peliLimpia || peliculasSugeridas.has(peliLimpia)) return null; 
                 for (let p of inventarioData) {
                     if (p.Categoria === 'Poster' && p.Cantidad_Guardados > 0 && !usadosIds.has(p.ID_Publicidad)) {
                         if (coinciden(p.Nombre_Material, peliLimpia)) return { origen: 'bodega', posterId: p.ID_Publicidad, posterNombre: p.Nombre_Material };
@@ -430,89 +531,101 @@
                 return null;
             }
 
-            // 1. ORDEN DE PRIORIDAD VIP: Muro de Taquilla (Slots 1 al 7) primero, luego las salas (Slots 8 al 23)
             let ordenSlots = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-            
-            // Mapeo: ¿De qué sala del Excel debe sacar la información este Slot?
-            let mapSlotSala = {
-                1: 1, 2: 4, 3: 8, 4: 8, 5: 7, 6: 7, 7: (postersSolicitados[17] ? 17 : 16)
-            };
+            let mapSlotSala = { 1: 1, 2: 4, 3: 8, 4: 8, 5: 7, 6: 7, 7: (conteoSala[17] ? 17 : 16) };
             for(let i=8; i<=23; i++) mapSlotSala[i] = i - 7;
 
-            // FASE A: ASIGNACIÓN CON CONCIENCIA DE INVENTARIO
+            let globalEstrenos = [];
+            let hoy = new Date();
+            for (let s in conteoSala) {
+                for (let p in conteoSala[s]) {
+                    if(p === 'ganador' || p === 'razon') continue;
+                    let info = conteoSala[s][p];
+                    let prio = obtenerPrioridad(info.dcp, info.conteo);
+                    if (prio.etiqueta.includes("Estreno")) {
+                        if (!globalEstrenos.find(x => x.titulo === p)) {
+                            globalEstrenos.push({ titulo: p, rating: info.rating, dcp: info.dcp, conteo: info.conteo });
+                        }
+                    }
+                }
+            }
+            globalEstrenos.sort((a,b) => b.conteo - a.conteo);
+
             ordenSlots.forEach(slot => {
                 let salaNum = mapSlotSala[slot];
-                let preferencias = [];
+                let peliculasSala = conteoSala[salaNum] ? Object.keys(conteoSala[salaNum]).filter(k => k !== 'ganador' && k !== 'razon') : [];
                 
-                // Opción 1: Lo que solicitó el Excel para esa sala
-                if (postersSolicitados[salaNum]) preferencias.push(postersSolicitados[salaNum].titulo);
-                
-                // Opción 2: Relleno con las demás funciones que dan en esa sala (las que tienen más funciones primero)
-                let topDeLaSala = conteoSala[salaNum] ? Object.keys(conteoSala[salaNum]).sort((a, b) => conteoSala[salaNum][b] - conteoSala[salaNum][a]) : [];
-                topDeLaSala.forEach(p => { if(!preferencias.includes(p)) preferencias.push(p); });
+                let evaluadas = [];
+                let reglaInvitadoAplicada = false;
 
+                if ((slot === 2 || slot === 4 || slot === 6) && peliculasSala.length === 1) {
+                    let estrenosDisponibles = globalEstrenos.filter(p => !peliculasSugeridas.has(p.titulo));
+                    if (estrenosDisponibles.length > 0) {
+                        evaluadas = estrenosDisponibles.map(est => {
+                            return { titulo: est.titulo, score: 10000 + est.conteo, etiqueta: "🚀 Estreno Invitado (Muro VIP)", rating: est.rating };
+                        });
+                        reglaInvitadoAplicada = true;
+                    } else {
+                        evaluadas = peliculasSala.map(peli => {
+                            let info = conteoSala[salaNum][peli];
+                            let prio = obtenerPrioridad(info.dcp, info.conteo);
+                            return { titulo: peli, score: prio.score, etiqueta: prio.etiqueta, rating: info.rating };
+                        });
+                    }
+                } else {
+                    evaluadas = peliculasSala.map(peli => {
+                        let info = conteoSala[salaNum][peli];
+                        let prio = obtenerPrioridad(info.dcp, info.conteo);
+                        return { titulo: peli, score: prio.score, etiqueta: prio.etiqueta, rating: info.rating };
+                    });
+                }
+
+                evaluadas.sort((a, b) => b.score - a.score);
+                
                 let asignado = false;
                 
-                // Probar cada preferencia a ver si hay stock físico
-                for(let peliTitle of preferencias) {
+                for(let evalItem of evaluadas) {
+                    let peliTitle = evalItem.titulo;
                     let match = buscarPosterInteligente(peliTitle);
+                    
                     if (match) {
                         usadosIds.add(match.posterId);
                         peliculasSugeridas.add(peliTitle);
                         peliculasParaSalasVirtuales[slot] = peliTitle;
                         
-                        // Auditoría de Clasificación (Usando la fecha real de hoy)
-                        let reglaAuditoria = "🌟 Prioridad 4: Especial / Funciones";
-                        let req = null;
-                        for(let sn in postersSolicitados) { if(coinciden(postersSolicitados[sn].titulo, peliTitle)) { req = postersSolicitados[sn]; break; } }
-                        
-                        let clasifFinal = req ? req.clasif : "";
-                        let fechaDCP = req ? parseDateDCP(req.dcp.match(/_(\d{8})_/) ? req.dcp.match(/_(\d{8})_/)[1] : "0") : 0;
-                        
-                        if(fechaDCP !== 0) {
-                            let diffDays = (hoy - fechaDCP) / (1000 * 60 * 60 * 24);
-                            if (diffDays <= 7 && diffDays >= -30) reglaAuditoria = "1️⃣ Prioridad 1: Estreno";
-                            else if (topDeLaSala[0] && coinciden(peliTitle, topDeLaSala[0])) reglaAuditoria = "3️⃣ Prioridad 3: Más Repetida";
-                        }
+                        let clasifFinal = evalItem.rating ? `${evalItem.etiqueta} (${evalItem.rating})` : evalItem.etiqueta;
 
                         infoAsignacion[slot] = {
-                            match: match,
-                            clasificacion: clasifFinal ? `${reglaAuditoria} (${clasifFinal})` : reglaAuditoria,
-                            tituloOriginal: peliTitle
+                            match: match, clasificacion: clasifFinal, tituloOriginal: peliTitle
                         };
-                        asignado = true;
-                        break; // Se encontró stock y se asignó, pasamos al siguiente slot
+
+                        if(!analisisGlobalSalas[salaNum].ganador && !reglaInvitadoAplicada) {
+                            analisisGlobalSalas[salaNum].ganador = peliTitle;
+                            analisisGlobalSalas[salaNum].razon = evalItem.etiqueta; 
+                        }
+
+                        asignado = true; break; 
                     }
                 }
 
-                // Si NO hubo stock de NADA de esa sala, pedimos Letrero Manual para la primera opción
-                if (!asignado && preferencias.length > 0) {
-                    let peliPrincipal = preferencias[0];
-                    peliculasParaSalasVirtuales[slot] = peliPrincipal;
+                if (!asignado && evaluadas.length > 0) {
+                    let topChoice = evaluadas[0];
+                    peliculasParaSalasVirtuales[slot] = topChoice.titulo;
                     
-                    let req = postersSolicitados[salaNum];
-                    let reglaAuditoria = "🌟 Prioridad 4: Especial / Funciones";
-                    let clasifFinal = req ? req.clasif : "";
-                    
-                    if(req) {
-                        let fechaDCP = parseDateDCP(req.dcp.match(/_(\d{8})_/) ? req.dcp.match(/_(\d{8})_/)[1] : "0");
-                        if(fechaDCP !== 0) {
-                            let diffDays = (hoy - fechaDCP) / (1000 * 60 * 60 * 24);
-                            if (diffDays <= 7 && diffDays >= -30) reglaAuditoria = "1️⃣ Prioridad 1: Estreno";
-                            else if (topDeLaSala[0] && coinciden(peliPrincipal, topDeLaSala[0])) reglaAuditoria = "3️⃣ Prioridad 3: Más Repetida";
-                        }
-                    }
+                    let clasifFinal = topChoice.rating ? `${topChoice.etiqueta} (${topChoice.rating})` : topChoice.etiqueta;
 
                     infoAsignacion[slot] = {
-                        match: { origen: 'manual', posterId: 0, posterNombre: peliPrincipal + " ✍️" },
-                        clasificacion: clasifFinal ? `${reglaAuditoria} (${clasifFinal})` : reglaAuditoria,
-                        tituloOriginal: peliPrincipal
+                        match: { origen: 'manual', posterId: 0, posterNombre: topChoice.titulo + " ✍️" },
+                        clasificacion: clasifFinal, tituloOriginal: topChoice.titulo
                     };
+
+                    if(!analisisGlobalSalas[salaNum].ganador && !reglaInvitadoAplicada) {
+                        analisisGlobalSalas[salaNum].ganador = topChoice.titulo;
+                        analisisGlobalSalas[salaNum].razon = topChoice.etiqueta + " (Letrero a Mano)";
+                    }
                 }
             });
 
-
-            // FASE B: Buscar Obsoletos vs Cartelera Física Actual (usando la lista ya corregida con stock)
             obsoletosGlobales = []; let seQuedanData = []; let aMudarData = [];
             
             carteleraVirtual.forEach(c => {
@@ -543,24 +656,19 @@
                 btnLimpiar.style.display = 'inline-block'; btnLimpiar.innerText = `🧹 Desmontar ${obsoletosGlobales.length} Obsoletos`;
             }
 
-            // FASE C: Crear visualmente las cajas de sugerencia final
             sugerenciasGlobales = [];
             for(let slot=1; slot<=23; slot++) {
                 if(infoAsignacion[slot]) {
                     sugerenciasGlobales.push({
-                        slot: slot,
-                        match: infoAsignacion[slot].match,
-                        idioma: "",
-                        clasificacion: infoAsignacion[slot].clasificacion,
-                        tituloOriginal: infoAsignacion[slot].tituloOriginal
+                        slot: slot, match: infoAsignacion[slot].match, idioma: "", clasificacion: infoAsignacion[slot].clasificacion, tituloOriginal: infoAsignacion[slot].tituloOriginal
                     });
                 }
             }
-            dibujarSugerenciasEnPantalla(true);
+            dibujarSugerenciasEnPantalla();
         });
     }
 
-    function dibujarSugerenciasEnPantalla(mostrarAlerta) {
+    function dibujarSugerenciasEnPantalla() {
         document.querySelectorAll('.sugerencia-box').forEach(e => e.remove());
         let aplicadas = 0;
         
@@ -590,24 +698,68 @@
         });
         
         const btnAll = document.getElementById('btnInstalarTodas');
-        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Auto-Asignar ${aplicadas} sugerencias calculadas`; } 
+        if(aplicadas > 0) { btnAll.style.display = 'inline-block'; btnAll.innerText = `✔️ Auto-Asignar ${aplicadas} sugerencias de la semana`; } 
+    }
+
+    function abrirModalAnalisis() {
+        if(Object.keys(analisisGlobalSalas).length === 0) {
+            alert("⚠️ Aún no hay datos de análisis. Debes subir primero los 7 archivos de Excel de la semana.");
+            return;
+        }
+        
+        const tbody = document.getElementById('cuerpoAnalisis');
+        tbody.innerHTML = '';
+        
+        let salasOrdenadas = Object.keys(analisisGlobalSalas).map(Number).sort((a,b) => a - b);
+        
+        salasOrdenadas.forEach(salaNum => {
+            let infoSala = analisisGlobalSalas[salaNum];
+            let ganador = infoSala.ganador;
+            let razonGanador = infoSala.razon;
+            
+            let peliculas = Object.keys(infoSala).filter(k => k !== 'ganador' && k !== 'razon');
+            peliculas.sort((a,b) => infoSala[b].conteo - infoSala[a].conteo);
+            
+            peliculas.forEach(peli => {
+                let datosPeli = infoSala[peli];
+                let esGanador = (peli === ganador);
+                
+                let trClass = esGanador ? 'class="tr-ganador"' : '';
+                let badgeVerde = esGanador ? `<br><span style="display:inline-block; margin-top:4px; background:var(--success); color:white; font-size:10px; padding:3px 6px; border-radius:4px; font-weight:bold;">ELEGIDA: ${razonGanador}</span>` : '';
+                
+                tbody.innerHTML += `
+                    <tr ${trClass}>
+                        <td><strong>Sala ${salaNum}</strong></td>
+                        <td style="text-align:left;">${peli} ${badgeVerde}</td>
+                        <td>${datosPeli.entreSemana}</td>
+                        <td>${datosPeli.finSemana}</td>
+                        <td style="font-weight:bold; font-size:15px;">${datosPeli.conteo}</td>
+                    </tr>
+                `;
+            });
+        });
+        
+        abrirModal('modalAnalisis');
     }
 
     async function desmontarListaObsoletos() {
-        if(!confirm(`⚠️ ATENCIÓN: Vas a retirar ${obsoletosGlobales.length} pósters que ya NO SALEN en el Excel. \n\nSerán devueltos automáticamente a bodega.\n¿Continuar?`)) return;
+        if(!confirm(`⚠️ ATENCIÓN: Vas a retirar ${obsoletosGlobales.length} pósters que ya NO SALEN en los archivos semanales. \n\nSerán devueltos automáticamente a bodega.\n¿Continuar?`)) return;
         const btn = document.getElementById('btnLimpiarObsoletos'); btn.disabled = true; btn.innerText = "Desmontando...";
         for(let slot of obsoletosGlobales) { await fetch(`${API_CARTELERAS}/${slot}/liberar`, { method: 'POST' }); }
-        alert("🧹 ¡Listo! Las salas quedaron vacías y listas para que instales las nuevas sugerencias."); obsoletosGlobales = []; cargarMapa(false);
+        alert("🧹 ¡Listo! Las salas quedaron vacías y listas para que instales las nuevas sugerencias."); obsoletosGlobales = []; cargarMapa();
     }
 
     async function confirmarSugerencia(event, idSlot, idPub, origen, origenId, idioma, clasif, tituloOri) {
         event.stopPropagation();
         if (origen === 'estrenos') await fetch(`${API_ESTRENOS}/${origenId}/liberar`, { method: 'POST' });
         await fetch(`${API_CARTELERAS}/${idSlot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: idPub, titulo_manual: tituloOri || "", idioma: idioma, clasificacion: clasif }) });
-        sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== idSlot); cargarMapa(false);
+        sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== idSlot); cargarMapa();
     }
 
     async function instalarTodasSugerencias() {
+        let numSemana = prompt("🚀 Sugerencias listas para asignarse.\n\nIngresa el NÚMERO DE SEMANA para registrar esta versión en el historial:");
+        if (!numSemana || isNaN(parseInt(numSemana))) return;
+
         const slotsParaInstalar = [];
         sugerenciasGlobales.forEach(sug => { let slotDiv = document.getElementById('slot-div-' + sug.slot); if (slotDiv && !slotDiv.classList.contains('lleno')) slotsParaInstalar.push(sug); });
         if (slotsParaInstalar.length === 0) return;
@@ -618,10 +770,17 @@
             if (m.origen === 'estrenos') await fetch(`${API_ESTRENOS}/${m.origenId}/liberar`, { method: 'POST' });
             await fetch(`${API_CARTELERAS}/${sug.slot}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id_publicidad: m.posterId, titulo_manual: sug.tituloOriginal || "", idioma: sug.idioma || '', clasificacion: sug.clasificacion || '' }) });
         }
-        sugerenciasGlobales = []; btn.style.display = 'none'; btn.disabled = false; alert("¡Todos los movimientos y asignaciones logísticas se completaron con éxito!"); cargarMapa(false);
+        sugerenciasGlobales = []; btn.style.display = 'none'; btn.disabled = false; 
+        
+        setTimeout(() => {
+            fetch(API_CARTELERAS).then(res => res.json()).then(dataAct => {
+                carteleraVirtual = dataAct;
+                ejecutarGuardadoHistorial(numSemana);
+                cargarMapa();
+            });
+        }, 1000);
     }
 
-    // 📥 LA ADUANA (ASIGNACIÓN MANUAL)
     function abrirAsignacion(idSlot, ubicacion, estaLleno) {
         if(estaLleno) return; 
         slotSeleccionado = idSlot;
@@ -645,7 +804,7 @@
         document.getElementById('inputTituloManual').value = '';
     }
 
-    function cerrarModal() { document.getElementById('modalAsignar').style.display = 'none'; slotSeleccionado = null; }
+    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; slotSeleccionado = null; }
     
     function guardarAsignacion() {
         const isManual = document.getElementById('chkManual').checked;
@@ -663,13 +822,13 @@
 
         let bodyPayload = { id_publicidad: isManual ? 0 : parseInt(idPub), titulo_manual: isManual ? tituloManual : "", idioma: "", clasificacion: clasificacionFinal };
         fetch(`${API_CARTELERAS}/${slotSeleccionado}/asignar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(bodyPayload) }).then(res => res.json()).then(data => {
-            if(data.error) alert("❌ " + data.error); else { sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== slotSeleccionado); cerrarModal(); cargarMapa(false); }
+            if(data.error) alert("❌ " + data.error); else { sugerenciasGlobales = sugerenciasGlobales.filter(s => s.slot !== slotSeleccionado); cerrarModal('modalAsignar'); cargarMapa(); }
         });
     }
 
     function liberarCartelera(event, idSlot) {
         event.stopPropagation();
-        if(confirm("¿Seguro que deseas retirar este material de la sala? Si era un póster físico, volverá a la bodega.")) { fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa(false)); }
+        if(confirm("¿Seguro que deseas retirar este material de la sala? Si era un póster físico, volverá a la bodega.")) { fetch(`${API_CARTELERAS}/${idSlot}/liberar`, { method: 'POST' }).then(() => cargarMapa()); }
     }
 </script>
 </body>
