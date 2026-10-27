@@ -57,6 +57,11 @@
         .btn-c-nuke { background-color: #dc3545; color: white; border: 2px solid white; box-shadow: 0 0 10px red; animation: pulsoRojo 2s infinite; }
         @keyframes pulsoRojo { 0% { box-shadow: 0 0 5px red; } 50% { box-shadow: 0 0 20px red; } 100% { box-shadow: 0 0 5px red; } }
         
+        .btn-mic { width: 80px; height: 80px; border-radius: 50%; background: #dc3545; color: white; font-size: 35px; border: 4px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 0 15px rgba(220,53,69,0.5); transition: 0.3s; margin: 10px auto 20px auto; display: block; display:flex; align-items:center; justify-content:center;}
+        .btn-mic:hover { transform: scale(1.05); }
+        .btn-mic.listening { animation: pulseMic 1s infinite; background: #20c997; box-shadow: 0 0 25px #20c997; border-color: white;}
+        @keyframes pulseMic { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
         .box { background: var(--box-bg); padding: 20px; border-radius: 10px; overflow-x: auto;}
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px;}
         th, td { border: 1px solid var(--border-color); padding: 10px; text-align: left;}
@@ -77,7 +82,6 @@
         
         .filtros-container { display: flex; gap: 10px; margin-left: auto; }
 
-      
         #modalNuke { background: rgba(25, 0, 0, 0.95); }
         .terminal-nuke { background: #0a0a0a; color: #0f0; font-family: monospace; padding: 20px; border-radius: 5px; text-align: left; height: 150px; overflow: hidden; position: relative; border: 1px solid #0f0; margin-top: 20px; font-size: 14px;}
         .glitch-nuke { color: red; font-size: 40px; font-weight: bold; text-transform: uppercase; text-shadow: 2px 2px 0px black, -2px -2px 0px darkred; animation: temblor 0.2s infinite; }
@@ -107,26 +111,29 @@
 
 <div id="interfazProtegida" style="display: none;">
     <div class="action-bar">
-        <button class="btn btn-c-blue req-staff" onclick="abrirModal('modalProducto')">+ Registrar Ingreso</button>
-        <button class="btn btn-c-yellow req-admin" onclick="abrirModalMasivo()">⚡ Ingreso Masivo</button>
-        <button class="btn btn-c-pink req-admin" onclick="abrirModalUsuarios()">👥 Gestionar Usuarios</button>
+        <button class="btn btn-c-blue req-staff" onclick="abrirModal('modalProducto')">+ Registrar Producto</button>
+        
+        <button class="btn btn-c-teal req-admin" onclick="abrirModalVoz()">🎙️ Registrar por Voz</button>
+
+        <button class="btn btn-c-yellow req-admin" onclick="abrirModalMasivo()">⚡ Registro Masivo</button>
+        <button class="btn btn-c-pink req-admin" onclick="abrirModalUsuarios()">👥 Gestor de Usuarios</button>
         <button class="btn btn-c-yellow req-admin" onclick="abrirModalCategorias()">🏷️ Categorías</button>
         
         <button class="btn btn-c-teal req-admin" onclick="abrirModalQRVisitante()">📲 QR para Cinepolitos</button>
         <button class="btn btn-c-purple req-admin" onclick="abrirModalImpresionQR()">🖨️ QRs de Pósters</button>
-        <button class="btn btn-c-hotpink req-admin" onclick="abrirModalHistorial()">📖 Historial General</button>
+        <button class="btn btn-c-hotpink req-admin" onclick="abrirModalHistorial()">📖 Registro de movimientos</button>
         <button class="btn btn-c-blue req-admin" onclick="abrirModalAccesos()">🕵️ Ver Accesos</button>
 
-        <button id="btnNuke" class="btn btn-c-nuke" style="display:none;" onclick="prepararProtocoloCero()">⚠️ Protocolo Cero</button>
+        <button id="btnNuke" class="btn btn-c-nuke" style="display:none;" onclick="prepararProtocoloCero()">⚠️ No oprimir</button>
 
         <button class="btn btn-c-lightpurple req-staff req-auth" onclick="revisarSolicitudesPendientes()">📋 Aprobaciones</button>
-        <button class="btn btn-c-cyan req-staff" onclick="abrirModalSlots()">📂 Gestionar Slots</button>
+        <button class="btn btn-c-cyan req-staff" onclick="abrirModalSlots()">📂 Gestor de Slots</button>
         
-        <a href="carteleras.html" target="_blank" class="btn btn-c-lightpurple req-staff">🗺️ Mapa Carteleras</a>
-        <a href="proximos_estrenos.html" target="_blank" class="btn btn-c-darkgreen req-staff">🚀 Próximos Estrenos</a>
-        <a href="plano_interactivo.html" target="_blank" class="btn btn-c-hotpink req-staff">📍 Plano del Cine</a>
+        <a href="carteleras.html" target="_blank" class="btn btn-c-lightpurple req-staff">🗺️ Mapa posters de cartelera </a>
+        <a href="proximos_estrenos.html" target="_blank" class="btn btn-c-darkgreen req-staff">🚀 Carteleras publicitarias</a>
+        <a href="plano_interactivo.html" target="_blank" class="btn btn-c-hotpink req-staff">📍 Mapa de Carteleras</a>
         <a href="lobby_stands.html" target="_blank" class="btn btn-c-orange req-staff">🎪 Stands de Lobby</a>
-        <a href="areas_cine.html" target="_blank" class="btn btn-c-darkorange req-staff">🏢 Áreas del Cine</a>
+        <a href="areas_cine.html" target="_blank" class="btn btn-c-darkorange req-staff">🏢 Publicidad de otras áreas</a>
         <button class="btn btn-c-gray req-admin" onclick="abrirModalArchivo()">🗄️ Archivo Muerto</button>
         
         <div class="filtros-container" style="margin-left: auto; display:flex; gap:10px;">
@@ -154,6 +161,34 @@
     </div>
 </div>
 
+
+<div id="modalVoz" class="modal">
+    <div class="modal-content" style="max-width: 800px; text-align: center;">
+        <button class="close-btn" onclick="cerrarModal('modalVoz'); if(recognition) recognition.stop();">&times;</button>
+        <h2 style="margin-top: 0; color: #20c997;">🎙️ Asistente de Inventario Rápido</h2>
+        <div style="font-size:12px; background:rgba(0,0,0,0.05); padding:10px; border-radius:5px; margin-bottom:15px; text-align:left; border:1px solid var(--border-color); color:var(--text-color);">
+            <strong>📌 Comandos de Voz:</strong><br>
+            Puedes decir "Categoría" seguido del nombre o número. Al final dí "Cantidad" y el número.<br>
+            <em>Ejemplo: "Spiderman Categoría 4 Cantidad 15" o "Batman Categoría Poster Cantidad 5"</em><br><br>
+            <span id="textoDiccionarioDinamico">Cargando categorías...</span>
+        </div>
+        
+        <div id="btnMicrofono" class="btn-mic" onclick="toggleMic()">🎤</div>
+        
+        <div id="estadoMic" style="font-size:16px; font-weight:bold; color:var(--primary); margin-bottom: 20px; min-height: 25px;">
+            Presiona el micrófono y habla.
+        </div>
+
+        <div style="overflow-x:auto;">
+            <table id="tablaVoz">
+                <thead><tr><th>Nombre detectado</th><th>Categoría (Auto)</th><th>Cantidad</th><th>Quitar</th></tr></thead>
+                <tbody id="cuerpoVoz"></tbody>
+            </table>
+        </div>
+        <br>
+        <button class="btn" style="background:#ffc107; color:black; width:100%; font-size:18px;" onclick="guardarIngresoVoz()">💾 Guardar Todo en Base de Datos</button>
+    </div>
+</div>
 
 <div id="modalNuke" class="modal">
     <div class="modal-content" style="max-width: 600px; text-align: center; border: 2px solid red; box-shadow: 0 0 50px red;">
@@ -220,7 +255,7 @@
 
 <div id="modalProducto" class="modal"><div class="modal-content" style="max-width: 500px;"><button class="close-btn" onclick="cerrarModal('modalProducto')">&times;</button><h2 style="margin-top: 0;">Registro Individual</h2><input type="text" id="nombre" placeholder="Nombre (Ej. Poster Venom)" style="width:100%;" required onkeydown="if(event.key==='Enter') guardarProducto()"><select id="categoria" class="select-dinamico-cat" style="width:100%;"></select><input type="number" id="cantidadTotal" placeholder="Cantidad Total Recibida" style="width:100%;" min="1" required onkeydown="if(event.key==='Enter') guardarProducto()"><button class="btn" style="background:#0d6efd; color:white; width: 100%;" onclick="guardarProducto()">Guardar Registro</button></div></div>
 
-<div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: #ffc107;">⚡ Ingreso Masivo</h2><div style="overflow-x:auto;"><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table></div><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn" style="background:#ffc107; color:black; float:right;" onclick="guardarIngresoMasivo()">Guardar Todo</button></div></div>
+<div id="modalMasivo" class="modal"><div class="modal-content"><button class="close-btn" onclick="cerrarModal('modalMasivo')">&times;</button><h2 style="margin-top: 0; color: #ffc107;">⚡ Ingreso Masivo Manual</h2><div style="overflow-x:auto;"><table id="tablaMasivo"><thead><tr><th>Nombre</th><th>Categoría</th><th>Cantidad</th><th>Quitar</th></tr></thead><tbody id="cuerpoMasivo"></tbody></table></div><br><button class="btn btn-info" onclick="agregarFilaMasivo()">+ Añadir fila</button><button class="btn" style="background:#ffc107; color:black; float:right;" onclick="guardarIngresoMasivo()">Guardar Todo</button></div></div>
 
 <div id="modalAlertasSupervisor" class="modal">
     <div class="modal-content" style="max-width: 800px;">
@@ -274,10 +309,12 @@
     const API_CATEGORIAS = 'https://jonassk13.pythonanywhere.com/api/categorias';
     const API_GRUPOS = 'https://jonassk13.pythonanywhere.com/api/grupos';
     const API_MERMAS = 'https://jonassk13.pythonanywhere.com/api/mermas';
-    const API_RESET = 'https://jonassk13.pythonanywhere.com/api/inventario/reset'; // NUEVO API
+    const API_RESET = 'https://jonassk13.pythonanywhere.com/api/inventario/reset';
     
     let datosInventario = []; let listaCategorias = []; let slotsData = [];
     let rolUsuario = 'General'; let idUsuario = null; let nombreUsuario = '';
+    
+    let recognition;
 
     function aplicarTemasMagicos() {
         if(rolUsuario !== 'Subgerente') return; 
@@ -383,7 +420,153 @@
         }
     }
 
-    
+   
+    function inicializarVoz() {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert("⚠️ Tu navegador no soporta comandos de voz. Intenta desde Google Chrome en tu celular o PC.");
+            return;
+        }
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.lang = 'es-MX';
+        recognition.interimResults = true; 
+
+        recognition.onresult = function(event) {
+            let interimTranscript = '';
+            let finalTranscript = '';
+
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                    finalTranscript += event.results[i][0].transcript;
+                } else {
+                    interimTranscript += event.results[i][0].transcript;
+                }
+            }
+
+            if (interimTranscript !== '') {
+                document.getElementById('estadoMic').innerHTML = `<span style="color:gray;">Escuchando: "${interimTranscript}"</span>`;
+            }
+
+            if (finalTranscript !== '') {
+                document.getElementById('estadoMic').innerHTML = `✅ Procesando: "${finalTranscript}"`;
+                procesarTextoVoz(finalTranscript.trim());
+            }
+        };
+
+        recognition.onerror = function(event) {
+            console.error(event.error);
+            document.getElementById('btnMicrofono').classList.remove('listening');
+            document.getElementById('estadoMic').innerHTML = `<span style="color:red;">❌ No te escuché bien. Intenta de nuevo.</span>`;
+        };
+        recognition.onend = function() {
+            document.getElementById('btnMicrofono').classList.remove('listening');
+        };
+    }
+
+    function toggleMic() {
+        if(!recognition) inicializarVoz();
+        const btn = document.getElementById('btnMicrofono');
+        if(btn.classList.contains('listening')) {
+            recognition.stop();
+        } else {
+            recognition.start();
+            btn.classList.add('listening');
+            document.getElementById('estadoMic').innerText = "🔊 Escuchando... Di el nombre, categoría y cantidad.";
+        }
+    }
+
+    function procesarTextoVoz(texto) {
+        let cant = 1;
+        let txt = texto.toLowerCase().replace(/categoría/g, "categoria");
+
+        let matchCant = txt.match(/(?:cantidad|piezas|con|son)\s+(\d+)/);
+        if(matchCant) {
+            cant = parseInt(matchCant[1]);
+            txt = txt.replace(matchCant[0], "");
+        } else {
+            let matchEnd = txt.match(/\s+(\d+)$/);
+            if(matchEnd) {
+                cant = parseInt(matchEnd[1]);
+                txt = txt.replace(matchEnd[0], "");
+            }
+        }
+
+        let matchCat = txt.match(/categoria\s+(\w+)/);
+        let catFinal = listaCategorias.length > 0 ? (listaCategorias.find(c => c.Nombre === "Poster") ? "Poster" : listaCategorias[0].Nombre) : "Poster";
+        
+        if(matchCat) {
+            let catStr = matchCat[1];
+            txt = txt.replace(matchCat[0], ""); 
+            
+            let mapPalabras = { "uno":1, "dos":2, "tres":3, "cuatro":4, "cinco":5, "seis":6, "siete":7, "ocho":8, "nueve":9, "diez":10, "once":11, "doce":12, "trece":13, "catorce":14, "quince":15, "dieciseis": 16, "diecisiete": 17, "dieciocho": 18, "diecinueve": 19, "veinte": 20 };
+            
+            let numCat = parseInt(catStr);
+            if(isNaN(numCat)) {
+                numCat = mapPalabras[catStr];
+            }
+            
+            if(numCat && numCat > 0 && numCat <= listaCategorias.length) {
+                catFinal = listaCategorias[numCat - 1].Nombre;
+            } else {
+                let catBuscada = listaCategorias.find(c => c.Nombre.toLowerCase().includes(catStr));
+                if(catBuscada) catFinal = catBuscada.Nombre;
+            }
+        } else {
+            for (let i = 0; i < listaCategorias.length; i++) {
+                let catName = listaCategorias[i].Nombre.toLowerCase();
+                if(txt.includes(catName)) {
+                    catFinal = listaCategorias[i].Nombre;
+                    break; 
+                }
+            }
+        }
+
+        let nombre = txt.replace(/\s+/g, ' ').trim(); 
+        if(nombre) nombre = nombre.charAt(0).toUpperCase() + nombre.slice(1); 
+        if(!nombre) nombre = "Producto sin nombre";
+        
+        agregarFilaVoz(nombre, catFinal, cant);
+    }
+
+    function abrirModalVoz() {
+        document.getElementById('cuerpoVoz').innerHTML = '';
+        document.getElementById('estadoMic').innerText = "Presiona el micrófono y habla.";
+        if(recognition) recognition.stop();
+        abrirModal('modalVoz');
+    }
+
+    function agregarFilaVoz(nombre, categoria, cantidad) {
+        let opciones = listaCategorias.map(c => `<option value="${c.Nombre}" ${c.Nombre===categoria?'selected':''}>${c.Nombre}</option>`).join(''); 
+        const tr = document.createElement('tr'); 
+        tr.className = 'fila-voz'; 
+        tr.innerHTML = `
+            <td><input type="text" class="voz-nombre" required style="width:90%; font-weight:bold; color:var(--primary);" value="${nombre}"></td>
+            <td><select class="voz-cat" style="width:90%;">${opciones}</select></td>
+            <td><input type="number" class="voz-cant" min="1" required style="width:70%; font-weight:bold; font-size:16px;" value="${cantidad}"></td>
+            <td><button class="btn btn-danger" onclick="this.parentElement.parentElement.remove()">X</button></td>
+        `; 
+        document.getElementById('cuerpoVoz').appendChild(tr);
+    }
+
+    function guardarIngresoVoz() {
+        let productos = []; const usuarioAct = nombreUsuario || rolUsuario; 
+        document.querySelectorAll('.fila-voz').forEach(fila => { 
+            productos.push({ 
+                nombre: fila.querySelector('.voz-nombre').value, 
+                categoria: fila.querySelector('.voz-cat').value, 
+                cantidad_total: parseInt(fila.querySelector('.voz-cant').value), 
+                usuario: usuarioAct 
+            }); 
+        }); 
+        if(productos.length === 0) return alert("⚠️ No has agregado ningún producto. Usa el micrófono primero.");
+        
+        fetch(API_URL + '/masivo', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(productos) }).then(() => { 
+            cerrarModal('modalVoz'); 
+            if(recognition) recognition.stop();
+            cargarTabla(); 
+        }); 
+    }
+
     function prepararProtocoloCero() {
         abrirModal('modalNuke');
         document.getElementById('nukeTerminal').style.display = 'none';
@@ -435,6 +618,7 @@
         }, 3000);
     }
 
+    
     function revisarSolicitudesPendientes() {
         Promise.all([fetch(API_RESERVAS).then(r => r.json()), fetch(API_MERMAS).then(r => r.json())]).then(([reservasData, mermasData]) => {
             const tbPosters = document.getElementById('tablaAlertasAutorizacion'); 
@@ -496,7 +680,7 @@
 
     function entregarReserva(id) { fetch(`${API_RESERVAS}/${id}/entregar`, {method: 'PUT'}).then(() => abrirModalReservas()); }
 
-   
+ 
     function abrirModalAccesos() {
         fetch('https://jonassk13.pythonanywhere.com/api/historial_logins').then(r => r.json()).then(data => {
             const tb = document.getElementById('cuerpoAccesos'); tb.innerHTML = '';
@@ -543,6 +727,7 @@
         } 
     }
 
+  
     function abrirModalSlots() { 
         Promise.all([fetch(API_URL).then(r => r.json()), fetch(API_GRUPOS).then(r => r.json())]).then(([inventario, grupos]) => { 
             datosInventario = inventario; slotsData = grupos; renderizarSlots(); abrirModal('modalSlots'); 
@@ -596,6 +781,7 @@
     function eliminarSlot(idGrupo) { if(!confirm("¿Seguro que deseas eliminar esta carpeta completa? Los pósters quedarán libres.")) return; fetch(`${API_GRUPOS}/${idGrupo}`, { method: 'DELETE' }).then(() => { abrirModalSlots(); cargarTabla(); }); }
     function autoAgruparSlots() { if(!confirm("⚡ MODO INTELIGENTE (A-Z):\n\nEl sistema leerá las letras en el nombre de tus slots y asignará los pósters automáticamente.\n\n⚠️ Si no tienes ningún slot, creará mágicamente los 6 slots oficiales (A-D, E-H, etc.) y ordenará toda la bodega.\n\n¿Continuar?")) return; fetch(`${API_GRUPOS}/auto_organizar`, { method: 'POST' }).then(res => res.json()).then(data => { abrirModalSlots(); cargarTabla(); alert("✅ " + data.mensaje); }); }
 
+  
     let postersFiltradosQR = [];
     function abrirModalImpresionQR() { 
         fetch(API_GRUPOS).then(r => r.json()).then(grupos => { 
@@ -665,7 +851,7 @@
         ventana.document.close(); 
     }
 
- 
+
     function abrirModalPerfil() { document.getElementById('perfilNombre').value = nombreUsuario; let whatsActivado = localStorage.getItem('whatsAppPiloto') === 'true'; document.getElementById('chkWhatsPiloto').checked = whatsActivado; document.getElementById('cajaWhatsNum').style.display = whatsActivado ? 'block' : 'none'; document.getElementById('inputWhatsNum').value = localStorage.getItem('whatsAppNumero') || ''; abrirModal('modalPerfil'); }
     function guardarPerfil() { const nombre = document.getElementById('perfilNombre').value; const clave = document.getElementById('perfilClave').value; const claveConf = document.getElementById('perfilClaveConf').value; localStorage.setItem('whatsAppPiloto', document.getElementById('chkWhatsPiloto').checked); localStorage.setItem('whatsAppNumero', document.getElementById('inputWhatsNum').value.trim()); if(clave && clave !== claveConf) return alert("❌ Las contraseñas no coinciden."); fetch(`${API_USUARIOS}/${idUsuario}`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre, clave}) }).then(() => { alert("Perfil actualizado correctamente."); if(clave) cerrarSesion(); else { localStorage.setItem('nombreCine', nombre); cerrarModal('modalPerfil'); verificarSesion(); location.reload(); } }); }
     function abrirModalHistorial() { fetch('https://jonassk13.pythonanywhere.com/api/historial_global').then(r => r.json()).then(data => { const tb = document.getElementById('cuerpoHistorialGlobal'); tb.innerHTML = ''; if(data.length === 0) tb.innerHTML = '<tr><td colspan="5" style="text-align:center;">No hay movimientos registrados.</td></tr>'; data.forEach(h => { let badgeClass = h.Accion.includes('Ingreso') ? 'background:var(--success);' : (h.Accion.includes('Salida') || h.Accion.includes('Merma') || h.Accion.includes('Daño') || h.Accion.includes('Regalo') ? 'background:var(--danger);' : 'background:#6c757d;'); tb.innerHTML += `<tr><td>${h.Fecha}</td><td style="color:var(--primary); font-weight:bold;">${h.Usuario}</td><td>${h.Nombre_Material}</td><td><span class="estado-badge" style="${badgeClass}">${h.Accion}</span></td><td><i>${h.Detalle}</i></td></tr>`; }); abrirModal('modalHistorialGlobal'); }); }
@@ -673,7 +859,29 @@
     function imprimirQR() { const contenidoQR = document.getElementById('qrVisitanteContainer').innerHTML; const ventana = window.open('', '_blank'); ventana.document.write(`<html><head><title>Ticket Visitante</title><style>body { background: #111; color: white; font-family: 'Arial', sans-serif; text-align: center; padding: 50px; } .ticket { border: 4px dashed gold; padding: 40px; border-radius: 15px; background: #222; max-width: 400px; margin: 0 auto; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); } h1 { color: gold; text-transform: uppercase; font-size: 28px; margin-bottom: 5px; } p { font-size: 16px; color: #ccc; margin-bottom: 30px; } .qr-box { background: white; padding: 15px; border-radius: 10px; display: inline-block; margin-bottom: 20px;} .footer { font-size: 12px; color: #777; margin-top: 20px; font-style: italic;}</style></head><body><div class="ticket"><h1>🎬 Cinepolitos 🍿</h1><h2 style="margin: 0; color: white;">Catálogo de Publicidad</h2><p>Escanea este código mágico con tu celular para apartar los productos a tu nombre.</p><div class="qr-box">${contenidoQR}</div><div class="footer">⚠️ La entrega está sujeta a que Corporativo no solicite el retorno de los materiales.</div></div></body></html>`); ventana.document.close(); setTimeout(() => ventana.print(), 800); }
     function abrirModalMisPedidos() { const nombreCinepolito = localStorage.getItem('nombreCinepolito'); if(!nombreCinepolito) { alert("Todavía no has pedido nada. Abre un producto y dale clic a 'Quiero pedir esto' primero."); return; } fetch(API_RESERVAS).then(res => res.json()).then(data => { const tbody = document.getElementById('tablaMisPedidosCuerpo'); tbody.innerHTML = ''; let todosMisPedidos = []; data.pendientes.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.aprobados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.entregadas.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); data.rechazados.forEach(r => { if(r.Nombre_Persona === nombreCinepolito) todosMisPedidos.push(r) }); if(todosMisPedidos.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">No encontramos historial a tu nombre.</td></tr>'; } else { todosMisPedidos.forEach(pedido => { let badgeClass = `estado-${pedido.Estado}`; let textoEstado = pedido.Estado; if(pedido.Estado === 'Rechazado') textoEstado = 'Corporativo lo pidió 🔙'; if(pedido.Estado === 'Aprobado') textoEstado = 'Aprobado (Listo) ✅'; if(pedido.Estado === 'Pendiente') textoEstado = 'En Espera ⏳'; if(pedido.Estado === 'Entregado') textoEstado = 'Entregado 🎉'; tbody.innerHTML += `<tr><td><strong>${pedido.Nombre_Material}</strong></td><td>${pedido.Cantidad} pz</td><td><span class="estado-badge ${badgeClass}">${textoEstado}</span></td></tr>`; }); } abrirModal('modalMisPedidos'); }); }
 
-    function cargarCategoriasGlobales() { fetch(API_CATEGORIAS).then(res => res.json()).then(data => { listaCategorias = data; const filtro = document.getElementById('filtroCategoria'); filtro.innerHTML = '<option value="Todos">Todas las categorías</option>'; data.forEach(c => filtro.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); document.querySelectorAll('.select-dinamico-cat, .masivo-cat').forEach(sel => { let actual = sel.value; sel.innerHTML = ''; data.forEach(c => sel.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); if(actual) sel.value = actual; }); }).catch(err => console.log("Omitiendo categorías...")); }
+
+    function cargarCategoriasGlobales() { 
+        fetch(API_CATEGORIAS).then(res => res.json()).then(data => { 
+            listaCategorias = data; 
+            const filtro = document.getElementById('filtroCategoria'); 
+            filtro.innerHTML = '<option value="Todos">Todas las categorías</option>'; 
+            
+            let diccHtml = "<strong>📖 Diccionario:</strong> ";
+            data.forEach((c, i) => { 
+                filtro.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`; 
+                diccHtml += `[${i+1}] ${c.Nombre} | `;
+            }); 
+            let uiDic = document.getElementById('textoDiccionarioDinamico');
+            if(uiDic) uiDic.innerHTML = diccHtml.slice(0, -3); 
+
+            document.querySelectorAll('.select-dinamico-cat, .masivo-cat').forEach(sel => { 
+                let actual = sel.value; sel.innerHTML = ''; 
+                data.forEach(c => sel.innerHTML += `<option value="${c.Nombre}">${c.Nombre}</option>`); 
+                if(actual) sel.value = actual; 
+            }); 
+        }).catch(err => console.log("Omitiendo categorías...")); 
+    }
+
     function abrirModalCategorias() { fetch(API_CATEGORIAS).then(res => res.json()).then(data => { const tb = document.getElementById('tablaCategorias'); tb.innerHTML = ''; data.forEach(c => { tb.innerHTML += `<tr><td><strong>${c.Nombre}</strong></td><td><button class="btn btn-info" style="padding:5px;" onclick="editarCategoria(${c.ID_Categoria}, '${c.Nombre}')">✏️</button> <button class="btn" style="background:#dc3545; color:white; padding:5px;" onclick="eliminarCategoria(${c.ID_Categoria})">🗑️</button></td></tr>`; }); abrirModal('modalCategorias'); }); }
     function guardarCategoria() { const nombre = document.getElementById('catNombre').value.trim(); const id = document.getElementById('catIdEdit').value; if(!nombre) return; const config = id ? { method: 'PUT', url: `${API_CATEGORIAS}/${id}` } : { method: 'POST', url: API_CATEGORIAS }; fetch(config.url, { method: config.method, headers: {'Content-Type': 'application/json'}, body: JSON.stringify({nombre}) }).then(() => { document.getElementById('catNombre').value = ''; document.getElementById('catIdEdit').value = ''; cargarCategoriasGlobales(); abrirModalCategorias(); }); }
     function editarCategoria(id, nombre) { document.getElementById('catIdEdit').value = id; document.getElementById('catNombre').value = nombre; }
