@@ -82,6 +82,7 @@
         .sugerencia-box { margin-top: 8px; padding: 8px; border-radius: 5px; font-size: 12px; width: 90%; animation: parpadeo 1.5s infinite alternate; background: var(--box-bg);}
         @keyframes parpadeo { from { opacity: 0.8; } to { opacity: 1; } }
 
+        /* Estilos Tabla Análisis */
         .tabla-analisis { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
         .tabla-analisis th, .tabla-analisis td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
         .tabla-analisis th { background-color: var(--th-bg); color: var(--th-text); }
@@ -111,17 +112,21 @@
         <h1 style="margin:0;">🗺️ Plano de Exhibición</h1>
         <p style="margin:0; font-size:12px; color:gray;">Control Operativo de 16 Salas</p>
     </div>
-    <div id="botones-edicion" style="display: flex; gap: 5px; flex-wrap: wrap;">
+    <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
         <button class="btn btn-primary" onclick="abrirModalAnalisis()">📊 Análisis de Salas</button>
-        <button class="btn btn-warning" onclick="guardarCarteleraManual()">💾 Guardar Cambios Manuales</button>
-        <button class="btn btn-info" onclick="document.getElementById('archivosExcel').click()">🪄 Sugerir por Excel (7 Días)</button>
-        <input type="file" id="archivosExcel" accept=".xlsx, .xls" multiple style="display: none;" onchange="procesarMultiplesExcel(event)">
         
-        <button id="btnLimpiarObsoletos" class="btn btn-danger" style="display:none; animation: parpadeo 1.5s infinite alternate;" onclick="desmontarListaObsoletos()">🧹 Desmontar Obsoletos</button>
-        <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Sugerencias</button>
+        <div id="botones-edicion" style="display: flex; gap: 5px; flex-wrap: wrap;">
+            <button class="btn btn-warning" onclick="guardarCarteleraManual()">💾 Guardar Cambios Manuales</button>
+            <button class="btn btn-info" onclick="document.getElementById('archivosExcel').click()">🪄 Sugerir por Excel (7 Días)</button>
+            <input type="file" id="archivosExcel" accept=".xlsx, .xls" multiple style="display: none;" onchange="procesarMultiplesExcel(event)">
+            <button id="btnLimpiarObsoletos" class="btn btn-danger" style="display:none; animation: parpadeo 1.5s infinite alternate;" onclick="desmontarListaObsoletos()">🧹 Desmontar Obsoletos</button>
+            <button id="btnInstalarTodas" class="btn btn-success" style="display:none;" onclick="instalarTodasSugerencias()">✔️ Instalar Sugerencias</button>
+        </div>
+
         <button class="btn btn-dark" onclick="toggleDarkMode()">🌙 / ☀️</button>
     </div>
 </div>
+
 
 <div class="carrusel-semanas" id="listaSemanas">
 </div>
@@ -195,7 +200,7 @@
     <div class="modal-content" style="max-width: 850px;">
         <button class="close-btn" onclick="cerrarModal('modalAnalisis')">&times;</button>
         <h2 style="margin-top:0; color:var(--primary);">📊 Análisis Logístico de Salas</h2>
-        <p style="font-size:13px; color:gray;">Distribución de funciones extraída de los 7 archivos de Excel.<br>La fila resaltada en verde representa la película que el algoritmo eligió para el póster físico de esa sala.</p>
+        <p id="descAnalisis" style="font-size:13px; color:gray;">Distribución de funciones extraída de los 7 archivos de Excel.<br>La fila resaltada en verde representa la película que el algoritmo eligió para el póster físico de esa sala.</p>
         
         <div style="overflow-y:auto; max-height: 60vh;">
             <table class="tabla-analisis">
@@ -229,7 +234,10 @@
     let sugerenciasGlobales = []; 
     let obsoletosGlobales = []; 
     let carteleraVirtual = [];
+    
     let analisisGlobalSalas = {}; 
+    let analisisPresente = {}; 
+    
     let rolUsuario = localStorage.getItem('rolCine') || 'General'; 
     let nombreUsuario = localStorage.getItem('nombreCine') || '';
     let modoHistorico = false;
@@ -265,7 +273,13 @@
                 btn.onclick = () => {
                     document.querySelectorAll('.tarjeta-semana').forEach(el => el.classList.remove('tarjeta-activa'));
                     btn.classList.add('tarjeta-activa');
-                    renderizarPlano(JSON.parse(sem.Datos_JSON), true);
+                    
+                    let parsedData = JSON.parse(sem.Datos_JSON);
+                    let carteleraHistorica = Array.isArray(parsedData) ? parsedData : parsedData.cartelera;
+                    let analisisHistorico = Array.isArray(parsedData) ? {} : (parsedData.analisis || {});
+                    
+                    analisisGlobalSalas = analisisHistorico;
+                    renderizarPlano(carteleraHistorica, true);
                 };
                 contenedor.appendChild(btn);
             });
@@ -288,11 +302,17 @@
                 Ubicacion: c.Ubicacion
             };
         });
+
+        let payloadDatos = {
+            cartelera: datosA_Guardar,
+            analisis: analisisGlobalSalas
+        };
+
         fetch(API_HISTORIAL_SEMANAS, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ semana: parseInt(numSemana), datos: datosA_Guardar })
+            body: JSON.stringify({ semana: parseInt(numSemana), datos: payloadDatos })
         }).then(() => { 
-            alert("¡Cartelera física respaldada en la Semana " + numSemana + "!"); 
+            alert("¡Cartelera física y análisis guardados en la Semana " + numSemana + "!"); 
             cargarHistorialSemanas(); 
         });
     }
@@ -303,6 +323,8 @@
         document.querySelectorAll('.tarjeta-semana').forEach(el => el.classList.remove('tarjeta-activa'));
         let btnAct = document.getElementById('btn-semana-actual');
         if(btnAct) btnAct.classList.add('tarjeta-activa');
+
+        analisisGlobalSalas = JSON.parse(JSON.stringify(analisisPresente));
 
         fetch(API_CARTELERAS).then(res => res.json()).then(data => {
             carteleraVirtual = data;
@@ -394,6 +416,7 @@
         return new Date(parseInt(str.substring(0,4)), parseInt(str.substring(4,6))-1, parseInt(str.substring(6,8)));
     }
 
+ 
     function procesarMultiplesExcel(event) {
         const files = event.target.files;
         if (files.length !== 7) {
@@ -486,7 +509,6 @@
         event.target.value = '';
     }
 
-    
     function obtenerPrioridad(dcp, conteo) {
         let dcpUpper = String(dcp).toUpperCase();
         let esConcierto = dcpUpper.includes('TOUR') || dcpUpper.includes('CONCERT') || dcpUpper.includes('EVENT') || dcpUpper.includes('LIVE') || dcpUpper.includes('MUSIC');
@@ -507,7 +529,8 @@
     }
 
     function generarSugerenciasIntegradas(conteoSala) {
-        analisisGlobalSalas = conteoSala; 
+        analisisGlobalSalas = conteoSala;
+        analisisPresente = JSON.parse(JSON.stringify(conteoSala)); // Guardamos en memoria
 
         Promise.all([fetch(API_INVENTARIO).then(r => r.json()), fetch(API_ESTRENOS).then(r => r.json())]).then(([inventarioData, estrenosData]) => {
             
@@ -703,13 +726,16 @@
 
     function abrirModalAnalisis() {
         if(Object.keys(analisisGlobalSalas).length === 0) {
-            alert("⚠️ Aún no hay datos de análisis. Debes subir primero los 7 archivos de Excel de la semana.");
+            alert("⚠️ Aún no hay datos de análisis para esta semana. Si deseas crearlo, sube primero los 7 archivos de Excel de la semana.");
             return;
         }
         
         const tbody = document.getElementById('cuerpoAnalisis');
         tbody.innerHTML = '';
         
+        let extraText = modoHistorico ? "<br><span style='color:var(--danger);'>Estás viendo el análisis histórico de una semana pasada.</span>" : "";
+        document.getElementById('descAnalisis').innerHTML = `Distribución de funciones extraída de los 7 archivos de Excel.<br>La fila resaltada en verde representa la película que el algoritmo eligió para el póster físico de esa sala.${extraText}`;
+
         let salasOrdenadas = Object.keys(analisisGlobalSalas).map(Number).sort((a,b) => a - b);
         
         salasOrdenadas.forEach(salaNum => {
