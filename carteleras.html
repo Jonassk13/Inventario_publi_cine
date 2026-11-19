@@ -32,9 +32,9 @@
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
         
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--box-bg); padding: 15px; border-radius: 8px; flex-wrap: wrap; gap: 10px; border-top: 5px solid var(--primary);}
-        button.btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; }
-        button.btn:hover { opacity: 0.8; } button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000; } .btn-success { background: var(--success); } .btn-warning { background: var(--warning); color: #000;} .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 6px; }
+        button.btn, a.btn { padding: 10px 15px; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; color: white; transition: 0.2s; text-decoration: none; display: inline-block; font-size: 13px; }
+        button.btn:hover, a.btn:hover { opacity: 0.8; } button.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-dark { background: #212529; } .btn-primary { background: var(--primary); } .btn-danger { background: var(--danger); } .btn-info { background: #0dcaf0; color: #000 !important; } .btn-success { background: var(--success); } .btn-warning { background: var(--warning); color: #000 !important;} .btn-sm { padding: 5px 10px; font-size: 11px; margin-top: 6px; }
 
         .carrusel-semanas { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
         .tarjeta-semana { flex: 0 0 auto; background: var(--box-bg); padding: 15px; border-radius: 8px; border: 2px solid var(--border-color); text-align: center; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.05); min-width: 180px; transition: 0.2s;}
@@ -73,6 +73,7 @@
         .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 10px;}
         .slot { border: 2px dashed #999; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; background: rgba(0,0,0,0.02); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 90px; position: relative;}
         .slot.lleno { border: 2px solid var(--success); background: rgba(25, 135, 84, 0.1); border-style: solid;}
+        .slot.lleno:hover, .muro-slot.lleno:hover { transform: translateY(-2px); }
         
         .slot.marcado-cambio, .muro-slot.marcado-cambio {
             border: 3px solid #20c997 !important;
@@ -99,8 +100,10 @@
 
         .slot-numero { font-size: 11px; color: gray; margin-bottom: 5px;}
         .slot-titulo { font-weight: bold; font-size: 14px; margin-bottom: 8px;}
-        .poster-nombre { font-size: 14px; color: var(--primary); font-weight: bold;}
+        .poster-nombre { font-size: 14px; color: var(--primary); font-weight: bold; text-decoration: underline dotted; cursor: pointer;}
         .muro-slot .poster-nombre { color: white; font-size: 14px; }
+        .link-preview { cursor: pointer; text-decoration: underline dotted; font-weight: bold; }
+        .link-preview:hover { color: var(--primary); }
 
         .sugerencia-box { margin-top: 8px; padding: 8px; border-radius: 5px; font-size: 12px; width: 90%; animation: parpadeo 1.5s infinite alternate; background: var(--box-bg);}
         @keyframes parpadeo { from { opacity: 0.8; } to { opacity: 1; } }
@@ -110,6 +113,26 @@
         .tabla-analisis th { background-color: var(--th-bg); color: var(--th-text); }
         .tr-ganador { background: rgba(25, 135, 84, 0.15) !important; border-left: 4px solid var(--success) !important; font-weight: bold; }
         body.dark-mode .tr-ganador { background: rgba(25, 135, 84, 0.25) !important; }
+
+        .preview-img-box {
+            width: 100%;
+            min-height: 360px;
+            max-height: 460px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.15);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+        .preview-img-box img {
+            max-width: 100%;
+            max-height: 460px;
+            object-fit: contain;
+            border-radius: 6px;
+        }
 
         @media (max-width: 800px) {
             .mapa-container { grid-template-columns: 1fr; }
@@ -219,10 +242,9 @@
 <div id="modalAnalisis" class="modal">
     <div class="modal-content" style="max-width: 1000px;">
         <button class="close-btn" onclick="cerrarModal('modalAnalisis')">&times;</button>
-        <h2 style="margin-top:0; color:var(--primary);">Análisis Peliculas por sala </h2>
- 
-       <p id="descAnalisis" style="font-size:13px; color:gray;">Nombres extraídos de <strong>PLAYLIST</strong>, fecha de <strong>FEATURE</strong> y clasificación de <strong>FEATURE_RATING</strong>.<br>Desde aquí puedes elegir qué película se queda con el póster de la sala, asignar otro póster de bodega o marcar las carteleras que ya cambiaste.</p> 
-       
+        <h2 style="margin-top:0; color:var(--primary);">Análisis Logístico y Control de Salas</h2>
+        <p id="descAnalisis" style="font-size:13px; color:gray;">Nombres extraídos de <strong>PLAYLIST</strong>, fecha de <strong>FEATURE</strong> y clasificación de <strong>FEATURE_RATING</strong>.<br>Haz clic sobre cualquier título para ver la vista previa del póster.</p>
+        
         <div style="overflow-y:auto; max-height: 65vh;">
             <table class="tabla-analisis">
                 <thead>
@@ -239,6 +261,34 @@
                 </thead>
                 <tbody id="cuerpoAnalisis"></tbody>
             </table>
+        </div>
+    </div>
+</div>
+
+<!-- vista previa poster -->
+<div id="modalVistaPrevia" class="modal" style="z-index: 1300;">
+    <div class="modal-content" style="max-width: 460px; text-align: center;">
+        <button class="close-btn" onclick="cerrarModal('modalVistaPrevia')">&times;</button>
+        <h2 id="previewTitulo" style="margin:0 0 4px 0; color:var(--primary); font-size: 20px;">Vista Previa</h2>
+        <div id="previewMeta" style="font-size: 12px; color: gray;"></div>
+        
+        <div class="preview-img-box" id="previewImgContenedor">
+            <span style="color:gray; font-size:13px;">Buscando póster...</span>
+        </div>
+
+        <div id="previewFuente" style="font-size: 11px; color: gray; margin-bottom: 10px;"></div>
+
+        <div style="display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom: 12px;">
+            <a id="linkCinepolis" href="#" target="_blank" class="btn btn-primary btn-sm">Ver en Cinépolis</a>
+            <a id="linkGoogleImg" href="#" target="_blank" class="btn btn-info btn-sm">Buscar en Internet</a>
+        </div>
+
+        <div style="border-top: 1px dashed var(--border-color); padding-top: 10px; text-align: left;">
+            <label style="font-size: 11px; font-weight: bold; color: gray; display: block; margin-bottom: 5px;">Fijar imagen manual (URL de Cinépolis o internet):</label>
+            <div style="display: flex; gap: 6px;">
+                <input type="text" id="inputUrlPosterManual" placeholder="https://..." style="margin: 0; flex: 1; padding: 7px; font-size: 12px;" onkeydown="if(event.key==='Enter') guardarUrlPosterManual()">
+                <button class="btn btn-success btn-sm" style="margin: 0;" onclick="guardarUrlPosterManual()">Guardar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -263,6 +313,8 @@
     let analisisGlobalSalas = {}; 
     let analisisPresente = {}; 
     let cartelerasMarcadas = JSON.parse(localStorage.getItem('cartelerasMarcadas') || '{}');
+    let cachePostersUrl = JSON.parse(localStorage.getItem('cachePostersUrl') || '{}');
+    let previewActual = { titulo: '', idPub: 0, claveCache: '' };
     let rolUsuario = localStorage.getItem('rolCine') || 'General'; 
     let nombreUsuario = localStorage.getItem('nombreCine') || '';
     let modoHistorico = false;
@@ -279,12 +331,25 @@
 
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        cargarHistorialSemanas(); cargarMapa(); aplicarTemasMagicos(); 
+        cargarInventarioBase();
+        cargarHistorialSemanas();
+        cargarMapa();
+        aplicarTemasMagicos(); 
     };
+
+    function cargarInventarioBase() {
+        fetch(API_INVENTARIO).then(r => r.json()).then(data => {
+            if (Array.isArray(data)) cacheInventario = data;
+        }).catch(() => {});
+    }
 
     function toggleDarkMode() { document.body.classList.toggle('dark-mode'); localStorage.setItem('darkMode', document.body.classList.contains('dark-mode')); }
     function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
     function cerrarModal(id) { document.getElementById(id).style.display = 'none'; if(id === 'modalAsignar') slotSeleccionado = null; }
+
+    function codificarArg(str) {
+        return encodeURIComponent(String(str || '')).replace(/'/g, '%27');
+    }
 
     // marcas de cambio
     function toggleMarcaCartelera(event, idSlot) {
@@ -306,6 +371,143 @@
         localStorage.setItem('cartelerasMarcadas', JSON.stringify(cartelerasMarcadas));
         renderizarPlano(carteleraVirtual, modoHistorico);
         if (!modoHistorico && sugerenciasGlobales.length > 0) dibujarSugerenciasEnPantalla();
+    }
+
+    // vista previa de posters
+    function limpiarTituloBusquedaPoster(titulo) {
+        return String(titulo || '')
+            .replace(/\(Manual\)/gi, '')
+            .replace(/^HCF:\s*/i, '')
+            .replace(/^RE\s+/i, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+    }
+
+    async function verVistaPreviaPoster(event, ubicacion, titulo, idPub, clasificacion) {
+        if (event) event.stopPropagation();
+        const tituloLimpio = limpiarTituloBusquedaPoster(titulo);
+        if (!tituloLimpio || tituloLimpio === "Espacio Vacío") return;
+
+        const clave = limpiarTituloDCP(tituloLimpio) || tituloLimpio.toLowerCase();
+        previewActual = { titulo: tituloLimpio, idPub: idPub || 0, claveCache: clave };
+
+        document.getElementById('previewTitulo').innerText = tituloLimpio;
+        document.getElementById('previewMeta').innerText = [ubicacion, clasificacion].filter(Boolean).join(' | ');
+        document.getElementById('previewImgContenedor').innerHTML = `<span style="color:gray; font-size:13px;">Buscando póster...</span>`;
+        document.getElementById('previewFuente').innerText = '';
+        document.getElementById('inputUrlPosterManual').value = '';
+
+        document.getElementById('linkCinepolis').href = `https://www.google.com/search?q=site:cinepolis.com+${encodeURIComponent(tituloLimpio)}`;
+        document.getElementById('linkGoogleImg').href = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(tituloLimpio + ' poster cinepolis')}`;
+
+        abrirModal('modalVistaPrevia');
+
+        // imagen guardada en inventario
+        let urlGuardada = '';
+        let prodInv = null;
+        if (idPub && Number(idPub) > 0) {
+            prodInv = cacheInventario.find(p => p.ID_Publicidad === Number(idPub));
+        }
+        if (!prodInv) {
+            prodInv = cacheInventario.find(p => p.Categoria === 'Poster' && coinciden(p.Nombre_Material, tituloLimpio));
+            if (prodInv) previewActual.idPub = prodInv.ID_Publicidad;
+        }
+        if (prodInv && prodInv.Imagen_URL) {
+            urlGuardada = String(prodInv.Imagen_URL).replace(/&amp;/g, '&').trim();
+        }
+
+        if (urlGuardada) {
+            mostrarImagenPreview(urlGuardada, 'Guardado en inventario');
+            return;
+        }
+
+        if (cachePostersUrl[clave]) {
+            mostrarImagenPreview(cachePostersUrl[clave], 'Caché local');
+            return;
+        }
+
+        const resultado = await buscarPosterOnline(tituloLimpio);
+        if (resultado && resultado.url) {
+            cachePostersUrl[clave] = resultado.url;
+            localStorage.setItem('cachePostersUrl', JSON.stringify(cachePostersUrl));
+            mostrarImagenPreview(resultado.url, resultado.fuente);
+        } else {
+            document.getElementById('previewImgContenedor').innerHTML = `<div style="padding:20px; color:gray; font-size:13px;">No se encontró un póster automático.<br><br>Usa <strong>Ver en Cinépolis</strong> o <strong>Buscar en Internet</strong> y pega abajo el enlace de la imagen.</div>`;
+        }
+    }
+
+    function mostrarImagenPreview(url, fuente) {
+        const cont = document.getElementById('previewImgContenedor');
+        const img = document.createElement('img');
+        img.alt = previewActual.titulo;
+        img.src = url;
+        img.onerror = () => {
+            cont.innerHTML = `<div style="padding:20px; color:gray; font-size:13px;">No se pudo cargar la imagen desde el enlace.<br>Intenta buscarla en Cinépolis y pegar una nueva URL.</div>`;
+        };
+        cont.innerHTML = '';
+        cont.appendChild(img);
+        document.getElementById('previewFuente').innerText = fuente ? `Origen: ${fuente}` : '';
+        document.getElementById('inputUrlPosterManual').value = url;
+    }
+
+    async function buscarPosterOnline(titulo) {
+        // consulta catalogo mx y us
+        const paises = ['mx', 'us'];
+        for (let pais of paises) {
+            try {
+                const resp = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(titulo)}&media=movie&country=${pais}&limit=5`);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.results && data.results.length > 0) {
+                        const mejor = data.results.find(r => coinciden(r.trackName || '', titulo)) || data.results[0];
+                        if (mejor.artworkUrl100) {
+                            return {
+                                url: mejor.artworkUrl100.replace('100x100bb', '600x900bb'),
+                                fuente: `Catálogo de películas (${pais.toUpperCase()})`
+                            };
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
+
+        // respaldo wikipedia
+        try {
+            const urlWiki = `https://es.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(titulo + ' película')}&gsrlimit=4&prop=pageimages&pithumbsize=600&format=json&origin=*`;
+            const respW = await fetch(urlWiki);
+            if (respW.ok) {
+                const dataW = await respW.json();
+                if (dataW.query && dataW.query.pages) {
+                    const paginas = Object.values(dataW.query.pages);
+                    const conImagen = paginas.find(p => p.thumbnail && p.thumbnail.source);
+                    if (conImagen) {
+                        return { url: conImagen.thumbnail.source, fuente: 'Wikipedia' };
+                    }
+                }
+            }
+        } catch (e) {}
+
+        return null;
+    }
+
+    function guardarUrlPosterManual() {
+        const nuevaUrl = document.getElementById('inputUrlPosterManual').value.trim();
+        if (!nuevaUrl) return alert("Ingresa la URL de la imagen del póster.");
+
+        cachePostersUrl[previewActual.claveCache] = nuevaUrl;
+        localStorage.setItem('cachePostersUrl', JSON.stringify(cachePostersUrl));
+        mostrarImagenPreview(nuevaUrl, 'Imagen fijada manualmente');
+
+        if (previewActual.idPub && previewActual.idPub > 0) {
+            fetch(`${API_INVENTARIO}/${previewActual.idPub}/imagen`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: nuevaUrl })
+            }).then(() => {
+                const prod = cacheInventario.find(p => p.ID_Publicidad === previewActual.idPub);
+                if (prod) prod.Imagen_URL = nuevaUrl;
+            }).catch(() => {});
+        }
     }
 
     // historial semanas
@@ -416,6 +618,7 @@
     function crearSlotVisual(c, esMuro) {
         if(!c) c = { ID_Slot: 0 };
         const slotId = c.ID_Slot || c.slot;
+        const ubicacionTxt = c.Ubicacion || (esMuro ? `Muro Slot #${slotId}` : `Sala ${slotId - 7}`);
         const estaLleno = modoHistorico ? (c.peli && c.peli !== "Espacio Vacío") : ((c.ID_Publicidad !== null && c.ID_Publicidad !== undefined) || (c.Titulo_Manual && c.Titulo_Manual !== ""));
         const estaMarcado = !!cartelerasMarcadas[slotId];
         
@@ -423,10 +626,10 @@
         if (estaMarcado && !modoHistorico) clase += ' marcado-cambio';
         
         let extras = '';
+        let clasifTxt = c.Clasificacion || c.clasificacion || '';
         if(estaLleno) {
-            let clasif = c.Clasificacion || c.clasificacion;
             let idioma = c.Idioma || c.idioma;
-            let badgeRegla = clasif ? `<div style="margin-top:5px; font-size:${esMuro?'10px':'11px'}; color:var(--success); border:1px dashed var(--success); padding:2px; border-radius:3px;">${clasif}</div>` : '';
+            let badgeRegla = clasifTxt ? `<div style="margin-top:5px; font-size:${esMuro?'10px':'11px'}; color:var(--success); border:1px dashed var(--success); padding:2px; border-radius:3px;">${clasifTxt}</div>` : '';
             let badgeIdioma = idioma ? `<span class="badge-idioma" style="margin-top:5px; display:inline-block;">${idioma}</span>` : '';
             extras = `<div>${badgeIdioma}${badgeRegla}</div>`;
         }
@@ -435,11 +638,15 @@
         if (modoHistorico) { nombreVisual = c.peli; } 
         else { nombreVisual = c.Titulo_Manual ? c.Titulo_Manual + ' (Manual)' : c.Nombre_Material; }
 
-        let contenido = estaLleno ? `<span class="poster-nombre" style="${esMuro?'color:white;':''}">${nombreVisual}</span>${extras}` : `<span style="color:gray; font-size:12px;">Slot #${slotId}<br>${modoHistorico?'Vacío':'Sin póster activo'}</span>`;
+        let idPubVal = (!modoHistorico && c.ID_Publicidad) ? c.ID_Publicidad : 0;
+
+        let contenido = estaLleno
+            ? `<span class="poster-nombre" style="${esMuro?'color:white;':''}" title="Clic para ver póster">${nombreVisual}</span>${extras}`
+            : `<span style="color:gray; font-size:12px;">Slot #${slotId}<br>${modoHistorico?'Vacío':'Sin póster activo'}</span>`;
         
         if (!modoHistorico && estaLleno) {
             contenido += `<div style="display:flex; gap:4px; flex-wrap:wrap; justify-content:center;">
-                <button class="btn btn-warning btn-sm" onclick="abrirAsignacionDesdeSlot(event, ${slotId}, '${c.Ubicacion || 'Sala '+(slotId-7)}')">Cambiar</button>
+                <button class="btn btn-warning btn-sm" onclick="abrirAsignacionDesdeSlot(event, ${slotId}, decodeURIComponent('${codificarArg(ubicacionTxt)}'))">Cambiar</button>
                 <button class="btn btn-danger btn-sm" onclick="liberarCartelera(event, ${slotId})">${c.Titulo_Manual ? "Borrar" : "Desmontar"}</button>
             </div>`;
         }
@@ -450,10 +657,15 @@
             </button>`;
         }
         
-        let onclickAttr = (!modoHistorico && !estaLleno) ? `onclick="abrirAsignacion(${slotId}, '${c.Ubicacion || 'Sala '+(slotId-7)}', false)"` : '';
+        let onclickAttr = '';
+        if (estaLleno) {
+            onclickAttr = `onclick="verVistaPreviaPoster(event, decodeURIComponent('${codificarArg(ubicacionTxt)}'), decodeURIComponent('${codificarArg(nombreVisual)}'), ${idPubVal}, decodeURIComponent('${codificarArg(clasifTxt)}'))"`;
+        } else if (!modoHistorico) {
+            onclickAttr = `onclick="abrirAsignacion(${slotId}, decodeURIComponent('${codificarArg(ubicacionTxt)}'), false)"`;
+        }
 
         if (esMuro) return `<div id="slot-div-${slotId}" class="${clase}" ${onclickAttr}>${contenido}</div>`;
-        return `<div id="slot-div-${slotId}" class="${clase}" ${onclickAttr}><div class="slot-numero">Espacio #${slotId}</div><div class="slot-titulo">${c.Ubicacion || 'Sala ' + (slotId-7)}</div>${contenido}</div>`;
+        return `<div id="slot-div-${slotId}" class="${clase}" ${onclickAttr}><div class="slot-numero">Espacio #${slotId}</div><div class="slot-titulo">${ubicacionTxt}</div>${contenido}</div>`;
     }
 
     function abrirAsignacionDesdeSlot(event, slotId, ubicacion) {
@@ -462,6 +674,38 @@
     }
 
     // utilidades de texto y fecha
+    function extraerFechaProgramada(schedRaw) {
+        if (schedRaw === null || schedRaw === undefined || schedRaw === '') return null;
+        if (typeof schedRaw === 'number') {
+            const d = new Date(Math.round((schedRaw - 25569) * 86400 * 1000));
+            const anio = d.getUTCFullYear();
+            const mes = d.getUTCMonth() + 1;
+            const dia = d.getUTCDate();
+            return {
+                fechaStr: `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`,
+                dateObj: new Date(anio, mes - 1, dia)
+            };
+        }
+        const texto = String(schedRaw).trim().split(' ')[0].split('T')[0];
+        let m = texto.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/);
+        if (m) {
+            const anio = parseInt(m[1]), mes = parseInt(m[2]), dia = parseInt(m[3]);
+            return {
+                fechaStr: `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`,
+                dateObj: new Date(anio, mes - 1, dia)
+            };
+        }
+        m = texto.match(/^(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})$/);
+        if (m) {
+            const dia = parseInt(m[1]), mes = parseInt(m[2]), anio = parseInt(m[3]);
+            return {
+                fechaStr: `${anio}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`,
+                dateObj: new Date(anio, mes - 1, dia)
+            };
+        }
+        return null;
+    }
+
     function limpiarNombrePlaylist(playlistRaw) {
         if (!playlistRaw) return "";
         let limpio = String(playlistRaw).trim();
@@ -529,8 +773,9 @@
             let fechasEncontradas = new Set();
             let conteoSala = {}; 
             
-            let hoy = new Date();
-            hoy.setHours(0, 0, 0, 0); 
+            // fecha actual valida
+            let ahora = new Date();
+            let hoyStr = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')}`;
             let errorFechasPasadas = false;
 
             resultados.forEach(hoja => {
@@ -542,14 +787,10 @@
                     let rating = row['FEATURE_RATING'];
 
                     if (aud && sched && (playlist || feature)) {
-                        let datePart = String(sched).split(' ')[0]; 
-                        fechasEncontradas.add(datePart);
-                        
-                        let partesFecha = datePart.split('-');
-                        let rowDate = null;
-                        if(partesFecha.length === 3) {
-                            rowDate = new Date(parseInt(partesFecha[0]), parseInt(partesFecha[1])-1, parseInt(partesFecha[2]));
-                            if (rowDate < hoy) errorFechasPasadas = true;
+                        let infoSched = extraerFechaProgramada(sched);
+                        if (infoSched) {
+                            fechasEncontradas.add(infoSched.fechaStr);
+                            if (infoSched.fechaStr < hoyStr) errorFechasPasadas = true;
                         }
 
                         let numMatch = String(aud).match(/\d+/);
@@ -581,8 +822,8 @@
                             }
                             conteoSala[salaNum][titulo].conteo++;
 
-                            if (rowDate) {
-                                let diaSemana = rowDate.getDay(); 
+                            if (infoSched && infoSched.dateObj) {
+                                let diaSemana = infoSched.dateObj.getDay(); 
                                 if (diaSemana === 0 || diaSemana === 5 || diaSemana === 6) {
                                     conteoSala[salaNum][titulo].finSemana++;
                                 } else {
@@ -600,7 +841,7 @@
             }
 
             if (errorFechasPasadas) {
-                alert("Error Logístico: Se detectaron fechas inferiores al día de hoy. No puedes armar carteleras con base en días pasados.");
+                alert("Error Logístico: Se detectaron fechas anteriores al día de hoy. Solo se permiten fechas a partir de hoy.");
                 event.target.value = ''; return;
             }
 
@@ -811,10 +1052,11 @@
                 if(slotDiv.classList.contains('muro-slot')) bgStyle += " color: white;";
 
                 let metaBadge = sug.clasificacion ? `<div style="margin:5px 0;"><span style="font-size:10px; background:var(--warning); color:black; padding:2px 4px; border-radius:3px; margin-right:3px;">${sug.clasificacion}</span></div>` : '';
+                let ubicTxt = sug.slot <= 7 ? `Muro Slot #${sug.slot}` : `Sala ${sug.slot - 7}`;
 
                 let sugHTML = document.createElement('div');
                 sugHTML.className = 'sugerencia-box'; sugHTML.style = bgStyle;
-                sugHTML.innerHTML = `${badge}<strong>${m.posterNombre}</strong>${metaBadge}<br><button class="btn btn-success btn-sm" style="width:100%; border-radius:3px; margin-top: 5px;" onclick="confirmarSugerencia(event, ${sug.slot}, ${m.posterId}, '${m.origen}', ${m.origenId || null}, '${sug.idioma || ''}', '${sug.clasificacion || ''}', '${sug.tituloOriginal.replace(/'/g, "\\'")}')">${btnText}</button>`;
+                sugHTML.innerHTML = `${badge}<strong class="link-preview" title="Clic para ver póster" onclick="verVistaPreviaPoster(event, decodeURIComponent('${codificarArg(ubicTxt)}'), decodeURIComponent('${codificarArg(m.posterNombre)}'), ${m.posterId || 0}, decodeURIComponent('${codificarArg(sug.clasificacion || '')}'))">${m.posterNombre}</strong>${metaBadge}<br><button class="btn btn-success btn-sm" style="width:100%; border-radius:3px; margin-top: 5px;" onclick="confirmarSugerencia(event, ${sug.slot}, ${m.posterId}, '${m.origen}', ${m.origenId || null}, decodeURIComponent('${codificarArg(sug.idioma || '')}'), decodeURIComponent('${codificarArg(sug.clasificacion || '')}'), decodeURIComponent('${codificarArg(sug.tituloOriginal || '')}'))">${btnText}</button>`;
                 
                 slotDiv.appendChild(sugHTML); aplicadas++;
             }
@@ -845,7 +1087,7 @@
         tbody.innerHTML = '';
         
         let extraText = modoHistorico ? "<br><span style='color:var(--danger);'>Estás viendo el análisis histórico de una semana pasada.</span>" : "";
-        document.getElementById('descAnalisis').innerHTML ='Desde aquí puedes elegir qué película se queda con el póster de la sala, poner otro póster de bodega o marcar las carteleras que ya cambiaste.' + extraText;
+        document.getElementById('descAnalisis').innerHTML = `Nombres extraídos de <strong>PLAYLIST</strong>, fecha de <strong>FEATURE</strong> y clasificación de <strong>FEATURE_RATING</strong>.<br>Haz clic sobre cualquier película para abrir la vista previa de su póster.${extraText}`;
 
         let salasOrdenadas = Object.keys(analisisGlobalSalas).map(Number).sort((a,b) => a - b);
         
@@ -870,7 +1112,8 @@
             peliculas.forEach((peli, index) => {
                 let datosPeli = infoSala[peli];
                 let esGanador = (peli === ganador);
-                let peliEscapada = peli.replace(/'/g, "\\'");
+                let peliCod = codificarArg(peli);
+                let clasifPeli = datosPeli.rating ? `Clasif: ${datosPeli.rating}` : '';
                 
                 let trClass = esGanador ? 'class="tr-ganador"' : '';
                 let badgeVerde = esGanador ? `<br><span style="display:inline-block; margin-top:4px; background:var(--success); color:white; font-size:10px; padding:3px 6px; border-radius:4px; font-weight:bold;">ELEGIDA: ${razonGanador}</span>` : '';
@@ -893,9 +1136,9 @@
                 let btnAccionPeli = '';
                 if (!modoHistorico) {
                     if (esGanador) {
-                        btnAccionPeli = `<button class="btn btn-success btn-sm" onclick="elegirPeliculaAnalisis(${salaNum}, '${peliEscapada}', true)">Instalar en Sala ${salaNum}</button>`;
+                        btnAccionPeli = `<button class="btn btn-success btn-sm" onclick="elegirPeliculaAnalisis(${salaNum}, decodeURIComponent('${peliCod}'), true)">Instalar en Sala ${salaNum}</button>`;
                     } else {
-                        btnAccionPeli = `<button class="btn btn-info btn-sm" onclick="elegirPeliculaAnalisis(${salaNum}, '${peliEscapada}', true)">Elegir para Sala ${salaNum}</button>`;
+                        btnAccionPeli = `<button class="btn btn-info btn-sm" onclick="elegirPeliculaAnalisis(${salaNum}, decodeURIComponent('${peliCod}'), true)">Elegir para Sala ${salaNum}</button>`;
                     }
                 } else {
                     btnAccionPeli = `<span style="color:gray; font-size:11px;">Histórico</span>`;
@@ -904,7 +1147,10 @@
                 tbody.innerHTML += `
                     <tr ${trClass}>
                         ${celdaSala}
-                        <td style="text-align:left;">${peli} ${badgeVerde}</td>
+                        <td style="text-align:left;">
+                            <span class="link-preview" title="Clic para ver póster" onclick="verVistaPreviaPoster(event, 'Sala ${salaNum}', decodeURIComponent('${peliCod}'), 0, decodeURIComponent('${codificarArg(clasifPeli)}'))">${peli}</span>
+                            ${badgeVerde}
+                        </td>
                         <td><span style="font-family:monospace; font-size:12px;">${datosPeli.fechaFeature || 'S/F'}</span></td>
                         <td><span class="badge-clasif" style="background:#444;">${datosPeli.rating || 'S/C'}</span></td>
                         <td>${datosPeli.entreSemana}</td>
