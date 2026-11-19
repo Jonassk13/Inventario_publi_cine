@@ -14,19 +14,19 @@
         body.theme-amanecer { background-image: linear-gradient(to bottom, rgba(168, 230, 207, 0.4), rgba(27, 94, 32, 0.9)), url('https://images.unsplash.com/photo-1425913397330-cf8af2ff40a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
         body.theme-amanecer .box, body.theme-amanecer .tarjeta-semana, body.theme-amanecer .muro-taquilla, body.theme-amanecer .zona, body.theme-amanecer .modal-content { background: rgba(20, 60, 40, 0.6) !important; border-color: #a8e6cf !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(168, 230, 207, 0.2); color: #fff !important; }
         body.theme-amanecer .btn-dark { background: rgba(27, 94, 32, 0.8) !important; border: 1px solid #a8e6cf; color: white !important;}
-        body.theme-amanecer input, body.theme-amanecer select { background: rgba(0,0,0,0.4) !important; color: white !important; border: 1px solid #a8e6cf !important; }
+        body.theme-amanecer input, body.theme-amanecer select, body.theme-amanecer textarea { background: rgba(0,0,0,0.4) !important; color: white !important; border: 1px solid #a8e6cf !important; }
         body.theme-amanecer .zona-titulo { background: #1b5e20 !important; color: white !important; border-color: #a8e6cf !important; }
 
         body.theme-atardecer { background-image: linear-gradient(to bottom, rgba(255, 110, 64, 0.45), rgba(42, 8, 69, 0.95)), url('https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
         body.theme-atardecer .box, body.theme-atardecer .tarjeta-semana, body.theme-atardecer .muro-taquilla, body.theme-atardecer .zona, body.theme-atardecer .modal-content { background: rgba(30, 10, 20, 0.6) !important; border-color: #ff7e5f !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(255, 110, 64, 0.2); color: #ffe8d6 !important; }
         body.theme-atardecer .btn-dark { background: rgba(90, 20, 30, 0.8) !important; border: 1px solid #ff7e5f; color: white !important;}
-        body.theme-atardecer input, body.theme-atardecer select { background: rgba(0,0,0,0.5) !important; color: white !important; border: 1px solid #ff7e5f !important; }
+        body.theme-atardecer input, body.theme-atardecer select, body.theme-atardecer textarea { background: rgba(0,0,0,0.5) !important; color: white !important; border: 1px solid #ff7e5f !important; }
         body.theme-atardecer .zona-titulo { background: #2a0845 !important; color: white !important; border-color: #ff7e5f !important; }
 
         body.theme-noche { background-image: linear-gradient(to bottom, rgba(10, 25, 47, 0.7), rgba(2, 6, 12, 0.98)), url('https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') !important; }
         body.theme-noche .box, body.theme-noche .tarjeta-semana, body.theme-noche .muro-taquilla, body.theme-noche .zona, body.theme-noche .modal-content { background: rgba(10, 15, 30, 0.7) !important; border-color: #64ffda !important; backdrop-filter: blur(8px); box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 20px rgba(100, 255, 218, 0.1); color: #e6f1ff !important; }
         body.theme-noche .btn-dark { background: rgba(2, 12, 27, 0.8) !important; border: 1px solid #64ffda; color: #64ffda !important;}
-        body.theme-noche input, body.theme-noche select { background: rgba(0,0,0,0.5) !important; color: #e6f1ff !important; border: 1px solid #64ffda !important; }
+        body.theme-noche input, body.theme-noche select, body.theme-noche textarea { background: rgba(0,0,0,0.5) !important; color: #e6f1ff !important; border: 1px solid #64ffda !important; }
         body.theme-noche .zona-titulo { background: #020c1b !important; color: #64ffda !important; border-color: #64ffda !important; }
 
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 20px; transition: 0.3s;}
@@ -159,6 +159,7 @@
     </div>
     <div style="display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end;">
         <button class="btn btn-primary" onclick="abrirModalAnalisis()">Análisis de Salas</button>
+        <button class="btn btn-dark" style="background:#0b5345;" onclick="abrirModalSyncCinepolis()">Sincronizar Cinépolis</button>
         
         <div id="botones-edicion" style="display: flex; gap: 5px; flex-wrap: wrap;">
             <button class="btn btn-warning" onclick="guardarCarteleraManual()">Guardar Cambios Manuales</button>
@@ -265,7 +266,7 @@
     </div>
 </div>
 
-<!-- vista previa poster -->
+<!-- vista previa -->
 <div id="modalVistaPrevia" class="modal" style="z-index: 1300;">
     <div class="modal-content" style="max-width: 460px; text-align: center;">
         <button class="close-btn" onclick="cerrarModal('modalVistaPrevia')">&times;</button>
@@ -293,6 +294,39 @@
     </div>
 </div>
 
+<!-- sincronizacion cinepolis -->
+<div id="modalSyncCinepolis" class="modal" style="z-index: 1350;">
+    <div class="modal-content" style="max-width: 620px;">
+        <button class="close-btn" onclick="cerrarModal('modalSyncCinepolis')">&times;</button>
+        <h2 style="margin-top:0; color:var(--primary);">Sincronizar Pósters desde Cinépolis</h2>
+        
+        <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:12px; cursor:pointer;">
+            <input type="checkbox" id="chkSobreescribirPosters" style="width:auto; margin:0;">
+            Reemplazar también los pósters que ya tienen imagen guardada
+        </label>
+
+        <div style="border:1px solid var(--border-color); padding:12px; border-radius:6px; margin-bottom:15px;">
+            <strong style="font-size:13px;">Opción 1: Directo desde el servidor</strong>
+            <p style="font-size:12px; color:gray; margin:4px 0 10px 0;">Requiere servidor sin bloqueo de salida (local o PythonAnywhere de pago).</p>
+            <button class="btn btn-primary btn-sm" id="btnSyncDirecto" onclick="sincronizarDirectoServidor()">Intentar sincronización directa</button>
+        </div>
+
+        <div style="border:1px solid var(--border-color); padding:12px; border-radius:6px;">
+            <strong style="font-size:13px;">Opción 2: Extraer desde cinepolis.com (recomendado)</strong>
+            <ol style="font-size:12px; color:gray; padding-left:18px; margin:6px 0 10px 0;">
+                <li>Abre <a href="https://cinepolis.com/cartelera/morelia" target="_blank">cinepolis.com/cartelera/morelia</a> y espera a que carguen las portadas.</li>
+                <li>Presiona <strong>F12</strong>, entra a la pestaña <strong>Console</strong>, pega el código copiado y presiona Enter.</li>
+                <li>Pega aquí abajo el resultado (se copia solo al portapapeles) y guarda en la base de datos.</li>
+            </ol>
+            <button class="btn btn-info btn-sm" style="margin-bottom:10px;" onclick="copiarExtractorCinepolis()">Copiar código extractor</button>
+            <textarea id="txtJsonCinepolis" rows="5" placeholder='[{"titulo": "Película", "url": "https://..."}]' style="width:100%; padding:8px; border-radius:5px; border:1px solid var(--border-color); background:var(--box-bg); color:var(--text-color); font-family:monospace; font-size:12px; box-sizing:border-box;"></textarea>
+            <button class="btn btn-success" style="width:100%; margin-top:8px;" id="btnImportarJson" onclick="importarPostersJson()">Guardar pósters en Base de Datos</button>
+        </div>
+
+        <div id="resultadoSyncCinepolis" style="margin-top:12px; font-size:12px;"></div>
+    </div>
+</div>
+
 <script>
     // estado global
     document.addEventListener('keydown', event => { 
@@ -304,6 +338,8 @@
     const API_INVENTARIO = 'https://jonassk13.pythonanywhere.com/api/inventario';
     const API_ESTRENOS = 'https://jonassk13.pythonanywhere.com/api/estrenos'; 
     const API_HISTORIAL_SEMANAS = 'https://jonassk13.pythonanywhere.com/api/carteleras/historial';
+    const API_SYNC_CINEPOLIS = 'https://jonassk13.pythonanywhere.com/api/inventario/sincronizar_posters_cinepolis';
+    const API_IMPORT_CINEPOLIS = 'https://jonassk13.pythonanywhere.com/api/inventario/importar_posters_cinepolis';
     
     let slotSeleccionado = null; 
     let sugerenciasGlobales = []; 
@@ -329,8 +365,14 @@
         } else { document.body.classList.add('theme-jacqui'); }
     }
 
+    function textoBotonExcel() {
+        return rolUsuario === 'Admin' ? 'Nueva Semana por Excel (Libre)' : 'Nueva Semana por Excel (7 Días)';
+    }
+
     window.onload = () => {
         if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
+        const btnExcel = document.getElementById('btnSubirExcel');
+        if (btnExcel) btnExcel.innerText = textoBotonExcel();
         cargarInventarioBase();
         cargarHistorialSemanas();
         cargarMapa();
@@ -402,7 +444,6 @@
 
         abrirModal('modalVistaPrevia');
 
-        // imagen guardada en inventario
         let urlGuardada = '';
         let prodInv = null;
         if (idPub && Number(idPub) > 0) {
@@ -451,7 +492,6 @@
     }
 
     async function buscarPosterOnline(titulo) {
-        // consulta catalogo mx y us
         const paises = ['mx', 'us'];
         for (let pais of paises) {
             try {
@@ -471,7 +511,6 @@
             } catch (e) {}
         }
 
-        // respaldo wikipedia
         try {
             const urlWiki = `https://es.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=${encodeURIComponent(titulo + ' película')}&gsrlimit=4&prop=pageimages&pithumbsize=600&format=json&origin=*`;
             const respW = await fetch(urlWiki);
@@ -507,6 +546,93 @@
                 const prod = cacheInventario.find(p => p.ID_Publicidad === previewActual.idPub);
                 if (prod) prod.Imagen_URL = nuevaUrl;
             }).catch(() => {});
+        }
+    }
+
+    // sincronizacion cinepolis
+    function abrirModalSyncCinepolis() {
+        document.getElementById('resultadoSyncCinepolis').innerHTML = '';
+        document.getElementById('txtJsonCinepolis').value = '';
+        abrirModal('modalSyncCinepolis');
+    }
+
+    function copiarExtractorCinepolis() {
+        const codigo = `(()=>{const m=new Map();document.querySelectorAll('img').forEach(i=>{const u=i.currentSrc||i.src||i.dataset.src||'';let t=(i.alt||i.title||'').trim();if(!t){const c=i.closest('article,div,a');const h=c&&c.querySelector('h1,h2,h3,h4,span');if(h)t=h.innerText.trim();}if(u.startsWith('http')&&t.length>=2&&(i.naturalHeight>=180||/pelicula|poster|movie/i.test(u))){m.set(t,{titulo:t,url:u});}});const r=Array.from(m.values());const s=JSON.stringify(r);if(typeof copy==='function')copy(s);console.log('Extraidos:',r.length);console.log(s);})();`;
+        navigator.clipboard.writeText(codigo).then(() => {
+            document.getElementById('resultadoSyncCinepolis').innerHTML = '<span style="color:var(--success);">Código copiado. Pégalo en la consola (F12) de cinepolis.com.</span>';
+        }).catch(() => {
+            prompt("Copia este código y pégalo en la consola de cinepolis.com:", codigo);
+        });
+    }
+
+    async function sincronizarDirectoServidor() {
+        const btn = document.getElementById('btnSyncDirecto');
+        const out = document.getElementById('resultadoSyncCinepolis');
+        const sobreescribir = document.getElementById('chkSobreescribirPosters').checked;
+        btn.disabled = true;
+        out.innerHTML = 'Consultando servidor...';
+
+        try {
+            const resp = await fetch(API_SYNC_CINEPOLIS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sobreescribir, usuario: nombreUsuario || rolUsuario })
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                out.innerHTML = `<span style="color:var(--danger);">${data.error}</span>`;
+            } else {
+                out.innerHTML = `<span style="color:var(--success);">Actualizados: ${data.actualizados} | Sin coincidencia: ${data.sin_coincidencia}</span>`;
+                cargarInventarioBase();
+            }
+        } catch (err) {
+            out.innerHTML = `<span style="color:var(--danger);">Error de red: ${err.message}</span>`;
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    async function importarPostersJson() {
+        const raw = document.getElementById('txtJsonCinepolis').value.trim();
+        const out = document.getElementById('resultadoSyncCinepolis');
+        const sobreescribir = document.getElementById('chkSobreescribirPosters').checked;
+
+        if (!raw) return alert("Pega el JSON extraído de Cinépolis primero.");
+
+        let posters = [];
+        try {
+            posters = JSON.parse(raw);
+            if (!Array.isArray(posters)) throw new Error("El formato debe ser una lista JSON.");
+        } catch (e) {
+            return alert("El texto pegado no es un JSON válido.");
+        }
+
+        const btn = document.getElementById('btnImportarJson');
+        btn.disabled = true;
+        out.innerHTML = 'Guardando en base de datos...';
+
+        try {
+            const resp = await fetch(API_IMPORT_CINEPOLIS, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ posters, sobreescribir, usuario: nombreUsuario || rolUsuario })
+            });
+            const data = await resp.json();
+            if (!resp.ok) {
+                out.innerHTML = `<span style="color:var(--danger);">${data.error}</span>`;
+            } else {
+                let listaTxt = data.detalle && data.detalle.length
+                    ? '<br><small>' + data.detalle.map(x => x.nombre).join(', ') + '</small>'
+                    : '';
+                out.innerHTML = `<span style="color:var(--success);">Listo. Pósters guardados en BD: ${data.actualizados} | Sin coincidencia: ${data.sin_coincidencia}</span>${listaTxt}`;
+                cachePostersUrl = {};
+                localStorage.removeItem('cachePostersUrl');
+                cargarInventarioBase();
+            }
+        } catch (err) {
+            out.innerHTML = `<span style="color:var(--danger);">Error de red: ${err.message}</span>`;
+        } finally {
+            btn.disabled = false;
         }
     }
 
@@ -747,10 +873,14 @@
         return false;
     }
 
-    // lectura de excel y reseteo de cartelera
+    // lectura de excel y permisos admin
     function procesarMultiplesExcel(event) {
         const files = event.target.files;
-        if (files.length !== 7) {
+        const esAdmin = (rolUsuario === 'Admin');
+
+        if (!files || files.length === 0) return;
+
+        if (!esAdmin && files.length !== 7) {
             alert("Debes seleccionar estrictamente los 7 archivos de Excel correspondientes a cada día de la semana.");
             event.target.value = '';
             return;
@@ -773,7 +903,6 @@
             let fechasEncontradas = new Set();
             let conteoSala = {}; 
             
-            // fecha actual valida
             let ahora = new Date();
             let hoyStr = `${ahora.getFullYear()}-${String(ahora.getMonth() + 1).padStart(2, '0')}-${String(ahora.getDate()).padStart(2, '0')}`;
             let errorFechasPasadas = false;
@@ -786,7 +915,7 @@
                     let feature = row['FEATURE'];
                     let rating = row['FEATURE_RATING'];
 
-                    if (aud && sched && (playlist || feature)) {
+                    if (aud && (playlist || feature)) {
                         let infoSched = extraerFechaProgramada(sched);
                         if (infoSched) {
                             fechasEncontradas.add(infoSched.fechaStr);
@@ -835,13 +964,20 @@
                 });
             });
 
-            if (fechasEncontradas.size < 7) {
-                alert(`Error Logístico: Los archivos parecen no cubrir la semana completa. Solo se encontraron ${fechasEncontradas.size} fechas distintas.`);
-                event.target.value = ''; return;
+            if (!esAdmin) {
+                if (fechasEncontradas.size < 7) {
+                    alert(`Error Logístico: Los archivos parecen no cubrir la semana completa. Solo se encontraron ${fechasEncontradas.size} fechas distintas.`);
+                    event.target.value = ''; return;
+                }
+
+                if (errorFechasPasadas) {
+                    alert("Error Logístico: Se detectaron fechas anteriores al día de hoy. Solo se permiten fechas a partir de hoy.");
+                    event.target.value = ''; return;
+                }
             }
 
-            if (errorFechasPasadas) {
-                alert("Error Logístico: Se detectaron fechas anteriores al día de hoy. Solo se permiten fechas a partir de hoy.");
+            if (Object.keys(conteoSala).length === 0) {
+                alert("No se encontraron funciones válidas en los archivos seleccionados.");
                 event.target.value = ''; return;
             }
 
@@ -865,10 +1001,15 @@
             renderizarPlano(carteleraVirtual, false);
 
             btnExcel.disabled = false;
-            btnExcel.innerText = "Nueva Semana por Excel (7 Días)";
+            btnExcel.innerText = textoBotonExcel();
 
             generarSugerenciasIntegradas(conteoSala);
         }).catch(err => {
+            const btnExcel = document.getElementById('btnSubirExcel');
+            if (btnExcel) {
+                btnExcel.disabled = false;
+                btnExcel.innerText = textoBotonExcel();
+            }
             alert("Error al leer los archivos: " + err);
         });
         
@@ -1075,7 +1216,7 @@
 
     function abrirModalAnalisis() {
         if(Object.keys(analisisGlobalSalas).length === 0) {
-            alert("Aún no hay datos de análisis para esta semana. Sube primero los 7 archivos de Excel.");
+            alert("Aún no hay datos de análisis para esta semana. Sube primero los archivos de Excel.");
             return;
         }
         renderizarTablaAnalisis();
